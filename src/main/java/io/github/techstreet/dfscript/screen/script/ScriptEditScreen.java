@@ -20,7 +20,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class ScriptEditScreen extends CScreen {
 
@@ -41,7 +41,7 @@ public class ScriptEditScreen extends CScreen {
         for (ScriptPart part : script.getParts()) {
             if (part instanceof ScriptEvent se) {
                 panel.add(new CItem(5, y, se.getType().getIcon()));
-                panel.add(new CText(15, y + 2, new LiteralText(se.getType().getName())));
+                panel.add(new CText(15, y + 2, Text.literal(se.getType().getName())));
                 indent = 5;
 
                 int currentIndex = index;
@@ -91,7 +91,7 @@ public class ScriptEditScreen extends CScreen {
                 }
 
                 panel.add(new CItem(5 + indent, y, sa.getType().getIcon()));
-                panel.add(new CText(15 + indent, y + 2, new LiteralText(sa.getType().getName())));
+                panel.add(new CText(15 + indent, y + 2, Text.literal(sa.getType().getName())));
 
                 for (int i = 0; i < indent; i += 5) {
                     int xpos = 8 + i;

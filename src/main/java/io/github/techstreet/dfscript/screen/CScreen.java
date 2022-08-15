@@ -8,7 +8,7 @@ import java.util.List;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 public class CScreen extends Screen {
@@ -17,7 +17,7 @@ public class CScreen extends Screen {
     public final List<CWidget> widgets = new ArrayList<>();
 
     protected CScreen(int width, int height) {
-        super(new LiteralText("DFScript Screen"));
+        super(Text.literal("DFScript Screen"));
         this.width = width;
         this.height = height;
         io.github.techstreet.dfscript.DFScript.MC.keyboard.setRepeatEvents(true);

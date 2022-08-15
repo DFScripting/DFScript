@@ -8,7 +8,6 @@ import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,29 +25,27 @@ public class MClientPlayNetworkHandler {
             return;
         }
 
-        if (packet.getType() == MessageType.CHAT || packet.getType() == MessageType.SYSTEM) {
-            ReceiveChatEvent event = new ReceiveChatEvent(packet.getMessage());
-            EventManager.getInstance().dispatch(event);
-            if (event.isCancelled()) {
-                ci.cancel();
-            }
+        ReceiveChatEvent event = new ReceiveChatEvent(packet.content());
+        EventManager.getInstance().dispatch(event);
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
 
-            String packetString = packet.getMessage().getString();
+        String packetString = packet.content().getString();
 
-            if (packetString.equals("» You are now in dev mode.")) {
-                DevModeEvent modeEvent = new DevModeEvent();
-                EventManager.getInstance().dispatch(modeEvent);
-            }
+        if (packetString.equals("» You are now in dev mode.")) {
+            DevModeEvent modeEvent = new DevModeEvent();
+            EventManager.getInstance().dispatch(modeEvent);
+        }
 
-            if (packetString.equals("» You are now in build mode.")) {
-                BuildModeEvent modeEvent = new BuildModeEvent();
-                EventManager.getInstance().dispatch(modeEvent);
-            }
+        if (packetString.equals("» You are now in build mode.")) {
+            BuildModeEvent modeEvent = new BuildModeEvent();
+            EventManager.getInstance().dispatch(modeEvent);
+        }
 
-            if (packetString.startsWith("» Joined plot") || packetString.startsWith("» Joined game")) {
-                PlayModeEvent modeEvent = new PlayModeEvent();
-                EventManager.getInstance().dispatch(modeEvent);
-            }
+        if (packetString.startsWith("» Joined plot") || packetString.startsWith("» Joined game")) {
+            PlayModeEvent modeEvent = new PlayModeEvent();
+            EventManager.getInstance().dispatch(modeEvent);
         }
     }
 
@@ -77,7 +74,7 @@ public class MClientPlayNetworkHandler {
 
     @Inject(method = "onGameJoin", at = @At("RETURN"), cancellable = true)
     private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-        ClientConnection conn = io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler().getConnection();
+        ClientConnection conn = DFScript.MC.getNetworkHandler().getConnection();
         ServerJoinEvent event = new ServerJoinEvent(packet, ((InetSocketAddress)conn.getAddress()));
         EventManager.getInstance().dispatch(event);
     }

@@ -2,7 +2,7 @@ package io.github.techstreet.dfscript.util.hypercube;
 
 import io.github.techstreet.dfscript.commands.Command;
 import io.github.techstreet.dfscript.commands.CommandManager;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class HypercubeUtil {
                 if (rank.hasPermission(r)) {
                     if (!regCommands.contains(command)) {
                         regCommands.add(command);
-                        command.register(ClientCommandManager.DISPATCHER);
+                        command.register(ClientCommandManager.getActiveDispatcher());
                     }
                 }
             }

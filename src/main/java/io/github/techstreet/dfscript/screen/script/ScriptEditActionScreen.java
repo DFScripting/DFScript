@@ -22,7 +22,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class ScriptEditActionScreen extends CScreen {
 
@@ -58,7 +58,7 @@ public class ScriptEditActionScreen extends CScreen {
                 throw new IllegalArgumentException("Invalid argument type");
             }
             widgets.add(new CItem(5, y, icon));
-            widgets.add(new CText(15, y + 2, new LiteralText(text)));
+            widgets.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
 

@@ -27,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -142,11 +141,11 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     ScriptClientValueArgument(String name, String description, Item type, ScriptActionArgumentType varType, BiFunction<Event, ScriptContext, ScriptValue> consumer) {
         this.name = name;
         this.icon = new ItemStack(type);
-        icon.setCustomName(new LiteralText(name)
+        icon.setCustomName(Text.literal(name)
             .fillStyle(Style.EMPTY
                 .withItalic(false)));
         NbtList lore = new NbtList();
-        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(description)
+        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
             .fillStyle(Style.EMPTY
                 .withColor(Formatting.GRAY)
                 .withItalic(false)))));

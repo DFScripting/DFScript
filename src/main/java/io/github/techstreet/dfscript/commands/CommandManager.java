@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 public class CommandManager implements Loadable {
 
@@ -35,7 +35,7 @@ public class CommandManager implements Loadable {
         // Example of registering commands with a required df rank
         // rankedCommands.put(new TestCommand(), DFRank.JRHELPER);
 
-        attachTo(ClientCommandManager.DISPATCHER);
+        attachTo(ClientCommandManager.getActiveDispatcher());
     }
 
     private void attachTo(CommandDispatcher<FabricClientCommandSource> cd) {

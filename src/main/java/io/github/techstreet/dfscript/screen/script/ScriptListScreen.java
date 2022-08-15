@@ -27,8 +27,8 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.commons.codec.binary.Base64;
 
@@ -43,7 +43,7 @@ public class ScriptListScreen extends CScreen {
 
         int y = 0;
         for (Script s : ScriptManager.getInstance().getScripts()) {
-            MutableText text = new LiteralText(s.getName());
+            MutableText text = Text.literal(s.getName());
             if (s.disabled()) {
                 text = text.formatted(Formatting.GRAY);
             }

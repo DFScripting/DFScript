@@ -1,7 +1,7 @@
 package io.github.techstreet.dfscript.config.structure;
 
 import io.github.techstreet.dfscript.loader.v2.IManager;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ public class ConfigSubGroup implements IManager<ConfigSetting<?>>, IRawTranslati
     private boolean startExpanded = true;
     private final String name;
 
-    private LiteralText rawKey = null;
-    private LiteralText rawTooltip = null;
+    private Text rawKey = null;
+    private Text rawTooltip = null;
 
     public ConfigSubGroup(String name) {
         this.name = name;
@@ -21,23 +21,23 @@ public class ConfigSubGroup implements IManager<ConfigSetting<?>>, IRawTranslati
 
     @Override
     public ConfigSubGroup setRawKey(String key) {
-        this.rawKey = new LiteralText(key);
+        this.rawKey = Text.literal(key);
         return this;
     }
 
     @Override
-    public Optional<LiteralText> getRawKey() {
+    public Optional<Text> getRawKey() {
         return Optional.ofNullable(rawKey);
     }
 
     @Override
     public ConfigSubGroup setRawTooltip(String key) {
-        this.rawTooltip = new LiteralText(key);
+        this.rawTooltip = Text.literal(key);
         return this;
     }
 
     @Override
-    public Optional<LiteralText> getRawTooltip() {
+    public Optional<Text> getRawTooltip() {
         return Optional.ofNullable(rawTooltip);
     }
 

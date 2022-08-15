@@ -2,7 +2,6 @@ package io.github.techstreet.dfscript.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -12,7 +11,7 @@ import net.minecraft.util.Formatting;
 public class ComponentUtil {
 
     public static MutableText fromString(String message) {
-        LiteralText result = new LiteralText("");
+        MutableText result = Text.literal("");
 
         try {
             Regex pattern = Regex.of("(§[a-f0-9lonmkrA-FLONMRK]|§x(§[a-f0-9A-F]){6})");
@@ -25,7 +24,7 @@ public class ComponentUtil {
                 int start = matcher.start();
                 String text = message.substring(lastIndex, start);
                 if (text.length() != 0) {
-                    LiteralText t = new LiteralText(text);
+                    MutableText t = Text.literal(text);
                     t.setStyle(s);
                     result.append(t);
                 }
@@ -41,13 +40,13 @@ public class ComponentUtil {
             }
             String text = message.substring(lastIndex);
             if (text.length() != 0) {
-                LiteralText t = new LiteralText(text);
+                MutableText t = Text.literal(text);
                 t.setStyle(s);
                 result.append(t);
             }
         } catch (Exception err) {
             err.printStackTrace();
-            return new LiteralText("DFScript Text Error");
+            return Text.literal("DFScript Text Error");
         }
 
         return result;
@@ -81,7 +80,7 @@ public class ComponentUtil {
         }
 
         result.append(format);
-        result.append(message.asString());
+        result.append(message.getString());
 
         for (Text sibling : message.getSiblings()) {
             result.append(toFormattedString(sibling));

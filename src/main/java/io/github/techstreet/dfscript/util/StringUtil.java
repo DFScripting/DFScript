@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.minecraft.text.LiteralText;
+
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -19,9 +20,9 @@ import net.minecraft.util.Formatting;
 public class StringUtil {
     public static final Regex STRIP_CHARS_PATTERN = Regex.of("(^\\s+|\\s+$)");
 
-    public static LiteralText of(String... literalTexts) {
+    public static Text of(String... literalTexts) {
         int length = literalTexts.length;
-        LiteralText text = new LiteralText(literalTexts[0]);
+        MutableText text = Text.literal(literalTexts[0]);
 
         if (length == 1) {
             return text;
@@ -92,7 +93,7 @@ public class StringUtil {
             out.append("§k");
         }
 
-        out.append(txt.asString());
+        out.append(txt.getString());
 
         for (Text sibling : txt.getSiblings()) {
             out.append(textToString(sibling));

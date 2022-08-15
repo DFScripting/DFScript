@@ -1,6 +1,5 @@
 package io.github.techstreet.dfscript.script.action;
 
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -47,13 +46,13 @@ public class ScriptActionArgument {
     public Text text() {
         MutableText t = type.text();
         if (plural) {
-            t.append(new LiteralText("(s)").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+            t.append(Text.literal("(s)").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
         }
         if (optional) {
-            t.append(new LiteralText("*").fillStyle(Style.EMPTY.withItalic(true)));
+            t.append(Text.literal("*").fillStyle(Style.EMPTY.withItalic(true)));
         }
-        return t.append(new LiteralText(" - ").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)))
-            .append(new LiteralText(name).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+        return t.append(Text.literal(" - ").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)))
+            .append(Text.literal(name).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
     }
 
     public enum ScriptActionArgumentType {
@@ -65,7 +64,7 @@ public class ScriptActionArgument {
         ANY;
 
         public MutableText text() {
-            MutableText val = new LiteralText(switch (this) {
+            MutableText val = Text.literal(switch (this) {
                 case VARIABLE -> "Variable";
                 case NUMBER -> "Number";
                 case TEXT -> "Text";

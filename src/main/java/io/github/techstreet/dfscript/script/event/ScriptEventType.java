@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -50,12 +49,12 @@ public enum ScriptEventType {
         this.codeutilitiesEvent = codeutilitiesEvent;
         this.name = name;
         icon = new ItemStack(item);
-        icon.setCustomName(new LiteralText(name)
+        icon.setCustomName(Text.literal(name)
             .setStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
         NbtList lore = new NbtList();
-        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(description)
+        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
             .fillStyle(Style.EMPTY
                 .withColor(Formatting.GRAY)
                 .withItalic(false)))));

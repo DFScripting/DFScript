@@ -2,7 +2,7 @@ package io.github.techstreet.dfscript.config.structure;
 
 import io.github.techstreet.dfscript.loader.v2.IManager;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public abstract class ConfigGroup implements IManager<ConfigSubGroup>, IRawTrans
     private final String name;
     private HypercubeRank rank = HypercubeRank.DEFAULT;
 
-    private LiteralText rawKey = null;
+    private Text rawKey = null;
 
     public ConfigGroup(String name) {
         this.name = name;
@@ -22,12 +22,12 @@ public abstract class ConfigGroup implements IManager<ConfigSubGroup>, IRawTrans
 
     @Override
     public ConfigGroup setRawKey(String key) {
-        this.rawKey = new LiteralText(key);
+        this.rawKey = Text.literal(key);
         return this;
     }
 
     @Override
-    public Optional<LiteralText> getRawKey() {
+    public Optional<Text> getRawKey() {
         return Optional.ofNullable(rawKey);
     }
 

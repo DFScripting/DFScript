@@ -8,13 +8,13 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class StringListArgumentType implements ArgumentType<String> {
-    public static final SimpleCommandExceptionType UNKNOWN_TYPE_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("Unknown type"));
+    public static final SimpleCommandExceptionType UNKNOWN_TYPE_EXCEPTION = new SimpleCommandExceptionType(Text.literal("Unknown type"));
     private final String[] suggestions;
 
     public StringListArgumentType(String[] suggestions) {

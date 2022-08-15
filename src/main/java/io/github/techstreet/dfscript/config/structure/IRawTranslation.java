@@ -1,7 +1,7 @@
 package io.github.techstreet.dfscript.config.structure;
 
 
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ public interface IRawTranslation<T> extends IRawKey<T> {
         return null;
     }
 
-    default Optional<LiteralText> getRawKey() {
+    default Optional<Text> getRawKey() {
         return Optional.empty();
     }
 
@@ -18,7 +18,7 @@ public interface IRawTranslation<T> extends IRawKey<T> {
         return null;
     }
 
-    default Optional<LiteralText> getRawTooltip() {
+    default Optional<Text> getRawTooltip() {
         return Optional.empty();
     }
 }

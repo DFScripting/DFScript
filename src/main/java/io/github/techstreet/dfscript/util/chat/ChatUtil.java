@@ -23,7 +23,7 @@ public class ChatUtil {
     }
 
     public static void chat(String message) {
-        DFScript.MC.player.sendChatMessage(message);
+        DFScript.MC.player.sendChatMessage(message, Text.literal(message));
     }
 
     public static void executeCommand(String command) {
@@ -40,7 +40,7 @@ public class ChatUtil {
     }
 
     public static void sendMessage(String text) {
-        sendMessage(new LiteralText(text), null);
+        sendMessage(Text.literal(text), null);
     }
 
     public static void sendMessage(Text text) {
@@ -48,7 +48,7 @@ public class ChatUtil {
     }
 
     public static void sendMessage(String text, ChatType prefixType) {
-        sendMessage(new LiteralText(text), prefixType);
+        sendMessage(Text.literal(text), prefixType);
     }
 
     public static void sendMessage(Text text, ChatType prefixType) {
@@ -57,7 +57,7 @@ public class ChatUtil {
         if (prefixType != null) {
             prefix = prefixType.getString();
         }
-        io.github.techstreet.dfscript.DFScript.MC.player.sendMessage(new LiteralText(prefix).append(text), false);
+        io.github.techstreet.dfscript.DFScript.MC.player.sendMessage(Text.literal(prefix).append(text), false);
     }
 
     public static MutableText setColor(MutableText component, Color color) {

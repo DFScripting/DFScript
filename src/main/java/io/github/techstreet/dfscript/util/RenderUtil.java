@@ -16,7 +16,8 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vector4f;
 import org.lwjgl.opengl.GL11;
@@ -158,10 +159,10 @@ public class RenderUtil {
     }
 
     public static void sendToaster(String title, String description, SystemToast.Type type) {
-        sendToaster(new LiteralText(title), new LiteralText(description), type);
+        sendToaster(Text.literal(title), Text.literal(description), type);
     }
 
-    public static void sendToaster(LiteralText title, LiteralText description, SystemToast.Type type) {
+    public static void sendToaster(MutableText title, MutableText description, SystemToast.Type type) {
         MinecraftClient.getInstance().getToastManager().add(new SystemToast(type, title, description));
     }
 }

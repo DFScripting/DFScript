@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import io.github.techstreet.dfscript.util.Regex;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -71,7 +70,7 @@ public class TextUtil {
     }
 
     public static Text colorCodesToTextComponent(String message) {
-        MutableText result = new LiteralText("");
+        MutableText result = Text.literal("");
 
         try {
             Regex pattern = Regex.of("(§[a-f0-9lonmkrA-FLONMRK]|§x(§[a-f0-9A-F]){6})");
@@ -84,7 +83,7 @@ public class TextUtil {
                 int start = matcher.start();
                 String text = message.substring(lastIndex, start);
                 if (text.length() != 0) {
-                    MutableText t = new LiteralText(text);
+                    MutableText t = Text.literal(text);
                     t.setStyle(s);
                     result.append(t);
                 }
@@ -100,13 +99,13 @@ public class TextUtil {
             }
             String text = message.substring(lastIndex);
             if (text.length() != 0) {
-                MutableText t = new LiteralText(text);
+                MutableText t = Text.literal(text);
                 t.setStyle(s);
                 result.append(t);
             }
         } catch (Exception err) {
             err.printStackTrace();
-            return new LiteralText("DFScript Text Error");
+            return Text.literal("DFScript Text Error");
         }
 
         return result;

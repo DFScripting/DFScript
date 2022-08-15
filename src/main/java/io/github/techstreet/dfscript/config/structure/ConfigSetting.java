@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.config.structure;
 
 import io.github.techstreet.dfscript.config.types.DropdownSetting;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -13,8 +12,8 @@ public class ConfigSetting<Value> implements IRawTranslation<ConfigSetting<Value
     protected Value value;
     protected Value defaultValue;
 
-    private LiteralText rawKey = null;
-    private LiteralText rawTooltip = null;
+    private Text rawKey = null;
+    private Text rawTooltip = null;
     private String keyName = null;
     private String description = null;
 
@@ -54,23 +53,23 @@ public class ConfigSetting<Value> implements IRawTranslation<ConfigSetting<Value
 
     @Override
     public ConfigSetting<Value> setRawKey(String key) {
-        this.rawKey = new LiteralText(key);
+        this.rawKey = Text.literal(key);
         return this;
     }
 
     @Override
-    public Optional<LiteralText> getRawKey() {
+    public Optional<Text> getRawKey() {
         return Optional.ofNullable(rawKey);
     }
 
     @Override
     public ConfigSetting<Value> setRawTooltip(String key) {
-        this.rawTooltip = new LiteralText(key);
+        this.rawTooltip = Text.literal(key);
         return this;
     }
 
     @Override
-    public Optional<LiteralText> getRawTooltip() {
+    public Optional<Text> getRawTooltip() {
         return Optional.ofNullable(rawTooltip);
     }
 

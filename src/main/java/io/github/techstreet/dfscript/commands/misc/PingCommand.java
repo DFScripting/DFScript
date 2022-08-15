@@ -7,7 +7,7 @@ import io.github.techstreet.dfscript.event.ReceiveChatEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import java.util.Date;
 
@@ -50,8 +50,8 @@ public class PingCommand implements Command {
 
         cd.register(
                 literal("ping").executes(ctx -> {
-                    io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage("/server");
-                    DFScript.MC.player.sendChatMessage("/plot");
+                    io.github.techstreet.dfscript.DFScript.MC.player.sendCommand("/server");
+                    DFScript.MC.player.sendCommand("/plot");
 
                     serverPing = new Date().getTime();
                     proxyPing = new Date().getTime();

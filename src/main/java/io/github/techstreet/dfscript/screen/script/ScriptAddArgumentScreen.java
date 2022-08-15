@@ -11,8 +11,8 @@ import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 public class ScriptAddArgumentScreen extends CScreen {
 
@@ -27,19 +27,19 @@ public class ScriptAddArgumentScreen extends CScreen {
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
-        textIcon.setCustomName(new LiteralText("Text")
+        textIcon.setCustomName(Text.literal("Text")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
-        numberIcon.setCustomName(new LiteralText("Number")
+        numberIcon.setCustomName(Text.literal("Number")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack variableIcon = new ItemStack(Items.MAGMA_CREAM);
-        variableIcon.setCustomName(new LiteralText("Variable")
+        variableIcon.setCustomName(Text.literal("Variable")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack clientValueIcon = new ItemStack(Items.NAME_TAG);
-        clientValueIcon.setCustomName(new LiteralText("Client Value")
+        clientValueIcon.setCustomName(Text.literal("Client Value")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
         CItem addNumber = new CItem(2, 40, numberIcon);

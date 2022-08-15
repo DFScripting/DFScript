@@ -257,9 +257,9 @@ public class ConfigScreen implements ITranslatable {
 
     private static Text getTooltip(Text title, Text origin) {
         MutableText titleText = title.copy();
-        titleText.append(new LiteralText("\n\n"));
+        titleText.append(Text.literal("\n\n"));
 
-        LiteralText description = new LiteralText("» ");
+        MutableText description = Text.literal("» ");
         Style style = description.getStyle();
         style.withColor(TextColor.fromFormatting(Formatting.AQUA));
         description.setStyle(style);

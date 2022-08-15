@@ -41,8 +41,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.item.Item;
@@ -53,7 +54,6 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -103,8 +103,9 @@ public enum ScriptActionType {
                 sb.append(arg.asText())
                     .append(" ");
             }
+
             sb.deleteCharAt(sb.length() - 1);
-            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString());
+            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
         })),
 
     REPEAT_MULTIPLE(builder -> builder.name("RepeatMultiple")
@@ -961,7 +962,7 @@ public enum ScriptActionType {
                 }
 
                 if (ab instanceof LiteralArgumentBuilder lab) {
-                    ClientCommandManager.DISPATCHER.register(lab);
+                    ClientCommandManager.getActiveDispatcher().register(lab);
                 }
 
                 ClientPlayNetworkHandler nh = io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler();
@@ -1642,20 +1643,20 @@ public enum ScriptActionType {
     }
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
-        item.setCustomName(new LiteralText(name)
+        item.setCustomName(Text.literal(name)
             .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
 
         NbtList lore = new NbtList();
         for (String descriptionLine: description) {
-            lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(descriptionLine)
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
                 .fillStyle(Style.EMPTY
                       .withColor(Formatting.GRAY)
                       .withItalic(false)))));
         }
 
-        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(""))));
+        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
             lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
