@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "dfscript",
+  "version": "${project.version}",
+  "name": "DFScript",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "LGPL-3.0",
+  "icon": "assets/dfscript/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "io.github.techstreet.dfscript.DFScript"
+    ]
+  },
+  "mixins": [
+    "dfscript.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.2",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}
