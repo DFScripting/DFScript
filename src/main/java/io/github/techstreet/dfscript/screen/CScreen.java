@@ -69,6 +69,7 @@ public class CScreen extends Screen {
         for (CWidget cWidget : widgets) {
             cWidget.keyPressed(keyCode, scanCode, modifiers);
         }
+
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 

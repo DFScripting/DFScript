@@ -14,6 +14,7 @@ import io.github.techstreet.dfscript.event.TickEvent;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
+import io.github.techstreet.dfscript.screen.script.ScriptAddScreen;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptClientValueArgument;
@@ -40,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ScriptManager implements Loadable {
     public static final Logger LOGGER = LogManager.getLogger("Scripts");
+    public static long lastServerUpdate = 0;
     private static ScriptManager instance;
     private final List<Script> scripts = new ArrayList<>();
     private final Gson GSON = new GsonBuilder()
@@ -105,6 +107,21 @@ public class ScriptManager implements Loadable {
         } catch (Exception err) {
             LOGGER.error("Unable to listen for new scripts", err);
         }
+
+        final int[] tick = {0};
+        new Thread(ScriptAddScreen::getScripts).start();
+        lastServerUpdate = System.currentTimeMillis() / 1000;
+
+        EventManager.getInstance().register(TickEvent.class, event -> {
+            tick[0] += 1;
+
+            if (tick[0] >= 1200) {
+                tick[0] = 0;
+
+                new Thread(ScriptAddScreen::getScripts).start();
+                lastServerUpdate = System.currentTimeMillis() / 1000;
+            }
+        });
     }
 
     private void unloadScript(File file) {
@@ -152,8 +169,11 @@ public class ScriptManager implements Loadable {
             String content = FileUtil.readFile(file.toPath());
             Script s = GSON.fromJson(content, Script.class);
             s.setFile(file);
+            System.out.println(s.getServer());
 
             ScriptMigrator.migrate(s);
+            System.out.println(s.getServer());
+
             if (s.getVersion() != Script.scriptVersion) throw new RuntimeException("this script uses version " + s.getVersion() + " when this version of DFScript uses version " + Script.scriptVersion + "!");
 
             scripts.add(s);
@@ -211,7 +231,7 @@ public class ScriptManager implements Loadable {
             ownerId = DFScript.MC.player.getUuid().toString();
         }
 
-        Script script = new Script(name, ownerId, null, new ArrayList<>(),false, Script.scriptVersion);
+        Script script = new Script(name, ownerId, "None", new ArrayList<>(),false, Script.scriptVersion);
         scripts.add(script);
 
         File file = null;

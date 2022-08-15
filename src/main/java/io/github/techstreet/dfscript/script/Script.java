@@ -29,17 +29,17 @@ public class Script {
     private final String name;
     private String owner;
     private int version = 0;
-    private String serverId;
+    private String server;
     private final List<ScriptPart> parts;
     private final Logger LOGGER;
     private final ScriptContext context = new ScriptContext();
     private File file;
     private boolean disabled;
 
-    public Script(String name, String owner, String serverId, List<ScriptPart> parts, boolean disabled, int version) {
+    public Script(String name, String owner, String server, List<ScriptPart> parts, boolean disabled, int version) {
         this.name = name;
         this.owner = owner;
-        this.serverId = serverId;
+        this.server = server;
         this.parts = parts;
         this.disabled = disabled;
         this.version = version;
@@ -166,8 +166,7 @@ public class Script {
 
             task.stack().peekElement().setVariable("LagslayerCounter", lagslayerCounter);
 
-            if(lagslayerCounter >= 100000)
-            {
+            if(lagslayerCounter >= 100000) {
                 task.stack().peekElement().setVariable("LagslayerCounter", 0);
                 task.stop();//Lagslayer be like:
             }
@@ -200,8 +199,8 @@ public class Script {
         return version;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServer() {
+        return server;
     }
 
     public boolean disabled() {
@@ -220,8 +219,8 @@ public class Script {
         this.version = version;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServer(String server) {
+        this.server = server;
     }
 
     public ScriptContext getContext() {
@@ -233,8 +232,11 @@ public class Script {
         public Script deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
             String name = object.get("name").getAsString();
-            String owner = object.get("owner").getAsString();
-            String serverId = object.get("serverId").getAsString();
+
+            String owner = null;
+            if (object.get("owner") != null) owner = object.get("owner").getAsString();
+
+            String serverId = object.get("server").getAsString();
 
             List<ScriptPart> parts = new ArrayList<>();
             for (JsonElement element : object.get("actions").getAsJsonArray()) {
@@ -253,7 +255,7 @@ public class Script {
             JsonObject object = new JsonObject();
             object.addProperty("name", src.name);
             object.addProperty("owner", src.owner);
-            object.addProperty("serverId", src.serverId);
+            object.addProperty("server", src.server);
 
             JsonArray array = new JsonArray();
             for (ScriptPart part : src.getParts()) {

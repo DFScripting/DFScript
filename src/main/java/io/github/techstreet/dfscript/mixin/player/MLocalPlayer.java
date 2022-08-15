@@ -4,6 +4,7 @@ import io.github.techstreet.dfscript.event.TickEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.event.SendChatEvent;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MLocalPlayer {
 
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-    private void chat(String string, CallbackInfo ci) {
-        SendChatEvent event = new SendChatEvent(string);
+    private void chat(String message, Text preview, CallbackInfo ci) {
+        SendChatEvent event = new SendChatEvent(message);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();

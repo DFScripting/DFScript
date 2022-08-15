@@ -1,6 +1,5 @@
 package io.github.techstreet.dfscript.screen.script;
 
-import com.google.gson.JsonElement;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
@@ -19,8 +18,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.GZIPOutputStream;
 
+import io.github.techstreet.dfscript.script.util.UploadResponse;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawableHelper;
@@ -88,12 +89,13 @@ public class ScriptListScreen extends CScreen {
                                 try {
                                     // Encode the script JSON to GZIP Base64
                                     byte[] bytes = Files.readAllBytes(s.getFile().toPath());
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    GZIPOutputStream gzip = new GZIPOutputStream(baos);
-                                    gzip.write(Base64.encodeBase64(bytes));
-                                    gzip.finish();
 
-                                    String scriptData = baos.toString();
+                                    ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+                                    GZIPOutputStream zos = new GZIPOutputStream(rstBao);
+                                    zos.write(bytes);
+                                    zos.close();
+
+                                    String scriptData = Base64.encodeBase64String(rstBao.toByteArray());
 
                                     // Upload the script to the server
                                     URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/scripts/upload");
@@ -103,6 +105,7 @@ public class ScriptListScreen extends CScreen {
                                     con.setRequestProperty("Accept", "application/json");
                                     con.setDoOutput(true);
 
+                                    System.out.println(scriptData);
                                     String jsonInputString = "{\"data\": \"" + scriptData + "\"}";
                                     try (OutputStream os = con.getOutputStream()) {
                                         byte[] input = jsonInputString.getBytes("utf-8");
@@ -118,9 +121,11 @@ public class ScriptListScreen extends CScreen {
                                             response.append(responseLine.trim());
                                         }
 
-                                        //JsonElement obj = DFScript.GSON.fromJson(response.toString());
-                                        //System.out.println(obj.get("id"));
-                                        //s.setServerId(obj.get("id").toString());
+                                        UploadResponse uploadResponse = DFScript.GSON.fromJson(response.toString(), UploadResponse.class);
+                                        System.out.println(uploadResponse.getId());
+                                        s.setServer(uploadResponse.getId());
+
+                                        ScriptManager.getInstance().saveScript(s);
                                     }
                                 } catch (Exception e) {
                                     ChatUtil.sendMessage("Failed to upload script to the server, please report this to a DFScript developer!", ChatType.FAIL);
@@ -135,7 +140,7 @@ public class ScriptListScreen extends CScreen {
                                 contextMenu.add(enableDisable);
                             });
 
-                            if (s.getServerId() == null) {
+                            if (Objects.equals(s.getServer(), "None")) {
                                 DFScript.MC.send(() -> {
                                     widgets.add(upload);
                                     contextMenu.add(upload);
@@ -152,7 +157,7 @@ public class ScriptListScreen extends CScreen {
         }
 
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptCreationScreen());
+            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddScreen());
         });
         panel.add(add);
     }

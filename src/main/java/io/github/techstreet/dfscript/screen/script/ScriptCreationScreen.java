@@ -16,7 +16,7 @@ public class ScriptCreationScreen extends CScreen {
     Pattern ILLEGAL_CHARS = Pattern.compile("[\\\\/:*?\"<>|]");
 
     protected ScriptCreationScreen() {
-        super(100, 60);
+        super(105, 60);
 
         CTextField name = new CTextField("My Script", 2, 2, 96, 36, true);
 
@@ -37,13 +37,14 @@ public class ScriptCreationScreen extends CScreen {
             ScriptManager.getInstance().createScript(name.getText());
             io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptListScreen());
         }));
+
         widgets.add(new CButton(50, 42, 48, 15, "Cancel", () -> {
-            DFScript.MC.setScreen(new ScriptListScreen());
+            DFScript.MC.setScreen(new ScriptAddScreen());
         }));
     }
 
     @Override
     public void close() {
-        io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptListScreen());
+        DFScript.MC.setScreen(new ScriptAddScreen());
     }
 }

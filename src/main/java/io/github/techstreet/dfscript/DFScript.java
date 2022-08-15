@@ -89,6 +89,7 @@ public class DFScript implements ModInitializer {
             LOGGER.error("Error");
             err.printStackTrace();
         }
+
         LOGGER.info("Closed.");
     }
 }
