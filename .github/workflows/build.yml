@@ -19,8 +19,8 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: CodeUtilities
-        path: ./build/libs/CodeUtilities*.jar
+        name: DFScript
+        path: ./build/libs/DFScript*.jar
     - name: Publish Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
@@ -29,4 +29,4 @@ jobs:
         prerelease: false
         files: |
           LICENSE
-          ./build/libs/CodeUtilities-${{ github.run_number }}.jar
+          ./build/libs/DFScript-${{ github.run_number }}.jar
