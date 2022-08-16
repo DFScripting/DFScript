@@ -1,9 +1,6 @@
 package io.github.techstreet.dfscript.util;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 import io.github.techstreet.dfscript.DFScript;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,18 +40,6 @@ public class WebUtil {
     }
 
     public static String getString(String urlToRead) throws IOException {
-        //System.out.println(urlToRead);
         return getString(urlToRead, StandardCharsets.UTF_8);
     }
-
-    public static JsonElement getJSON(String url) {
-        try {
-            String jsonObject = WebUtil.getString(url);
-            return io.github.techstreet.dfscript.DFScript.JSON_PARSER.parse(jsonObject);
-        } catch (JsonSyntaxException | IOException ignored) {
-        }
-
-        return null;
-    }
-
 }

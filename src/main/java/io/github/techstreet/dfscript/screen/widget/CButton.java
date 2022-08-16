@@ -10,10 +10,10 @@ import net.minecraft.sound.SoundEvents;
 
 public class CButton implements CWidget {
 
-    private final int x;
-    private final int y;
-    private final int width;
-    private final int height;
+    public final int x;
+    public final int y;
+    public final int width;
+    public final int height;
     private final float textScale;
     private String text;
     private Runnable onClick;
@@ -47,7 +47,7 @@ public class CButton implements CWidget {
         RenderUtil.renderButton(stack, 0, 0, width * 2, height * 2, rect.contains(mouseX, mouseY), false);
         stack.pop();
 
-        TextRenderer f = io.github.techstreet.dfscript.DFScript.MC.textRenderer;
+        TextRenderer f = DFScript.MC.textRenderer;
 
         stack.translate(rect.width / 2f, rect.height / 2f, 0);
         stack.scale(0.5f * textScale, 0.5f * textScale, 0.5f * textScale);

@@ -39,6 +39,6 @@ public class ScriptAddClientValueScreen extends CScreen {
 
     @Override
     public void close() {
-        io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, insertIndex));
+        DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, insertIndex));
     }
 }

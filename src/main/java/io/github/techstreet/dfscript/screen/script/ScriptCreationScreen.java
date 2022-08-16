@@ -5,7 +5,6 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.ScriptManager;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

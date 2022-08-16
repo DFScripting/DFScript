@@ -32,7 +32,7 @@ public class ScriptAddActionScreen extends CScreen {
                 item.setClickListener((btn) -> {
                     ScriptEvent event = new ScriptEvent(type);
                     script.getParts().add(insertIndex, event);
-                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(script));
+                    DFScript.MC.setScreen(new ScriptEditScreen(script));
                 });
                 widgets.add(item);
                 x += 10;
@@ -53,7 +53,7 @@ public class ScriptAddActionScreen extends CScreen {
                 if (action.getType().hasChildren()) {
                     script.getParts().add(insertIndex + 1, new ScriptAction(ScriptActionType.CLOSE_BRACKET, List.of()));
                 }
-                io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(script));
+                DFScript.MC.setScreen(new ScriptEditScreen(script));
             });
             widgets.add(item);
             x += 10;

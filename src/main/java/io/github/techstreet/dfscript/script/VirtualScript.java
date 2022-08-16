@@ -5,14 +5,11 @@ import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.util.FileUtil;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -57,7 +54,6 @@ public class VirtualScript {
             JsonObject obj = JsonParser.parseReader(rd).getAsJsonObject();
             obj.addProperty("disabled", false);
             obj.addProperty("server", id);
-
             String content = obj.toString();
 
             Files.write(file.toPath(), content.getBytes());

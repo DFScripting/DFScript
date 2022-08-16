@@ -1,11 +1,9 @@
 package io.github.techstreet.dfscript.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
+import io.github.techstreet.dfscript.DFScript;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.techstreet.dfscript.DFScript;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -155,7 +153,7 @@ public class RenderUtil {
         scissorStack.remove(scissorStack.size() - 1);
         if (scissorStack.size() > 0) {
             Scissor s = scissorStack.get(scissorStack.size() - 1);
-            GL11.glScissor(s.x, io.github.techstreet.dfscript.DFScript.MC.getWindow().getHeight() - s.y - s.height, s.width, s.height);
+            GL11.glScissor(s.x, DFScript.MC.getWindow().getHeight() - s.y - s.height, s.width, s.height);
         } else {
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
@@ -163,7 +161,7 @@ public class RenderUtil {
 
     public static void renderGuiItem(MatrixStack stack, ItemStack item) {
         stack.push();
-        ItemRenderer renderer = io.github.techstreet.dfscript.DFScript.MC.getItemRenderer();
+        ItemRenderer renderer = DFScript.MC.getItemRenderer();
         Vector4f pos = new Vector4f(0, 0, 0, 1);
         pos.transform(stack.peek().getPositionMatrix());
         renderer.renderGuiItemIcon(item, (int) pos.getX(), (int) pos.getY());

@@ -1,10 +1,9 @@
 package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.features.MessageType;
-import net.minecraft.text.Text;
-
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.text.Text;
 
 public class MessageGrabberTask {
 

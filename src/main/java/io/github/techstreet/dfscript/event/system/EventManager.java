@@ -1,9 +1,5 @@
 package io.github.techstreet.dfscript.event.system;
 
-import io.github.techstreet.dfscript.event.TickEvent;
-import io.github.techstreet.dfscript.util.chat.ChatType;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

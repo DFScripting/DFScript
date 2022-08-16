@@ -76,20 +76,20 @@ public class ScriptEditActionScreen extends CScreen {
                 @Override
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
-                        io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
                         if (button != 0) {
                             CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
                                 DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex));
                             });
                             CButton insertAfter = new CButton((int) x, (int) y+8, 40, 8, "Insert After", () -> {
-                                io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1));
+                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1));
                             });
                             CButton delete = new CButton((int) x, (int) y + 16, 40, 8, "Delete", () -> {
                                 action.getArguments().remove(currentIndex);
-                                io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+                                DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
                             });
-                            io.github.techstreet.dfscript.DFScript.MC.send(() -> {
+                            DFScript.MC.send(() -> {
                                 widgets.add(insertBefore);
                                 widgets.add(insertAfter);
                                 widgets.add(delete);
@@ -110,14 +110,14 @@ public class ScriptEditActionScreen extends CScreen {
         }
 
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
+            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
         });
         widgets.add(add);
     }
 
     @Override
     public void close() {
-        io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(script));
+        DFScript.MC.setScreen(new ScriptEditScreen(script));
     }
 
     @Override

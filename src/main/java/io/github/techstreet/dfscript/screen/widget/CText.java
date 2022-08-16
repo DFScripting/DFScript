@@ -1,8 +1,7 @@
 package io.github.techstreet.dfscript.screen.widget;
 
-import java.awt.Rectangle;
-
 import io.github.techstreet.dfscript.DFScript;
+import java.awt.Rectangle;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;

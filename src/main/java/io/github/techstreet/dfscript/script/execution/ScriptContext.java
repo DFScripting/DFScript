@@ -2,7 +2,6 @@ package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;

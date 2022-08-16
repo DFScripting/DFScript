@@ -51,7 +51,7 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         addText.setClickListener((btn) -> {
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+            DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
         });
 
         addNumber.setClickListener((btn) -> {
@@ -66,11 +66,11 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         addVariable.setClickListener((btn) -> {
             action.getArguments().add(index, new ScriptVariableArgument(input.getText()));
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+            DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
         });
 
         addClientValue.setClickListener((btn) -> {
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index));
+            DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index));
         });
 
         widgets.add(input);
@@ -82,6 +82,6 @@ public class ScriptAddArgumentScreen extends CScreen {
 
     @Override
     public void close() {
-        io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+        DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
     }
 }

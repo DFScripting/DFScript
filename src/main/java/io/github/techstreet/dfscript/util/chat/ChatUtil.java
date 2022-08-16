@@ -1,10 +1,12 @@
 package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.DFScript;
+import java.awt.Color;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.*;
-
-import java.awt.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 
 public class ChatUtil {
 
@@ -18,7 +20,7 @@ public class ChatUtil {
 
     public static void playSound(SoundEvent sound, float pitch, float volume) {
         if (sound != null) {
-            io.github.techstreet.dfscript.DFScript.MC.player.playSound(sound, volume, pitch);
+            DFScript.MC.player.playSound(sound, volume, pitch);
         }
     }
 
@@ -52,12 +54,12 @@ public class ChatUtil {
     }
 
     public static void sendMessage(Text text, ChatType prefixType) {
-        if (io.github.techstreet.dfscript.DFScript.MC.player == null) return;
+        if (DFScript.MC.player == null) return;
         String prefix = "";
         if (prefixType != null) {
             prefix = prefixType.getString();
         }
-        io.github.techstreet.dfscript.DFScript.MC.player.sendMessage(Text.literal(prefix).append(text), false);
+        DFScript.MC.player.sendMessage(Text.literal(prefix).append(text), false);
     }
 
     public static MutableText setColor(MutableText component, Color color) {
@@ -67,8 +69,8 @@ public class ChatUtil {
     }
 
     public static void sendActionBar(Text msg) {
-        if (io.github.techstreet.dfscript.DFScript.MC.player == null) return;
-        io.github.techstreet.dfscript.DFScript.MC.player.sendMessage(msg, true);
+        if (DFScript.MC.player == null) return;
+        DFScript.MC.player.sendMessage(msg, true);
     }
 
     public static void error(String s) {

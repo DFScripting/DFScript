@@ -2,12 +2,11 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vector4f;
-
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vector4f;
 
 public class CPlainPanel implements CWidget {
 

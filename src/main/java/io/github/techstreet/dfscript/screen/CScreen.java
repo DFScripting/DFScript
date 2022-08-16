@@ -20,7 +20,7 @@ public class CScreen extends Screen {
         super(Text.literal("DFScript Screen"));
         this.width = width;
         this.height = height;
-        io.github.techstreet.dfscript.DFScript.MC.keyboard.setRepeatEvents(true);
+        DFScript.MC.keyboard.setRepeatEvents(true);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class CScreen extends Screen {
     }
 
     public double translateMouseX(double mouseX) {
-        MinecraftClient mc = io.github.techstreet.dfscript.DFScript.MC;
+        MinecraftClient mc = DFScript.MC;
         float s = (float) mc.getWindow().getScaleFactor();
         mouseX += -mc.currentScreen.width/2f;
         mouseX /= s;
@@ -107,7 +107,7 @@ public class CScreen extends Screen {
     }
 
     public double translateMouseY(double mouseY) {
-        MinecraftClient mc = io.github.techstreet.dfscript.DFScript.MC;
+        MinecraftClient mc = DFScript.MC;
         float s = (float) mc.getWindow().getScaleFactor();
         mouseY += -mc.currentScreen.height/2f;
         mouseY /= s;

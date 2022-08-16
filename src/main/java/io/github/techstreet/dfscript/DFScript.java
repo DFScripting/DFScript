@@ -2,21 +2,18 @@ package io.github.techstreet.dfscript;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.commands.CommandManager;
-import io.github.techstreet.dfscript.features.*;
+import io.github.techstreet.dfscript.features.UpdateAlerts;
 import io.github.techstreet.dfscript.loader.Loader;
-import io.github.techstreet.dfscript.loader.v2.CodeInitializer;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.util.Scheduler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class DFScript implements ModInitializer {
 
@@ -34,8 +31,6 @@ public class DFScript implements ModInitializer {
     public static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .create();
-
-    public static final JsonParser JSON_PARSER = new JsonParser();
 
     @Override
     public void onInitialize() {

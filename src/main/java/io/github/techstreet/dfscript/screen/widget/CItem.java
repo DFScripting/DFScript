@@ -44,8 +44,8 @@ public class CItem implements CWidget {
             stack.scale(0.5f, 0.5f, 1f);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             stack.peek().getPositionMatrix().addToLastColumn(new Vec3f(0, 0, 600));
-            io.github.techstreet.dfscript.DFScript.MC.currentScreen.renderTooltip(stack, item.getTooltip(
-                io.github.techstreet.dfscript.DFScript.MC.player, Default.NORMAL
+            DFScript.MC.currentScreen.renderTooltip(stack, item.getTooltip(
+                DFScript.MC.player, Default.NORMAL
             ), Optional.empty(), 0, 0);
             stack.pop();
         }

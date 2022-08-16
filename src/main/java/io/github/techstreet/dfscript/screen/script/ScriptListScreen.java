@@ -8,6 +8,9 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
+import io.github.techstreet.dfscript.script.util.UploadResponse;
+import io.github.techstreet.dfscript.util.chat.ChatType;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -20,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.GZIPOutputStream;
-
-import io.github.techstreet.dfscript.script.util.UploadResponse;
-import io.github.techstreet.dfscript.util.chat.ChatType;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -61,7 +60,7 @@ public class ScriptListScreen extends CScreen {
                 @Override
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
-                        io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
                         if (button == 0) {
                             DFScript.MC.setScreen(new ScriptEditScreen(s));
@@ -157,7 +156,7 @@ public class ScriptListScreen extends CScreen {
         }
 
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddScreen());
+            DFScript.MC.setScreen(new ScriptAddScreen());
         });
         panel.add(add);
     }

@@ -2,7 +2,12 @@ package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
-import io.github.techstreet.dfscript.screen.widget.*;
+import io.github.techstreet.dfscript.screen.widget.CButton;
+import io.github.techstreet.dfscript.screen.widget.CItem;
+import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
+import io.github.techstreet.dfscript.screen.widget.CText;
+import io.github.techstreet.dfscript.screen.widget.CTexturedButton;
+import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.ScriptPart;
@@ -12,8 +17,6 @@ import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.techstreet.dfscript.util.render.BlendableTexturedButtonWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -62,21 +65,21 @@ public class ScriptEditScreen extends CScreen {
                     @Override
                     public boolean mouseClicked(double x, double y, int button) {
                         if (getBounds().contains(x, y)) {
-                            io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
                             if (button != 0) {
                                 CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
                                     DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex));
                                 });
                                 CButton insertAfter = new CButton((int) x, (int) y+8, 40, 8, "Insert After", () -> {
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex + 1));
+                                    DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex + 1));
                                 });
                                 CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
                                     script.getParts().remove(currentIndex);
                                     scroll = panel.getScroll();
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(script));
+                                    DFScript.MC.setScreen(new ScriptEditScreen(script));
                                 });
-                                io.github.techstreet.dfscript.DFScript.MC.send(() -> {
+                                DFScript.MC.send(() -> {
                                     panel.add(insertBefore);
                                     panel.add(insertAfter);
                                     panel.add(delete);
@@ -127,26 +130,26 @@ public class ScriptEditScreen extends CScreen {
                     @Override
                     public boolean mouseClicked(double x, double y, int button) {
                         if (getBounds().contains(x, y)) {
-                            io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
                             if (button == 0) {
                                 if (sa.getType() != ScriptActionType.CLOSE_BRACKET) {
                                     scroll = panel.getScroll();
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditActionScreen(sa, script));
+                                    DFScript.MC.setScreen(new ScriptEditActionScreen(sa, script));
                                 }
                             } else {
                                 CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex));
+                                    DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex));
                                 });
                                 CButton insertAfter = new CButton((int) x, (int) y+8, 40, 8, "Insert After", () -> {
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex + 1));
+                                    DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, currentIndex + 1));
                                 });
                                 CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
                                     script.getParts().remove(currentIndex);
                                     scroll = panel.getScroll();
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(script));
+                                    DFScript.MC.setScreen(new ScriptEditScreen(script));
                                 });
-                                io.github.techstreet.dfscript.DFScript.MC.send(() -> {
+                                DFScript.MC.send(() -> {
                                     panel.add(insertBefore);
                                     panel.add(insertAfter);
                                     panel.add(delete);
@@ -176,9 +179,9 @@ public class ScriptEditScreen extends CScreen {
             DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, script.getParts().size()));
         });
 
-        panel.add(new CButton(84, y, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
+        panel.add(new CTexturedButton(84, y, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
 
-        }));
+        }, 0,0,1,0.5f,0,0.5f));
 
         panel.add(add);
         panel.setScroll(scroll);

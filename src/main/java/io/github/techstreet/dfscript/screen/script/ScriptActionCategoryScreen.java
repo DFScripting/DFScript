@@ -33,7 +33,7 @@ public class ScriptActionCategoryScreen extends CScreen {
         CItem item = new CItem(x, y, eventsItem);
         widgets.add(item);
 
-        item.setClickListener(btn -> io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddActionScreen(script, insertIndex, null)));
+        item.setClickListener(btn -> DFScript.MC.setScreen(new ScriptAddActionScreen(script, insertIndex, null)));
 
         x += 10;
 
@@ -41,7 +41,7 @@ public class ScriptActionCategoryScreen extends CScreen {
             CItem actionItem = new CItem(x, y, category.getIcon());
             widgets.add(actionItem);
 
-            actionItem.setClickListener(btn -> io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptAddActionScreen(script, insertIndex, category)));
+            actionItem.setClickListener(btn -> DFScript.MC.setScreen(new ScriptAddActionScreen(script, insertIndex, category)));
 
             x += 10;
             if (x >= size - 10) {

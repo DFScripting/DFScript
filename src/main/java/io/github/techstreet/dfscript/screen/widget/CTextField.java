@@ -52,7 +52,7 @@ public class CTextField implements CWidget {
         begin.transform(stack.peek().getPositionMatrix());
         end.transform(stack.peek().getPositionMatrix());
 
-        int guiScale = (int) io.github.techstreet.dfscript.DFScript.MC.getWindow().getScaleFactor();
+        int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
             (int) begin.getX()*guiScale,
             (int) begin.getY()*guiScale,
@@ -63,7 +63,7 @@ public class CTextField implements CWidget {
         stack.translate(2, 2 + scroll, 0);
         stack.scale(0.5f, 0.5f, 0);
 
-        TextRenderer f = io.github.techstreet.dfscript.DFScript.MC.textRenderer;
+        TextRenderer f = DFScript.MC.textRenderer;
         String[] lines = text.split("\n");
 
         stack.push();
@@ -130,7 +130,7 @@ public class CTextField implements CWidget {
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
         if (editable) {
             String lastText = text;
-            TextRenderer f = io.github.techstreet.dfscript.DFScript.MC.textRenderer;
+            TextRenderer f = DFScript.MC.textRenderer;
             boolean createSelection = modifiers != 0;
             if (createSelection && !hasSelection) {
                 hasSelection = true;
@@ -200,7 +200,7 @@ public class CTextField implements CWidget {
                 case 67: //c
                     if (modifiers == 2) {
                         if (hasSelection) {
-                            io.github.techstreet.dfscript.DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
+                            DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
                         }
                     }
                     break;
@@ -209,7 +209,7 @@ public class CTextField implements CWidget {
                         if (hasSelection) {
                             deleteSelection(selectionStart, selectionEnd);
                         }
-                        String clipboard = io.github.techstreet.dfscript.DFScript.MC.keyboard.getClipboard();
+                        String clipboard = DFScript.MC.keyboard.getClipboard();
                         text = text.substring(0, cursorPos) + clipboard + text.substring(cursorPos);
                         cursorPos += clipboard.length();
                     }
@@ -217,7 +217,7 @@ public class CTextField implements CWidget {
                 case 88: //x
                     if (modifiers == 2) {
                         if (hasSelection) {
-                            io.github.techstreet.dfscript.DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
+                            DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
                             deleteSelection(selectionStart, selectionEnd);
                         }
                     }
@@ -258,7 +258,7 @@ public class CTextField implements CWidget {
         if (editable) {
             if (button == 0) {
                 if (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
-                    TextRenderer f = io.github.techstreet.dfscript.DFScript.MC.textRenderer;
+                    TextRenderer f = DFScript.MC.textRenderer;
 
                     x -= 1 + this.x;
                     y -= 1 + this.y + scroll;

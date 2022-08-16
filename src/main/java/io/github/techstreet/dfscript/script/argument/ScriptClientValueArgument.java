@@ -67,27 +67,27 @@ public enum ScriptClientValueArgument implements ScriptArgument {
 
     TIMESTAMP("Timestamp","The current timestamp in milliseconds.", Items.CLOCK, ScriptActionArgumentType.NUMBER, (event,context) -> new ScriptNumberValue(System.currentTimeMillis())),
 
-    CLIPBOARD("Clipboard", "The current text on the clipboard", Items.PAPER, ScriptActionArgumentType.TEXT, (event,context) -> new ScriptTextValue(io.github.techstreet.dfscript.DFScript.MC.keyboard.getClipboard())),
+    CLIPBOARD("Clipboard", "The current text on the clipboard", Items.PAPER, ScriptActionArgumentType.TEXT, (event,context) -> new ScriptTextValue(DFScript.MC.keyboard.getClipboard())),
 
     MAIN_HAND_ITEM("MainHandItem","The item in the players main hand.", Items.STONE_BUTTON, ScriptActionArgumentType.DICTIONARY,
-        (event,context) -> ScriptValueItem.valueFromItem(io.github.techstreet.dfscript.DFScript.MC.player.getMainHandStack())
+        (event,context) -> ScriptValueItem.valueFromItem(DFScript.MC.player.getMainHandStack())
     ),
 
     OFF_HAND_ITEM("OffHandItem","The item in the players off hand.", Items.OAK_BUTTON, ScriptActionArgumentType.DICTIONARY,
-        (event,context) -> ScriptValueItem.valueFromItem(io.github.techstreet.dfscript.DFScript.MC.player.getOffHandStack())
+        (event,context) -> ScriptValueItem.valueFromItem(DFScript.MC.player.getOffHandStack())
     ),
 
     FULL_INVENTORY("FullInventory","The entire inventory items of the player.", Items.OAK_PLANKS, ScriptActionArgumentType.LIST, (event,context) -> {
         List<ScriptValue> list = new ArrayList<>();
-        for (int i = 0; i < io.github.techstreet.dfscript.DFScript.MC.player.getInventory().size(); i++) {
-            list.add(ScriptValueItem.valueFromItem(io.github.techstreet.dfscript.DFScript.MC.player.getInventory().getStack(i)));
+        for (int i = 0; i < DFScript.MC.player.getInventory().size(); i++) {
+            list.add(ScriptValueItem.valueFromItem(DFScript.MC.player.getInventory().getStack(i)));
         }
         return new ScriptListValue(list);
     }),
 
     MAIN_INVENTORY("MainInventory", "The main inventory items of the player.", Items.BIRCH_PLANKS, ScriptActionArgumentType.LIST, (event, context) -> {
         List<ScriptValue> list = new ArrayList<>();
-        for (ItemStack item : io.github.techstreet.dfscript.DFScript.MC.player.getInventory().main) {
+        for (ItemStack item : DFScript.MC.player.getInventory().main) {
             list.add(ScriptValueItem.valueFromItem(item));
         }
         return new ScriptListValue(list);
@@ -95,7 +95,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
 
     ARMOR("Armor", "The armor items of the player.", Items.IRON_CHESTPLATE, ScriptActionArgumentType.LIST, (event, context) -> {
         List<ScriptValue> list = new ArrayList<>();
-        for (ItemStack item : io.github.techstreet.dfscript.DFScript.MC.player.getInventory().armor) {
+        for (ItemStack item : DFScript.MC.player.getInventory().armor) {
             list.add(ScriptValueItem.valueFromItem(item));
         }
         return new ScriptListValue(list);
@@ -104,17 +104,17 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     HOTBAR_ITEMS("Hotbar Items", "The hotbar items of the player.", Items.IRON_AXE, ScriptActionArgumentType.LIST, (event, context) -> {
         List<ScriptValue> list = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            list.add(ScriptValueItem.valueFromItem(io.github.techstreet.dfscript.DFScript.MC.player.getInventory().getStack(i)));
+            list.add(ScriptValueItem.valueFromItem(DFScript.MC.player.getInventory().getStack(i)));
         }
         return new ScriptListValue(list);
     }),
 
     SELECTED_SLOT("Selected Slot", "The selected hotbar slot.", Items.LIME_DYE, ScriptActionArgumentType.NUMBER,
-        (event, context) -> new ScriptNumberValue(io.github.techstreet.dfscript.DFScript.MC.player.getInventory().selectedSlot)
+        (event, context) -> new ScriptNumberValue(DFScript.MC.player.getInventory().selectedSlot)
     ),
 
     GAME_MODE("Game Mode", "The gamemode the player is in.", Items.BEDROCK, ScriptActionArgumentType.TEXT,
-        (event, context) -> new ScriptTextValue(io.github.techstreet.dfscript.DFScript.MC.interactionManager.getCurrentGameMode().getName())
+        (event, context) -> new ScriptTextValue(DFScript.MC.interactionManager.getCurrentGameMode().getName())
     ),
 
     WINDOW_WIDTH("Window Width", "The width of the current window.", Items.STICK, ScriptActionArgumentType.NUMBER,
@@ -122,7 +122,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     ),
 
     WINDOW_HEIGHT("Window Height", "The height of the current window.", Items.STICK, ScriptActionArgumentType.NUMBER,
-        (event, context) -> new ScriptNumberValue(io.github.techstreet.dfscript.DFScript.MC.getWindow().getScaledHeight())
+        (event, context) -> new ScriptNumberValue(DFScript.MC.getWindow().getScaledHeight())
     ),
 
     MENU_ELEMENT_IDENTIFIER("Menu Element Identifier", "The identifier of the menu element that triggered the event.", Items.NAME_TAG, ScriptActionArgumentType.TEXT,(event, scriptContext) -> {

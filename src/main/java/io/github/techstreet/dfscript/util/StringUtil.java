@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;

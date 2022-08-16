@@ -2,19 +2,28 @@ package io.github.techstreet.dfscript.mixin.game;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.event.*;
+import io.github.techstreet.dfscript.event.BuildModeEvent;
+import io.github.techstreet.dfscript.event.DevModeEvent;
+import io.github.techstreet.dfscript.event.PlayModeEvent;
+import io.github.techstreet.dfscript.event.ReceiveChatEvent;
+import io.github.techstreet.dfscript.event.RecieveSoundEvent;
+import io.github.techstreet.dfscript.event.ServerJoinEvent;
+import io.github.techstreet.dfscript.event.ServerLeaveEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
+import java.net.InetSocketAddress;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.net.InetSocketAddress;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MClientPlayNetworkHandler {
@@ -52,9 +61,9 @@ public class MClientPlayNetworkHandler {
     @Inject(method = "onTeam", at = @At("RETURN"))
     private void handleSetPlayerTeamPacket(TeamS2CPacket packet, CallbackInfo ci) {
         if (DFScript.MC.player != null) {
-            if (io.github.techstreet.dfscript.DFScript.MC.getCurrentServerEntry() != null) {
-                if (io.github.techstreet.dfscript.DFScript.MC.getCurrentServerEntry().address.contains("mcdiamondfire.com")) {
-                    if (packet.getPlayerNames().contains(io.github.techstreet.dfscript.DFScript.MC.player.getName().getString())) {
+            if (DFScript.MC.getCurrentServerEntry() != null) {
+                if (DFScript.MC.getCurrentServerEntry().address.contains("mcdiamondfire.com")) {
+                    if (packet.getPlayerNames().contains(DFScript.MC.player.getName().getString())) {
                         for (HypercubeRank r : HypercubeRank.values()) {
                             if (r.getTeamName() == null)
                                 continue;
@@ -75,8 +84,8 @@ public class MClientPlayNetworkHandler {
     @Inject(method = "onGameJoin", at = @At("RETURN"), cancellable = true)
     private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
         ClientConnection conn = DFScript.MC.getNetworkHandler().getConnection();
-        ServerJoinEvent event = new ServerJoinEvent(packet, ((InetSocketAddress)conn.getAddress()));
-        EventManager.getInstance().dispatch(event);
+//        ServerJoinEvent event = new ServerJoinEvent(packet, ((InetSocketAddress)conn.getAddress()));
+//        EventManager.getInstance().dispatch(event);
     }
 
     @Inject(method = "onDisconnect", at = @At("RETURN"), cancellable = true)
