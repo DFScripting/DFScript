@@ -65,17 +65,18 @@ public class ScriptListScreen extends CScreen {
                         io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
                         if (button == 0) {
-                            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptEditScreen(s));
+                            DFScript.MC.setScreen(new ScriptEditScreen(s));
                         } else {
                             CButton delete = new CButton((int) x, (int) y, 40, 8, "Delete", () -> {
-                                io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptDeletionScreen(s));
+                                DFScript.MC.setScreen(new ScriptDeletionScreen(s));
                             });
+
                             CButton enableDisable;
                             if (s.disabled()) {
                                 enableDisable = new CButton((int) x, (int) y + 8, 40, 8, "Enable", () -> {
                                     s.setDisabled(false);
                                     ScriptManager.getInstance().saveScript(s);
-                                    io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptListScreen());
+                                    DFScript.MC.setScreen(new ScriptListScreen());
                                 });
                             } else {
                                 enableDisable = new CButton((int) x, (int) y + 8, 40, 8, "Disable", () -> {

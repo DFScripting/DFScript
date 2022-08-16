@@ -43,6 +43,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -962,7 +963,11 @@ public enum ScriptActionType {
                 }
 
                 if (ab instanceof LiteralArgumentBuilder lab) {
-                    ClientCommandManager.getActiveDispatcher().register(lab);
+                    if (ClientCommandManager.getActiveDispatcher() == null) {
+                        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(lab));
+                    } else {
+                        ClientCommandManager.getActiveDispatcher().register(lab);
+                    }
                 }
 
                 ClientPlayNetworkHandler nh = io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler();

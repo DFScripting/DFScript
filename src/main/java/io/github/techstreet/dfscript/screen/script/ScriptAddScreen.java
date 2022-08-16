@@ -28,14 +28,14 @@ public class ScriptAddScreen extends CScreen {
     CTextField searchBox;
 
     public ScriptAddScreen() {
-        super(110, 106);
+        super(111, 106);
         open();
     }
 
     private void open() {
-        CPlainPanel root = new CPlainPanel(0, 0, 110, 106);
+        CPlainPanel root = new CPlainPanel(0, 0, 111, 106);
 
-        panel = new CScrollPanel(0, 0, 110, 106);
+        panel = new CScrollPanel(0, 17, 111, 84);
 
         root.add(panel);
 
@@ -99,8 +99,8 @@ public class ScriptAddScreen extends CScreen {
     }
 
     private void fillPanel(List<VirtualScript> scriptList) {
-        int y = 35;
-        CButton newButton = new CButton(7, 23, 96, 10, "New Script", () -> {
+        int y = 18;
+        CButton newButton = new CButton(7, 6, 96, 10, "New Script", () -> {
             DFScript.MC.setScreen(new ScriptCreationScreen());
         });
 
@@ -119,6 +119,11 @@ public class ScriptAddScreen extends CScreen {
         long minutes = (time % 3600) / 60;
         long seconds = time % 60;
 
-        panel.add(new CText(8, 17, Text.literal("Last update: " + minutes + "m " + seconds + "s" + " ago!")));
+        panel.add(new CText(8, 0, Text.literal("Last update: " + minutes + "m " + seconds + "s" + " ago!")));
+    }
+
+    @Override
+    public void close() {
+        DFScript.MC.setScreen(new ScriptListScreen());
     }
 }

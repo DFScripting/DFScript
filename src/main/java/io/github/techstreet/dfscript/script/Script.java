@@ -24,10 +24,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 1;
+    public static int scriptVersion = 2;
 
-    private final String name;
+    private String name;
     private String owner;
+    private String description = "N/A";
     private int version = 0;
     private String server;
     private final List<ScriptPart> parts;
@@ -77,6 +78,7 @@ public class Script {
         if (disabled) { // don't run the code if it's disabled obviously
             return;
         }
+
         while (task.stack().peek() < parts.size()) { // check if there is still code to be run
             ScriptPart part = parts.get(task.stack().peek()); // get the script part (action or event who cares)
             if (part instanceof ScriptEvent) { // well maybe we do care?
@@ -199,6 +201,10 @@ public class Script {
         return version;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public String getServer() {
         return server;
     }
@@ -209,6 +215,14 @@ public class Script {
 
     public void setDisabled(boolean b) {
         disabled = b;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setOwner(String owner) {
@@ -236,7 +250,11 @@ public class Script {
             String owner = null;
             if (object.get("owner") != null) owner = object.get("owner").getAsString();
 
-            String serverId = object.get("server").getAsString();
+            String serverId = null;
+            if (object.get("server") != null) serverId = object.get("server").getAsString();
+
+            String description = "N/A";
+            if (object.get("description") != null) description = object.get("description").getAsString();
 
             List<ScriptPart> parts = new ArrayList<>();
             for (JsonElement element : object.get("actions").getAsJsonArray()) {
@@ -245,7 +263,9 @@ public class Script {
             }
 
             boolean disabled = object.has("disabled") && object.get("disabled").getAsBoolean();
-            int version = object.get("version").getAsInt();
+
+            int version = 0;
+            if (object.get("version") != null) version = object.get("version").getAsInt();
 
             return new Script(name, owner, serverId, parts, disabled, version);
         }
@@ -256,6 +276,7 @@ public class Script {
             object.addProperty("name", src.name);
             object.addProperty("owner", src.owner);
             object.addProperty("server", src.server);
+            object.addProperty("description", src.description);
 
             JsonArray array = new JsonArray();
             for (ScriptPart part : src.getParts()) {

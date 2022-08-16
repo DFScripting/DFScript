@@ -57,6 +57,7 @@ public class ScriptEditActionScreen extends CScreen {
             } else {
                 throw new IllegalArgumentException("Invalid argument type");
             }
+
             widgets.add(new CItem(5, y, icon));
             widgets.add(new CText(15, y + 2, Text.literal(text)));
 

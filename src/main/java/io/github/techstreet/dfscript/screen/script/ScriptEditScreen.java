@@ -2,11 +2,7 @@ package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
-import io.github.techstreet.dfscript.screen.widget.CButton;
-import io.github.techstreet.dfscript.screen.widget.CItem;
-import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.screen.widget.CText;
-import io.github.techstreet.dfscript.screen.widget.CWidget;
+import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.ScriptPart;
@@ -33,9 +29,14 @@ public class ScriptEditScreen extends CScreen {
         super(125, 100);
         this.script = script;
         panel = new CScrollPanel(0, 3, 120, 94);
+
+        CTextField description = new CTextField(script.getDescription(), 3, 3, 115, 20, true);
+        description.setChangedListener(() -> script.setDescription(description.getText()));
+        panel.add(description);
+
         widgets.add(panel);
 
-        int y = 5;
+        int y = 25;
         int index = 0;
         int indent = 0;
         for (ScriptPart part : script.getParts()) {

@@ -169,10 +169,8 @@ public class ScriptManager implements Loadable {
             String content = FileUtil.readFile(file.toPath());
             Script s = GSON.fromJson(content, Script.class);
             s.setFile(file);
-            System.out.println(s.getServer());
 
             ScriptMigrator.migrate(s);
-            System.out.println(s.getServer());
 
             if (s.getVersion() != Script.scriptVersion) throw new RuntimeException("this script uses version " + s.getVersion() + " when this version of DFScript uses version " + Script.scriptVersion + "!");
 
