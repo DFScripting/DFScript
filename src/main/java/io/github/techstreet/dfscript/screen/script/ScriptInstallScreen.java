@@ -36,7 +36,6 @@ public class ScriptInstallScreen extends CScreen {
 
                     widgets.add(new CButton(80, 26, 40, 10, "Update", () -> {
                         script.download(true);
-                        DFScript.MC.setScreen(new ScriptListScreen());
                     }));
 
                     return;
@@ -45,7 +44,6 @@ public class ScriptInstallScreen extends CScreen {
 
             widgets.add(new CButton(80, 26, 40, 10, "Install", () -> {
                 script.download(false);
-                DFScript.MC.setScreen(new ScriptListScreen());
             }));
         }
     }

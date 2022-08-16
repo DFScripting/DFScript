@@ -1,6 +1,5 @@
 package io.github.techstreet.dfscript.event.system;
 
-import io.github.techstreet.dfscript.config.Config;
 import io.github.techstreet.dfscript.event.TickEvent;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
@@ -35,12 +34,6 @@ public class EventManager {
     }
 
     public void dispatch(Event event) {
-        if (Config.getBoolean("debug")) {
-            if (!(event instanceof TickEvent)) {
-                ChatUtil.sendMessage(String.format("Event '%s' has been dispatched.", event.getClass()), ChatType.INFO_BLUE);
-            }
-        }
-
         for (Consumer<Event> consumer : listeners.getOrDefault(event.getClass(), new ArrayList<>())) {
             consumer.accept(event);
         }

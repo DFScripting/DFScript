@@ -2,6 +2,8 @@ package io.github.techstreet.dfscript.script;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 
@@ -13,10 +15,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-
-import static io.github.techstreet.dfscript.DFScript.GSON;
-import static io.github.techstreet.dfscript.screen.script.ScriptAddScreen.readAll;
 
 public class VirtualScript {
     private final String name;
@@ -56,17 +54,16 @@ public class VirtualScript {
                 }
             }
 
-            String content = readAll(rd)
-                    .replace("\n", "")
-                    .replace("\"disabled\":\"true\"", "\"disabled\":\"false\"")
-                    .replace("\"server\":\"None\"", "\"server\":\"" + id + "\"");
+            JsonObject obj = JsonParser.parseReader(rd).getAsJsonObject();
+            obj.addProperty("disabled", false);
+            obj.addProperty("server", id);
 
-            if (!content.contains("\"server\"")) {
-                content = content.replace(",\"actions\":", ",\"server\":\"" + id + "\",\"actions\":");
-            }
+            String content = obj.toString();
 
-            System.out.println(content);
             Files.write(file.toPath(), content.getBytes());
+            ScriptManager.getInstance().reload();
+
+            DFScript.MC.setScreen(new ScriptListScreen());
         } catch (Exception e) {
             e.printStackTrace();
         }

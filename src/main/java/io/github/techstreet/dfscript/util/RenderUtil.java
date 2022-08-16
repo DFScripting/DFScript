@@ -61,6 +61,22 @@ public class RenderUtil {
         renderContinuousTexture(stack, x, y, width, height, image, x1, y1, x2, y2, textureWidth, textureHeight, padding,1);
     }
 
+    public static void renderCustomButton(MatrixStack stack, int x, int y, int width, int height, boolean hovered, boolean disabled, String image) {
+        final int textureWidth = 256;
+        final int textureHeight = 256;
+        final int padding = 3;
+        int x1 = 0;
+        int y1 = 66;
+        if (disabled) {
+            y1 = 46;
+        } else if (hovered) {
+            y1 = 86;
+        }
+        int x2 = 200;
+        int y2 = y1 + 20;
+        renderContinuousTexture(stack, x, y, width, height, image, x1, y1, x2, y2, textureWidth, textureHeight, padding,1);
+    }
+
     public static void renderContinuousTexture(MatrixStack stack, int x, int y, int width, int height, String image, int tx1, int ty1, int tx2, int ty2, int textureWidth, int textureHeight, int padding,double scale) {
         int scaledPadding = (int) (padding*scale);
         //top left corner

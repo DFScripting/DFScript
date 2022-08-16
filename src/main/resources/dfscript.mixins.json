@@ -9,6 +9,7 @@
     "game.MMinecraftClient",
     "player.MLocalPlayer",
     "render.MInGameHUD",
+    "render.MMultiplayerScreen",
     "render.MOptionsScreen"
   ],
   "client": [

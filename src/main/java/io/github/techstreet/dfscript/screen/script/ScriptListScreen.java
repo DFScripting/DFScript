@@ -34,12 +34,11 @@ import net.minecraft.util.Formatting;
 import org.apache.commons.codec.binary.Base64;
 
 public class ScriptListScreen extends CScreen {
-
     private final List<CWidget> contextMenu = new ArrayList<>();
 
     public ScriptListScreen() {
         super(90, 100);
-        CScrollPanel panel = new CScrollPanel(0, 5, 120, 90);
+        CScrollPanel panel = new CScrollPanel(0, 5, 120, 94);
         widgets.add(panel);
 
         int y = 0;

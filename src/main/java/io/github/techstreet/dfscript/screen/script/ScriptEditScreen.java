@@ -12,13 +12,17 @@ import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.techstreet.dfscript.util.render.BlendableTexturedButtonWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class ScriptEditScreen extends CScreen {
+    private final Identifier identifier_main = new Identifier(DFScript.MOD_ID + ":wrench.png");
 
     private final Script script;
     private static int scroll = 0;
@@ -30,13 +34,13 @@ public class ScriptEditScreen extends CScreen {
         this.script = script;
         panel = new CScrollPanel(0, 3, 120, 94);
 
-        CTextField description = new CTextField(script.getDescription(), 3, 3, 115, 20, true);
-        description.setChangedListener(() -> script.setDescription(description.getText()));
-        panel.add(description);
+        //CTextField description = new CTextField(script.getDescription(), 3, 3, 115, 20, true);
+        //description.setChangedListener(() -> script.setDescription(description.getText()));
+        //panel.add(description);
 
         widgets.add(panel);
 
-        int y = 25;
+        int y = 0;
         int index = 0;
         int indent = 0;
         for (ScriptPart part : script.getParts()) {
@@ -168,9 +172,14 @@ public class ScriptEditScreen extends CScreen {
             index++;
         }
 
-        CButton add = new CButton(40, y, 45, 8, "Add", () -> {
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, script.getParts().size()));
+        CButton add = new CButton(36, y, 46, 8, "Add", () -> {
+            DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, script.getParts().size()));
         });
+
+        panel.add(new CButton(84, y, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
+
+        }));
+
         panel.add(add);
         panel.setScroll(scroll);
     }
@@ -179,7 +188,7 @@ public class ScriptEditScreen extends CScreen {
     public void close() {
         scroll = panel.getScroll();
         ScriptManager.getInstance().saveScript(script);
-        io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptListScreen());
+        DFScript.MC.setScreen(new ScriptListScreen());
     }
 
     @Override

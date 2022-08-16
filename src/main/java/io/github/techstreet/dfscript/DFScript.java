@@ -4,14 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.commands.CommandManager;
-import io.github.techstreet.dfscript.config.internal.ConfigFile;
-import io.github.techstreet.dfscript.config.internal.ConfigInstruction;
-import io.github.techstreet.dfscript.config.internal.gson.ConfigSerializer;
-import io.github.techstreet.dfscript.config.internal.gson.types.*;
-import io.github.techstreet.dfscript.config.internal.gson.types.list.*;
-import io.github.techstreet.dfscript.config.structure.ConfigManager;
-import io.github.techstreet.dfscript.config.types.*;
-import io.github.techstreet.dfscript.config.types.list.*;
 import io.github.techstreet.dfscript.features.*;
 import io.github.techstreet.dfscript.loader.Loader;
 import io.github.techstreet.dfscript.loader.v2.CodeInitializer;
@@ -40,19 +32,9 @@ public class DFScript implements ModInitializer {
     public static String PLAYER_NAME = null;
 
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ConfigInstruction.class, new ConfigSerializer())
-            .registerTypeAdapter(BooleanSetting.class, new BooleanSerializer())
-            .registerTypeAdapter(IntegerSetting.class, new IntegerSerializer())
-            .registerTypeAdapter(DoubleSetting.class, new DoubleSerializer())
-            .registerTypeAdapter(FloatSetting.class, new FloatSerializer())
-            .registerTypeAdapter(LongSetting.class, new LongSerializer())
-            .registerTypeAdapter(StringSetting.class, new StringSerializer())
-            .registerTypeAdapter(StringListSetting.class, new StringListSerializer())
-            .registerTypeAdapter(EnumSetting.class, new EnumSerializer())
-            .registerTypeAdapter(DynamicStringSetting.class, new DynamicStringSerializer())
-            .registerTypeAdapter(SoundSetting.class, new SoundSerializer())
             .setPrettyPrinting()
             .create();
+
     public static final JsonParser JSON_PARSER = new JsonParser();
 
     @Override
@@ -74,21 +56,11 @@ public class DFScript implements ModInitializer {
         loader.load(new Scheduler());
         loader.load(new UpdateAlerts());
 
-        CodeInitializer initializer = new CodeInitializer();
-        initializer.add(new ConfigFile());
-        initializer.add(new ConfigManager());
-
         LOGGER.info("Initialized");
     }
 
     public void onClose() {
         LOGGER.info("Closing...");
-        try {
-            ConfigFile.getInstance().save();
-        } catch (Exception err) {
-            LOGGER.error("Error");
-            err.printStackTrace();
-        }
 
         LOGGER.info("Closed.");
     }
