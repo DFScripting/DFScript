@@ -57,8 +57,6 @@ public class VirtualScript {
             String content = obj.toString();
 
             Files.write(file.toPath(), content.getBytes());
-            ScriptManager.getInstance().reload();
-
             DFScript.MC.setScreen(new ScriptListScreen());
         } catch (Exception e) {
             e.printStackTrace();

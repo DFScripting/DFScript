@@ -80,11 +80,11 @@ public class ScriptAddScreen extends CScreen {
             }
 
             is.close();
+
+            ScriptAddScreen.scripts = scripts;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ScriptAddScreen.scripts = scripts;
     }
 
     public static String readAll(Reader rd) throws IOException {

@@ -115,7 +115,7 @@ public class ScriptManager implements Loadable {
         EventManager.getInstance().register(TickEvent.class, event -> {
             tick[0] += 1;
 
-            if (tick[0] >= 1200) {
+            if (tick[0] >= 200) {
                 tick[0] = 0;
 
                 new Thread(ScriptAddScreen::getScripts).start();
