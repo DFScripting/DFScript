@@ -58,8 +58,12 @@ public class VirtualScript {
 
             String content = readAll(rd)
                     .replace("\n", "")
-                    .replace("\"disabled\":true", "\"disabled\":false")
-                    .replace("\"server\":None", "\"server\":" + id + "");
+                    .replace("\"disabled\":\"true\"", "\"disabled\":\"false\"")
+                    .replace("\"server\":\"None\"", "\"server\":\"" + id + "\"");
+
+            if (!content.contains("\"server\"")) {
+                content = content.replace(",\"actions\":", ",\"server\":\"" + id + "\",\"actions\":");
+            }
 
             System.out.println(content);
             Files.write(file.toPath(), content.getBytes());

@@ -29,8 +29,8 @@ public class ScriptInstallScreen extends CScreen {
 
         if (DFScript.MC.player != null) {
             for (Script s : ScriptManager.getInstance().getScripts()) {
-                if (Objects.equals(s.getServer(), script.getId())) {
-                    if (Objects.equals(s.getOwner(), script.getOwner())) {
+                if (s.getServer() != null && s.getServer().contains(script.getId())) {
+                    if (s.getOwner().contains(script.getOwner())) {
                         return;
                     }
 

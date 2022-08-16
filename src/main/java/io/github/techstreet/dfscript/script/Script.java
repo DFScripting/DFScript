@@ -250,7 +250,7 @@ public class Script {
             String owner = null;
             if (object.get("owner") != null) owner = object.get("owner").getAsString();
 
-            String serverId = null;
+            String serverId = "None";
             if (object.get("server") != null) serverId = object.get("server").getAsString();
 
             String description = "N/A";
@@ -267,7 +267,10 @@ public class Script {
             int version = 0;
             if (object.get("version") != null) version = object.get("version").getAsInt();
 
-            return new Script(name, owner, serverId, parts, disabled, version);
+            Script script = new Script(name, owner, serverId, parts, disabled, version);
+            script.setDescription(description);
+
+            return script;
         }
 
         @Override
