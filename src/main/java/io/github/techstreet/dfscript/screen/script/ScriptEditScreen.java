@@ -175,13 +175,9 @@ public class ScriptEditScreen extends CScreen {
             index++;
         }
 
-        CButton add = new CButton(36, y, 46, 8, "Add", () -> {
+        CButton add = new CButton(37, y, 46, 8, "Add", () -> {
             DFScript.MC.setScreen(new ScriptActionCategoryScreen(script, script.getParts().size()));
         });
-
-        panel.add(new CTexturedButton(84, y, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
-
-        }, 0,0,1,0.5f,0,0.5f));
 
         panel.add(add);
         panel.setScroll(scroll);
@@ -191,7 +187,7 @@ public class ScriptEditScreen extends CScreen {
     public void close() {
         scroll = panel.getScroll();
         ScriptManager.getInstance().saveScript(script);
-        DFScript.MC.setScreen(new ScriptListScreen());
+        DFScript.MC.setScreen(new ScriptListScreen(true));
     }
 
     @Override

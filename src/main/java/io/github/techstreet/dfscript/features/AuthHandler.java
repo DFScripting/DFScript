@@ -1,7 +1,10 @@
 package io.github.techstreet.dfscript.features;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.exceptions.AuthenticationException;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.script.util.AuthcodeResponse;
@@ -9,20 +12,31 @@ import io.github.techstreet.dfscript.script.util.ServercodeResponse;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.util.Session;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Objects;
 import java.util.UUID;
+
+import static io.github.techstreet.dfscript.screen.script.ScriptAddScreen.readAll;
 
 public class AuthHandler implements Loadable {
     private static String authCode = null;
+    private static boolean staff = false;
 
     @Override
     public void load() {
+        regen();
+    }
+
+    public static void regen() {
         URL url;
         HttpURLConnection con;
         String commonSecret;
@@ -31,19 +45,19 @@ public class AuthHandler implements Loadable {
         try {
             // Authorization step one - Create a random clientcode
             url = new URL("https://DFScript-Server.techstreetdev.repl.co/auth/secret/");
-            con = (HttpURLConnection)url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
+            con.setReadTimeout(5000);
+            con.setConnectTimeout(5000);
 
             String clientCode = UUID.randomUUID().toString();
 
             obj = new JsonObject();
             obj.addProperty("uuid", DFScript.PLAYER_UUID);
             obj.addProperty("clientcode", clientCode);
-
-            System.out.println(obj);
 
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = obj.toString().getBytes("utf-8");
@@ -59,16 +73,28 @@ public class AuthHandler implements Loadable {
                 }
 
                 ServercodeResponse servercodeResponse = DFScript.GSON.fromJson(response.toString(), ServercodeResponse.class);
-                commonSecret = servercodeResponse.getServercode();
+                commonSecret = DigestUtils.sha256Hex(servercodeResponse.getServercode() + clientCode);
+                commonSecret = commonSecret.substring(0, 30);
+            }
+
+            // Authorization step two - Fake server connect
+            try {
+                Session session = DFScript.MC.getSession();
+                DFScript.MC.getSessionService().joinServer(session.getProfile(), session.getAccessToken(), commonSecret);
+            } catch (AuthenticationException e) {
+                DFScript.LOGGER.error(e.getMessage());
+                e.printStackTrace();
             }
 
             // Authorization step two - Generate the authcode
-            url = new URL("https://DFScript-Server.techstreetdev.repl.co/auth/secret/");
-            con = (HttpURLConnection)url.openConnection();
+            url = new URL("https://DFScript-Server.techstreetdev.repl.co/auth/auth/");
+            con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
+            con.setReadTimeout(5000);
+            con.setConnectTimeout(5000);
 
             obj = new JsonObject();
             obj.addProperty("secret", commonSecret);
@@ -89,7 +115,29 @@ public class AuthHandler implements Loadable {
 
                 AuthcodeResponse authcodeResponse = DFScript.GSON.fromJson(response.toString(), AuthcodeResponse.class);
                 authCode = authcodeResponse.getAuthcode();
-                DFScript.LOGGER.info("Authorization code successfully generated: " + authCode);
+                DFScript.LOGGER.info("Server authorization code successfully generated!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/staff/").openStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
+
+            JsonArray array = obj.get("staff").getAsJsonArray();
+            boolean localStaff = false;
+
+            for (JsonElement staffMember : array) {
+                if (Objects.equals(staffMember.getAsString(), DFScript.PLAYER_UUID)) {
+                    staff = true;
+                    localStaff = true;
+                }
+            }
+
+            if (!localStaff) {
+                staff = false;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,5 +146,9 @@ public class AuthHandler implements Loadable {
 
     public static String getAuthCode() {
         return authCode;
+    }
+
+    public static boolean getStaffMember() {
+        return staff;
     }
 }

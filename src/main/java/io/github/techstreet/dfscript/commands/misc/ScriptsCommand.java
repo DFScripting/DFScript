@@ -22,7 +22,7 @@ public class ScriptsCommand implements Command {
         cd.register(
             literal("scripts")
                 .executes(ctx -> {
-                    DFScript.MC.send(() -> DFScript.MC.setScreen(new ScriptListScreen()));
+                    DFScript.MC.send(() -> DFScript.MC.setScreen(new ScriptListScreen(true)));
                     return 0;
                 })
                 .then(literal("reload")

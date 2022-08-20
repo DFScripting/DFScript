@@ -1402,7 +1402,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             String text = ctx.value("Text").asText();
             Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
-            int width = io.github.techstreet.dfscript.DFScript.MC.textRenderer.getWidth(t);
+            int width = DFScript.MC.textRenderer.getWidth(t);
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(width));
         })),
 

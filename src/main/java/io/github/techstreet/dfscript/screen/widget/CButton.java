@@ -7,6 +7,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 
 public class CButton implements CWidget {
 
@@ -15,8 +16,9 @@ public class CButton implements CWidget {
     public final int width;
     public final int height;
     private final float textScale;
-    private String text;
+    private Text text;
     private Runnable onClick;
+    private boolean disabled;
 
     public CButton(int x, int y, int width, int height, float textScale, String text, Runnable onClick) {
         this.x = x;
@@ -24,8 +26,9 @@ public class CButton implements CWidget {
         this.width = width;
         this.height = height;
         this.textScale = textScale;
-        this.text = text;
+        this.text = Text.literal(text);
         this.onClick = onClick;
+        this.disabled = false;
     }
 
     public CButton(int x, int y, int width, int height, String text, Runnable onClick) {
@@ -44,7 +47,7 @@ public class CButton implements CWidget {
 
         Rectangle rect = new Rectangle(x, y, width, height);
 
-        RenderUtil.renderButton(stack, 0, 0, width * 2, height * 2, rect.contains(mouseX, mouseY), false);
+        RenderUtil.renderButton(stack, 0, 0, width * 2, height * 2, rect.contains(mouseX, mouseY), disabled);
         stack.pop();
 
         TextRenderer f = DFScript.MC.textRenderer;
@@ -81,6 +84,14 @@ public class CButton implements CWidget {
     }
 
     public void setText(String text) {
+        this.text = Text.literal(text);
+    }
+
+    public void setText(Text text) {
         this.text = text;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

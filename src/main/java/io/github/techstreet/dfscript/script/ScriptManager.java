@@ -64,6 +64,7 @@ public class ScriptManager implements Loadable {
         if (instance == null) {
             instance = new ScriptManager();
         }
+
         return instance;
     }
 
@@ -115,7 +116,7 @@ public class ScriptManager implements Loadable {
         EventManager.getInstance().register(TickEvent.class, event -> {
             tick[0] += 1;
 
-            if (tick[0] >= 200) {
+            if (tick[0] >= 100) {
                 tick[0] = 0;
 
                 new Thread(ScriptAddScreen::getScripts).start();
@@ -241,6 +242,7 @@ public class ScriptManager implements Loadable {
         }
 
         script.setFile(file);
+        script.setOwner(DFScript.PLAYER_UUID);
         saveScript(script);
     }
 

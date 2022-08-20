@@ -4,12 +4,11 @@ import io.github.techstreet.dfscript.DFScript;
 
 public class ScriptMigrator {
     public static void migrate(Script script) {
-        int previousVer = 0;
+        int previousVer = script.getVersion();
 
         if (script.getVersion() == 0) {
             script.setServer("None");
-            if (DFScript.MC.player != null) script.setOwner(DFScript.MC.player.getUuid().toString());
-
+            script.setOwner(DFScript.PLAYER_UUID);
             script.setVersion(1);
         }
 
@@ -19,7 +18,7 @@ public class ScriptMigrator {
         }
 
         if (previousVer != script.getVersion()) {
-            ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer +" to version " + script.getVersion() + "!");
+            ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer + " to version " + script.getVersion() + "!");
             ScriptManager.getInstance().saveScript(script);
         }
     }

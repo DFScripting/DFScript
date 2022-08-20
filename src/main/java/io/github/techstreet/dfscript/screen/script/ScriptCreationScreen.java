@@ -34,7 +34,7 @@ public class ScriptCreationScreen extends CScreen {
             }
 
             ScriptManager.getInstance().createScript(name.getText());
-            DFScript.MC.setScreen(new ScriptListScreen());
+            DFScript.MC.setScreen(new ScriptListScreen(true));
         }));
 
         widgets.add(new CButton(50, 42, 48, 15, "Cancel", () -> {

@@ -1,8 +1,11 @@
 package io.github.techstreet.dfscript.screen.script;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.features.AuthHandler;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CPlainPanel;
@@ -11,19 +14,21 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 public class ScriptAddScreen extends CScreen {
     public static ArrayList<VirtualScript> scripts = new ArrayList<>();
+    public static HashMap<String, VirtualScript> scriptHash = new HashMap<>();
+
     CScrollPanel panel;
     CTextField searchBox;
 
@@ -70,16 +75,41 @@ public class ScriptAddScreen extends CScreen {
         ArrayList<VirtualScript> scripts = new ArrayList<>();
 
         try {
+            URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/check/");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("authorization", AuthHandler.getAuthCode());
+            con.setDoOutput(true);
+
+            con.getInputStream();
+            if (con.getResponseCode() != 204) {
+                AuthHandler.regen();
+            }
+        } catch (Exception e) {
+            AuthHandler.regen();
+            e.printStackTrace();
+        }
+
+        try {
             InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/scripts/get").openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             JsonObject obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
 
             for (String key : obj.keySet()) {
                 JsonObject scriptObject = obj.getAsJsonObject(key);
-                scripts.add(new VirtualScript(scriptObject.get("name").getAsString(), scriptObject.get("owner").getAsString(), key));
+
+                VirtualScript script = new VirtualScript(scriptObject.get("name").getAsString(), scriptObject.get("owner").getAsString(), key);
+                script.setApproved(scriptObject.get("approved").getAsBoolean());
+                script.setApprover((scriptObject.get("approvedBy").isJsonNull() ? "None" : scriptObject.get("approvedBy").getAsString()));
+
+                scripts.add(script);
             }
 
             is.close();
+
+            for (VirtualScript s : scripts) {
+                ScriptAddScreen.scriptHash.put(s.getId(), s);
+            }
 
             ScriptAddScreen.scripts = scripts;
         } catch (Exception e) {
@@ -107,7 +137,7 @@ public class ScriptAddScreen extends CScreen {
         panel.add(newButton);
 
         for (VirtualScript script : scriptList) {
-            CButton button = new CButton(7, y, 96, 10, script.getName(), () -> {
+            CButton button = new CButton(7, y, 96, 10, (script.isApproved() ? "§e⭐ " : "") + "§f" + script.getName(), () -> {
                 DFScript.MC.setScreen(new ScriptInstallScreen(script));
             });
 
@@ -124,6 +154,6 @@ public class ScriptAddScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptListScreen());
+        DFScript.MC.setScreen(new ScriptListScreen(true));
     }
 }

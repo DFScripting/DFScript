@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
@@ -250,7 +251,7 @@ public class Script {
             JsonObject object = json.getAsJsonObject();
             String name = object.get("name").getAsString();
 
-            String owner = null;
+            String owner = DFScript.PLAYER_UUID;
             if (object.get("owner") != null) owner = object.get("owner").getAsString();
 
             String serverId = "None";

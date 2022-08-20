@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
+import io.github.techstreet.dfscript.screen.script.ScriptMessageScreen;
 import io.github.techstreet.dfscript.util.FileUtil;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +18,8 @@ public class VirtualScript {
     private final String name;
     private final String owner;
     private final String id;
+    private boolean approved = false;
+    private String approver;
 
     public VirtualScript(String name, String owner, String id) {
         this.name = name;
@@ -34,6 +37,22 @@ public class VirtualScript {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public void setApprover(String approver) {
+        this.approver = approver;
     }
 
     public void download(boolean update) {
@@ -57,7 +76,7 @@ public class VirtualScript {
             String content = obj.toString();
 
             Files.write(file.toPath(), content.getBytes());
-            DFScript.MC.setScreen(new ScriptListScreen());
+            DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(true), "Successfully installed '" + name + "' by " + owner + "!"));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -13,16 +13,16 @@ public class ScriptDeletionScreen extends CScreen {
 
         widgets.add(new CButton(5,4,90,20,"Delete",() -> {
             ScriptManager.getInstance().deleteScript(script);
-            DFScript.MC.setScreen(new ScriptListScreen());
+            DFScript.MC.setScreen(new ScriptListScreen(true));
         }));
 
         widgets.add(new CButton(5,28,90,20,"Abort",() -> {
-            DFScript.MC.setScreen(new ScriptListScreen());
+            DFScript.MC.setScreen(new ScriptListScreen(true));
         }));
     }
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptListScreen());
+        DFScript.MC.setScreen(new ScriptListScreen(true));
     }
 }
