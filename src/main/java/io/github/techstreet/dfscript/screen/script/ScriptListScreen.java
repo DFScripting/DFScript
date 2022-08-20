@@ -78,7 +78,7 @@ public class ScriptListScreen extends CScreen {
 
             if (allowEditAndUpload) {
                 // Delete Button
-                CButton delete = new CTexturedButton(20 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":Delete.png", () -> {
+                CButton delete = new CTexturedButton(20 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":delete.png", () -> {
                     DFScript.MC.setScreen(new ScriptDeletionScreen(s));
                 }, 0, 0, 1, 0.5f, 0, 0.5f);
 
@@ -94,13 +94,13 @@ public class ScriptListScreen extends CScreen {
             // Enable or Disable Button
             CButton enableDisable;
             if (s.disabled()) {
-                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":Enable.png", () -> {
+                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":enable.png", () -> {
                     s.setDisabled(false);
                     ScriptManager.getInstance().saveScript(s);
                     DFScript.MC.setScreen(new ScriptListScreen(allowEditAndUpload));
                 }, 0,0,1,0.5f,0,0.5f);
             } else {
-                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":Disable.png", () -> {
+                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":disable.png", () -> {
                     s.setDisabled(true);
                     ScriptManager.getInstance().saveScript(s);
                     DFScript.MC.setScreen(new ScriptListScreen(allowEditAndUpload));
@@ -118,7 +118,7 @@ public class ScriptListScreen extends CScreen {
                 panel.add(edit);
 
                 // Upload or Remove Button
-                CButton upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":Upload.png", () -> {
+                CButton upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":upload.png", () -> {
                     try {
                         // Encode the script JSON to GZIP Base64
                         byte[] bytes = Files.readAllBytes(s.getFile().toPath());
@@ -170,7 +170,7 @@ public class ScriptListScreen extends CScreen {
                 }, 0,0,1,0.5f,0,0.5f);
 
                 if (!Objects.equals(s.getServer(), "None")) {
-                    upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":Un-Upload.png", () -> {
+                    upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":unupload.png", () -> {
                         try {
                             // Remove the script to the server
                             URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/scripts/remove/");
