@@ -21,7 +21,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
