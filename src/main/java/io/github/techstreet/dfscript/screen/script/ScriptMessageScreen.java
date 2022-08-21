@@ -29,7 +29,7 @@ public class ScriptMessageScreen extends CScreen {
                 int width = DFScript.MC.textRenderer.getWidth(words.toString());
                 int x = (106 - width);
 
-                CText text = new CText(10, y, Text.literal(words.toString()));
+                CText text = new CText(10, y, Text.of(words.toString()));
                 System.out.println(x + ":" + y + " == " + words);
                 widgets.add(text);
 

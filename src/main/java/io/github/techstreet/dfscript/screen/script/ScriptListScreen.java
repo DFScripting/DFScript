@@ -43,11 +43,11 @@ public class ScriptListScreen extends CScreen {
 
         int y = 0;
         for (Script s : ScriptManager.getInstance().getScripts()) {
-            MutableText text = Text.literal(s.getName());
+            MutableText text = (MutableText) Text.of(s.getName());
             VirtualScript script = ScriptAddScreen.scriptHash.get(s.getServer());
 
             if (script != null) {
-                text = Text.literal((script.isApproved() ? "⭐ " : "") + s.getName());
+                text = (MutableText) Text.of((script.isApproved() ? "⭐ " : "") + s.getName());
 
                 if (script.isApproved()) {
                     text = text.formatted(Formatting.YELLOW);

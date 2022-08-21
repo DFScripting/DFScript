@@ -24,10 +24,10 @@ public class ScriptInstallScreen extends CScreen {
     protected ScriptInstallScreen(VirtualScript script) {
         super(125, 52);
 
-        CText name = new CText(5, 5, Text.literal("Name: " + script.getName()));
-        CText owner = new CText(5, 12, Text.literal("Creator: " + script.getOwner()));
-        CText id = new CText(5, 19, Text.literal("ID: " + script.getId()));
-        CText approved = new CText(5, 26, Text.literal("Approved: " + (script.isApproved() ? "§a✓ by " + script.getApprover() : "§c❌")));
+        CText name = new CText(5, 5, Text.of("Name: " + script.getName()));
+        CText owner = new CText(5, 12, Text.of("Creator: " + script.getOwner()));
+        CText id = new CText(5, 19, Text.of("ID: " + script.getId()));
+        CText approved = new CText(5, 26, Text.of("Approved: " + (script.isApproved() ? "§a✓ by " + script.getApprover() : "§c❌")));
 
         widgets.add(name);
         widgets.add(owner);

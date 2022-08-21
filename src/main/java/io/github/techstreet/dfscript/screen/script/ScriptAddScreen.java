@@ -149,7 +149,7 @@ public class ScriptAddScreen extends CScreen {
         long minutes = (time % 3600) / 60;
         long seconds = time % 60;
 
-        panel.add(new CText(8, 0, Text.literal("Last update: " + minutes + "m " + seconds + "s" + " ago!")));
+        panel.add(new CText(8, 0, Text.of("Last update: " + minutes + "m " + seconds + "s" + " ago!")));
     }
 
     @Override

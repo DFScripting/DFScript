@@ -25,7 +25,7 @@ public class ScriptActionCategoryScreen extends CScreen {
         this.script = script;
 
         ItemStack eventsItem = new ItemStack(Items.DIAMOND);
-        eventsItem.setCustomName(Text.literal("Events").fillStyle(Style.EMPTY.withItalic(false)));
+        eventsItem.setCustomName(((LiteralText) Text.of("Events")).fillStyle(Style.EMPTY.withItalic(false)));
 
         int x = 3;
         int y = 3;
