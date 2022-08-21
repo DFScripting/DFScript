@@ -18,9 +18,9 @@
     "dfscript.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.13.2",
     "fabric": "*",
-    "minecraft": "~1.18",
+    "minecraft": "1.18.2",
     "java": ">=17"
   }
 }
