@@ -1649,6 +1649,50 @@ public enum ScriptActionType {
             list.sort(new ScriptValueComparator());
 
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(list));
+    })),
+
+    REPLACE_TEXT(builder -> builder.name("Replace Text")
+            .description("Searches for part of a text and replaces it.")
+            .icon(Items.LEAD)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Text part to replace", ScriptActionArgumentType.TEXT)
+            .arg("Replacement", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = ctx.value("Text to change").asText();
+
+                result = result.replace(ctx.value("Text part to replace").asText(), ctx.value("Replacement").asText());
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    REMOVE_TEXT(builder -> builder.name("Remove Text")
+            .description("Searches for part of a text and replaces it.")
+            .icon(Items.WRITABLE_BOOK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Text to remove", ScriptActionArgumentType.TEXT, b -> b.plural(true))
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = null;
+
+                if(ctx.argMap().containsKey("Text to change"))
+                {
+                    result = ctx.value("Text to change").asText();
+                }
+                else
+                {
+                    result = ctx.value("Result").asText();
+                }
+
+                List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
+
+                for(int i = 0; i < textsToRemove.size(); i++) {
+                    result = result.replace(textsToRemove.get(i).asText(), "");
+                }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
