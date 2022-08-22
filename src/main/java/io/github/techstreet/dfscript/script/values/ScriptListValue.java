@@ -43,4 +43,9 @@ public class ScriptListValue extends ScriptValue {
     public String asText() {
         return value.toString();
     }
+
+    @Override
+    public ScriptValue getCompareValue() {
+        return asList().get(0).getCompareValue();
+    }
 }

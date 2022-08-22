@@ -22,12 +22,7 @@ import io.github.techstreet.dfscript.script.menu.ScriptMenuTextField;
 import io.github.techstreet.dfscript.script.menu.ScriptWidget;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
 import io.github.techstreet.dfscript.script.util.ScriptValueJson;
-import io.github.techstreet.dfscript.script.values.ScriptDictionaryValue;
-import io.github.techstreet.dfscript.script.values.ScriptListValue;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.ComponentUtil;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.ItemUtil;
@@ -1517,7 +1512,7 @@ public enum ScriptActionType {
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.script())) {
-                    menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,false,identifier));
+                    menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,true,identifier));
                 } else {
                     ChatUtil.error("Unable to add text field to menu! (Not owned by script)");
                 }
@@ -1631,6 +1626,29 @@ public enum ScriptActionType {
         .hasChildren(true)
         .action(ctx -> {
             ctx.setLastIfResult(!ctx.lastIfResult());
+    })),
+
+    SORT_LIST(builder -> builder.name("Sort List")
+        .description("Sorts a list in ascending order.")
+        .icon(Items.REPEATING_COMMAND_BLOCK)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("List", ScriptActionArgumentType.LIST, b -> b.optional(true))
+        .category(ScriptActionCategory.LISTS)
+        .action(ctx -> {
+            List<ScriptValue> list = null;
+
+            if(ctx.argMap().containsKey("List"))
+            {
+                list = ctx.value("List").asList();
+            }
+            else
+            {
+                list = ctx.value("Result").asList();
+            }
+
+            list.sort(new ScriptValueComparator());
+
+            ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(list));
     }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
