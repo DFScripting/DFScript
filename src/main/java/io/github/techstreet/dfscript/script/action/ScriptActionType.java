@@ -42,6 +42,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -1667,6 +1669,22 @@ public enum ScriptActionType {
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     })),
 
+    REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
+            .description(new String[]{"Searches for part of a text", "using a regex and replaces it."})
+            .icon(Items.LEAD, true)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Regex", ScriptActionArgumentType.TEXT)
+            .arg("Replacement", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = ctx.value("Text to change").asText();
+
+                result = result.replaceAll(ctx.value("Regex").asText(), ctx.value("Replacement").asText());
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
     REMOVE_TEXT(builder -> builder.name("Remove Text")
             .description("Searches for part of a text and replaces it.")
             .icon(Items.WRITABLE_BOOK)
@@ -1729,6 +1747,8 @@ public enum ScriptActionType {
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
     };
+
+    private boolean glow = false;
     private Item icon = Items.STONE;
     private String name = "Unnamed Action";
     private boolean hasChildren = false;
@@ -1764,6 +1784,12 @@ public enum ScriptActionType {
         item.getSubNbt("display")
             .put("Lore", lore);
 
+        if(glow)
+        {
+            item.addEnchantment(Enchantments.UNBREAKING, 1);
+            item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
+        }
+
         return item;
     }
     public String getName() {
@@ -1783,8 +1809,14 @@ public enum ScriptActionType {
         return this;
     }
 
-    private ScriptActionType icon(Item icon) {
+    private ScriptActionType icon(Item icon, boolean glow) {
         this.icon = icon;
+        this.glow = glow;
+        return this;
+    }
+
+    private ScriptActionType icon(Item icon) {
+        icon(icon, false);
         return this;
     }
 
