@@ -1688,7 +1688,7 @@ public enum ScriptActionType {
 
     STRIP_COLOR(builder -> builder.name("Strip Color from Text")
             .description("Searches for color codes in a text and removes them.")
-            .icon(Items.WRITABLE_BOOK)
+            .icon(Items.CYAN_DYE)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text", ScriptActionArgumentType.TEXT, b -> b.optional(true))
             .category(ScriptActionCategory.TEXTS)
@@ -1703,6 +1703,26 @@ public enum ScriptActionType {
 
                 result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
                 result = result.replaceAll("&[0-9a-fA-FlonmkrLONMKR]", "");
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    REPEAT_TEXT(builder -> builder.name("Repeat Text")
+            .description("Repeats a text the given number of times.")
+            .icon(Items.REPEATING_COMMAND_BLOCK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to repeat", ScriptActionArgumentType.TEXT)
+            .arg("Times to repeat", ScriptActionArgumentType.NUMBER)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = "";
+                String input = ctx.value("Text to repeat").asText();
+                int times = (int) ctx.value("Times to repeat").asNumber();
+
+                for(int i = 0; i < times; i++)
+                {
+                    result += input;
+                }
 
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     }));
