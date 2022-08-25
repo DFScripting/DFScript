@@ -1675,22 +1675,34 @@ public enum ScriptActionType {
             .arg("Text to remove", ScriptActionArgumentType.TEXT, b -> b.plural(true))
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = null;
-
-                if(ctx.argMap().containsKey("Text to change"))
-                {
-                    result = ctx.value("Text to change").asText();
-                }
-                else
-                {
-                    result = ctx.value("Result").asText();
-                }
+                String result = ctx.value("Text to change").asText();
 
                 List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
 
                 for(int i = 0; i < textsToRemove.size(); i++) {
                     result = result.replace(textsToRemove.get(i).asText(), "");
                 }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    STRIP_COLOR(builder -> builder.name("Strip Color from Text")
+            .description("Searches for color codes in a text and removes them.")
+            .icon(Items.WRITABLE_BOOK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT, b -> b.optional(true))
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = null;
+
+                if (ctx.argMap().containsKey("Text")) {
+                    result = ctx.value("Text").asText();
+                } else {
+                    result = ctx.value("Result").asText();
+                }
+
+                result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
+                result = result.replaceAll("&[0-9a-fA-FlonmkrLONMKR]", "");
 
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     }));
