@@ -55,35 +55,39 @@ public class ComponentUtil {
     public static String toFormattedString(Text message) {
         StringBuilder result = new StringBuilder();
 
-        Style style = message.getStyle();
+        if(message.getSiblings().isEmpty()){
+            Style style = message.getStyle();
 
-        String format = "";
+            String format = "";
 
-        if (style.getColor() != null) {
-            format += "§x§" + String.join("§", String.format("%06X", style.getColor().getRgb()).split(""));
-        }
+            if (style.getColor() != null) {
+                format += "§x§" + String.join("§", String.format("%06X", style.getColor().getRgb()).split(""));
+            }
 
-        if (style.isBold()) {
-            format += "§l";
-        }
-        if (style.isItalic()) {
-            format += "§o";
-        }
-        if (style.isUnderlined()) {
-            format += "§n";
-        }
-        if (style.isStrikethrough()) {
-            format += "§m";
-        }
-        if (style.isObfuscated()) {
-            format += "§k";
-        }
+            if (style.isBold()) {
+                format += "§l";
+            }
+            if (style.isItalic()) {
+                format += "§o";
+            }
+            if (style.isUnderlined()) {
+                format += "§n";
+            }
+            if (style.isStrikethrough()) {
+                format += "§m";
+            }
+            if (style.isObfuscated()) {
+                format += "§k";
+            }
 
-        result.append(format);
-        result.append(message.getString());
-
-        for (Text sibling : message.getSiblings()) {
-            result.append(toFormattedString(sibling));
+            result.append(format);
+            result.append(message.getString());
+        }
+        else {
+            for (Text sibling : message.getSiblings()) {
+                result.append("§r");
+                result.append(toFormattedString(sibling));
+            }
         }
 
         return result.toString();
