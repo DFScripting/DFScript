@@ -1218,11 +1218,28 @@ public enum ScriptActionType {
         .arg("Last Index",ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            int start = (int)ctx.value("First Index").asNumber()+1;
+            int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
             String result = text.substring(start, end);
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
         })),
+
+    TEXT_SUBTEXT_V1(builder -> builder.name("Get Subtext OLD")
+            .description("Gets a piece of text within another text.")
+            .icon(Items.KNOWLEDGE_BOOK)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result",ScriptActionArgumentType.VARIABLE)
+            .arg("Text",ScriptActionArgumentType.TEXT)
+            .arg("First Index",ScriptActionArgumentType.NUMBER)
+            .arg("Last Index",ScriptActionArgumentType.NUMBER)
+            .deprecate(TEXT_SUBTEXT)
+            .action(ctx -> {
+                String text = ctx.value("Text").asText();
+                int start = (int)ctx.value("First Index").asNumber()+1;
+                int end = (int)ctx.value("Last Index").asNumber();
+                String result = text.substring(start, end);
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            })),
 
     TEXT_LENGTH(builder -> builder.name("Get Text Length")
         .description("Get the length of a text value.")
@@ -1755,6 +1772,8 @@ public enum ScriptActionType {
     private ScriptActionCategory category = ScriptActionCategory.MISC;
     private List<String> description = new ArrayList();
     private ScriptGroup group = ScriptGroup.ACTION;
+
+    private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final List<ScriptActionArgument> arguments = new ArrayList<>();
     ScriptActionType(Consumer<ScriptActionType> builder) {
         description.add("No description provided.");
@@ -1762,12 +1781,26 @@ public enum ScriptActionType {
     }
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
+
         item.setCustomName(Text.literal(name)
             .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
 
         NbtList lore = new NbtList();
+
+        if(isDeprecated())
+        {
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("This action is deprecated!")
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)))));
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("Use '" + deprecated.getName() + "'")
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)))));
+        }
+
         for (String descriptionLine: description) {
             lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
                 .fillStyle(Style.EMPTY
@@ -1794,6 +1827,10 @@ public enum ScriptActionType {
     }
     public String getName() {
         return name;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated != null;
     }
 
     public boolean hasChildren() {
@@ -1867,6 +1904,12 @@ public enum ScriptActionType {
     public ScriptActionType arg(String name, ScriptActionArgumentType type) {
         return arg(name, type, (arg) -> {
         });
+    }
+
+    public ScriptActionType deprecate(ScriptActionType newScriptActionType) {
+        deprecated = newScriptActionType;
+
+        return this;
     }
 
     public void run(ScriptActionContext ctx) {
