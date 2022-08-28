@@ -1,6 +1,7 @@
 package io.github.techstreet.dfscript.script;
 
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.script.action.ScriptActionType;
 
 public class ScriptMigrator {
     public static void migrate(Script script) {
@@ -15,6 +16,11 @@ public class ScriptMigrator {
         if (script.getVersion() == 1) {
             script.setDescription("N/A");
             script.setVersion(2);
+        }
+
+        if (script.getVersion() == 2) {
+            script.replaceAction(ScriptActionType.TEXT_SUBTEXT, ScriptActionType.TEXT_SUBTEXT_V1);
+            script.setVersion(3);
         }
 
         if (previousVer != script.getVersion()) {

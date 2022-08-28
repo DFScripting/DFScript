@@ -20,12 +20,18 @@ import java.util.function.Consumer;
 
 public class ScriptAction implements ScriptPart {
 
-    private final ScriptActionType type;
+    private ScriptActionType type;
     private final List<ScriptArgument> arguments;
 
     public ScriptAction(ScriptActionType type, List<ScriptArgument> arguments) {
         this.type = type;
         this.arguments = arguments;
+    }
+
+    public ScriptAction setType(ScriptActionType newType) {
+        type = newType;
+
+        return this;
     }
 
     public void invoke(Event event, ScriptContext context, Consumer<ScriptScopeVariables> inner, ScriptTask task, Script script) {

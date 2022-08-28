@@ -57,8 +57,11 @@ public class ScriptEditScreen extends CScreen {
                     @Override
                     public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
                         Rectangle b = getBounds();
+
                         if (b.contains(mouseX, mouseY)) {
-                            DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                            int color = 0x33000000;
+
+                            DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, color);
                         }
                     }
 
@@ -123,7 +126,21 @@ public class ScriptEditScreen extends CScreen {
                     public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
                         Rectangle b = getBounds();
                         if (b.contains(mouseX, mouseY)) {
-                            DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                            int color = 0x33000000;
+
+                            if(sa.getType().isDeprecated())
+                            {
+                                color = 0x80FF0000;
+                            }
+
+                            DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, color);
+                        }
+                        else
+                        {
+                            if(sa.getType().isDeprecated())
+                            {
+                                DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33FF0000);
+                            }
                         }
                     }
 

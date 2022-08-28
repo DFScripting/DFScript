@@ -45,4 +45,11 @@ public class ScriptDictionaryValue extends ScriptValue {
     public String asText() {
         return value.toString();
     }
+
+    @Override
+    public ScriptValue getCompareValue() {
+        HashMap<String, ScriptValue> dict = asDictionary();
+
+        return dict.get(dict.keySet().toArray()[0]).getCompareValue();
+    }
 }

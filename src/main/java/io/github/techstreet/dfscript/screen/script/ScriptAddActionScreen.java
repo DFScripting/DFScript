@@ -45,6 +45,7 @@ public class ScriptAddActionScreen extends CScreen {
 
         for (ScriptActionType type : ScriptActionType.values()) {
             if (type.getCategory() != category) continue;
+            if (type.isDeprecated()) continue;
 
             CItem item = new CItem(x, y, type.getIcon());
             item.setClickListener((btn) -> {

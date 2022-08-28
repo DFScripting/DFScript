@@ -35,4 +35,8 @@ public class ScriptUnknownValue extends ScriptValue{
     public double asNumber() {
         return 0;
     }
+
+    public int compare(ScriptValue other) {
+        return 0;
+    }
 }
