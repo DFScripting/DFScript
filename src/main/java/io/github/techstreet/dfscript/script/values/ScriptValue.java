@@ -29,4 +29,12 @@ public abstract class ScriptValue {
     }
 
     public abstract boolean valueEquals(ScriptValue other);
+
+    public ScriptValue getCompareValue() {
+        return this;
+    }
+
+    public int compare(ScriptValue other) {
+        return asText().compareTo(other.asText());
+    }
 }

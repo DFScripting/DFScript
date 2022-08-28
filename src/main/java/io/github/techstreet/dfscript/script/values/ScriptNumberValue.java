@@ -34,4 +34,20 @@ public class ScriptNumberValue extends ScriptValue {
         }
         return String.valueOf(value);
     }
+
+    @Override
+    public int compare(ScriptValue other) {
+        if(other instanceof ScriptNumberValue) {
+            if(asNumber() == other.asNumber()) {
+                return 0;
+            }
+
+            if(asNumber() > other.asNumber()) {
+                return 1;
+            }
+
+            return -1;
+        }
+        return asText().compareTo(other.asText());
+    }
 }

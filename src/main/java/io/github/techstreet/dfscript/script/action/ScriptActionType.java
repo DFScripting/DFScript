@@ -22,12 +22,7 @@ import io.github.techstreet.dfscript.script.menu.ScriptMenuTextField;
 import io.github.techstreet.dfscript.script.menu.ScriptWidget;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
 import io.github.techstreet.dfscript.script.util.ScriptValueJson;
-import io.github.techstreet.dfscript.script.values.ScriptDictionaryValue;
-import io.github.techstreet.dfscript.script.values.ScriptListValue;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.ComponentUtil;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.ItemUtil;
@@ -45,6 +40,8 @@ import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -1216,11 +1213,28 @@ public enum ScriptActionType {
         .arg("Last Index",ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            int start = (int)ctx.value("First Index").asNumber()+1;
+            int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
             String result = text.substring(start, end);
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
         })),
+
+    TEXT_SUBTEXT_V1(builder -> builder.name("Get Subtext OLD")
+            .description("Gets a piece of text within another text.")
+            .icon(Items.KNOWLEDGE_BOOK)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result",ScriptActionArgumentType.VARIABLE)
+            .arg("Text",ScriptActionArgumentType.TEXT)
+            .arg("First Index",ScriptActionArgumentType.NUMBER)
+            .arg("Last Index",ScriptActionArgumentType.NUMBER)
+            .deprecate(TEXT_SUBTEXT)
+            .action(ctx -> {
+                String text = ctx.value("Text").asText();
+                int start = (int)ctx.value("First Index").asNumber()+1;
+                int end = (int)ctx.value("Last Index").asNumber();
+                String result = text.substring(start, end);
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            })),
 
     TEXT_LENGTH(builder -> builder.name("Get Text Length")
         .description("Get the length of a text value.")
@@ -1512,7 +1526,7 @@ public enum ScriptActionType {
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.script())) {
-                    menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,false,identifier));
+                    menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,true,identifier));
                 } else {
                     ChatUtil.error("Unable to add text field to menu! (Not owned by script)");
                 }
@@ -1626,16 +1640,135 @@ public enum ScriptActionType {
         .hasChildren(true)
         .action(ctx -> {
             ctx.setLastIfResult(!ctx.lastIfResult());
+    })),
+
+    SORT_LIST(builder -> builder.name("Sort List")
+        .description("Sorts a list in ascending order.")
+        .icon(Items.REPEATING_COMMAND_BLOCK)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("List", ScriptActionArgumentType.LIST, b -> b.optional(true))
+        .category(ScriptActionCategory.LISTS)
+        .action(ctx -> {
+            List<ScriptValue> list = null;
+
+            if(ctx.argMap().containsKey("List"))
+            {
+                list = ctx.value("List").asList();
+            }
+            else
+            {
+                list = ctx.value("Result").asList();
+            }
+
+            list.sort(new ScriptValueComparator());
+
+            ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(list));
+    })),
+
+    REPLACE_TEXT(builder -> builder.name("Replace Text")
+            .description("Searches for part of a text and replaces it.")
+            .icon(Items.LEAD)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Text part to replace", ScriptActionArgumentType.TEXT)
+            .arg("Replacement", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = ctx.value("Text to change").asText();
+
+                result = result.replace(ctx.value("Text part to replace").asText(), ctx.value("Replacement").asText());
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
+            .description(new String[]{"Searches for part of a text", "using a regex and replaces it."})
+            .icon(Items.LEAD, true)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Regex", ScriptActionArgumentType.TEXT)
+            .arg("Replacement", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = ctx.value("Text to change").asText();
+
+                result = result.replaceAll(ctx.value("Regex").asText(), ctx.value("Replacement").asText());
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    REMOVE_TEXT(builder -> builder.name("Remove Text")
+            .description("Searches for part of a text and replaces it.")
+            .icon(Items.WRITABLE_BOOK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to change", ScriptActionArgumentType.TEXT)
+            .arg("Text to remove", ScriptActionArgumentType.TEXT, b -> b.plural(true))
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = ctx.value("Text to change").asText();
+
+                List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
+
+                for(int i = 0; i < textsToRemove.size(); i++) {
+                    result = result.replace(textsToRemove.get(i).asText(), "");
+                }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    STRIP_COLOR(builder -> builder.name("Strip Color from Text")
+            .description("Searches for color codes in a text and removes them.")
+            .icon(Items.CYAN_DYE)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT, b -> b.optional(true))
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = null;
+
+                if (ctx.argMap().containsKey("Text")) {
+                    result = ctx.value("Text").asText();
+                } else {
+                    result = ctx.value("Result").asText();
+                }
+
+                result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
+                result = result.replaceAll("&[0-9a-fA-FlonmkrLONMKR]", "");
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+    })),
+
+    REPEAT_TEXT(builder -> builder.name("Repeat Text")
+            .description("Repeats a text the given number of times.")
+            .icon(Items.REPEATING_COMMAND_BLOCK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text to repeat", ScriptActionArgumentType.TEXT)
+            .arg("Times to repeat", ScriptActionArgumentType.NUMBER)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                String result = "";
+                String input = ctx.value("Text to repeat").asText();
+                int times = (int) ctx.value("Times to repeat").asNumber();
+
+                for(int i = 0; i < times; i++)
+                {
+                    result += input;
+                }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
     };
+
+    private boolean glow = false;
     private Item icon = Items.STONE;
     private String name = "Unnamed Action";
     private boolean hasChildren = false;
     private ScriptActionCategory category = ScriptActionCategory.MISC;
     private List<String> description = new ArrayList();
     private ScriptGroup group = ScriptGroup.ACTION;
+
+    private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final List<ScriptActionArgument> arguments = new ArrayList<>();
     ScriptActionType(Consumer<ScriptActionType> builder) {
         description.add("No description provided.");
@@ -1643,12 +1776,26 @@ public enum ScriptActionType {
     }
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
+
         item.setCustomName(((LiteralText) Text.of(name))
                 .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
 
         NbtList lore = new NbtList();
+
+        if(isDeprecated())
+        {
+            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("This action is deprecated!"))
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)))));
+            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("Use '" + deprecated.getName() + "'"))
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)))));
+        }
+
         for (String descriptionLine: description) {
             lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of(descriptionLine))
                     .fillStyle(Style.EMPTY
@@ -1665,10 +1812,20 @@ public enum ScriptActionType {
         item.getSubNbt("display")
             .put("Lore", lore);
 
+        if(glow)
+        {
+            item.addEnchantment(Enchantments.UNBREAKING, 1);
+            item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
+        }
+
         return item;
     }
     public String getName() {
         return name;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated != null;
     }
 
     public boolean hasChildren() {
@@ -1684,8 +1841,14 @@ public enum ScriptActionType {
         return this;
     }
 
-    private ScriptActionType icon(Item icon) {
+    private ScriptActionType icon(Item icon, boolean glow) {
         this.icon = icon;
+        this.glow = glow;
+        return this;
+    }
+
+    private ScriptActionType icon(Item icon) {
+        icon(icon, false);
         return this;
     }
 
@@ -1736,6 +1899,12 @@ public enum ScriptActionType {
     public ScriptActionType arg(String name, ScriptActionArgumentType type) {
         return arg(name, type, (arg) -> {
         });
+    }
+
+    public ScriptActionType deprecate(ScriptActionType newScriptActionType) {
+        deprecated = newScriptActionType;
+
+        return this;
     }
 
     public void run(ScriptActionContext ctx) {

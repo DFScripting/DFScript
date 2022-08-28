@@ -28,7 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 2;
+    public static int scriptVersion = 3;
 
     private String name;
     private String owner;
@@ -243,6 +243,19 @@ public class Script {
 
     public ScriptContext getContext() {
         return context;
+    }
+
+    public void replaceAction(ScriptActionType oldAction, ScriptActionType newAction) {
+        for(int i = 0; i < parts.size(); i++)
+        {
+            if(parts.get(i) instanceof ScriptAction)
+            {
+                if(((ScriptAction) parts.get(i)).getType() == oldAction)
+                {
+                    parts.set(i, ((ScriptAction) parts.get(i)).setType(newAction));
+                }
+            }
+        }
     }
 
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
