@@ -5,8 +5,8 @@ import io.github.techstreet.dfscript.commands.misc.ScriptsCommand;
 import io.github.techstreet.dfscript.loader.Loadable;
 import java.util.ArrayList;
 import java.util.List;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public class CommandManager implements Loadable {
 
@@ -25,7 +25,7 @@ public class CommandManager implements Loadable {
     public void load() {
         commands.add(new ScriptsCommand());
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> attachTo(dispatcher));
+        attachTo(ClientCommandManager.DISPATCHER);
     }
 
     private void attachTo(CommandDispatcher<FabricClientCommandSource> cd) {

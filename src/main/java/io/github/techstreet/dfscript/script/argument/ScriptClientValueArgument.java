@@ -30,6 +30,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.text.LiteralText;
 
 public enum ScriptClientValueArgument implements ScriptArgument {
 
@@ -131,7 +132,13 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         } else {
             throw new IllegalStateException("The event is not a menu click event.");
         }
-    });
+    }),
+
+    PLAYER_UUID("Player UUID", "The UUID of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
+            (event, context) -> new ScriptTextValue(DFScript.PLAYER_UUID)),
+
+    PLAYER_NAME("Player Name", "The name of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
+            (event, context) -> new ScriptTextValue(DFScript.PLAYER_NAME));
 
     private final String name;
     private final ItemStack icon;
@@ -141,12 +148,13 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     ScriptClientValueArgument(String name, String description, Item type, ScriptActionArgumentType varType, BiFunction<Event, ScriptContext, ScriptValue> consumer) {
         this.name = name;
         this.icon = new ItemStack(type);
-        icon.setCustomName(Text.literal(name)
-            .fillStyle(Style.EMPTY
+        icon.setCustomName(((LiteralText) Text.of(name))
+                .fillStyle(Style.EMPTY
                 .withItalic(false)));
         NbtList lore = new NbtList();
-        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
-            .fillStyle(Style.EMPTY
+        
+        lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of(description))
+                .fillStyle(Style.EMPTY
                 .withColor(Formatting.GRAY)
                 .withItalic(false)))));
         icon.getSubNbt("display")

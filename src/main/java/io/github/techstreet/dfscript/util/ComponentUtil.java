@@ -11,7 +11,7 @@ import net.minecraft.util.Formatting;
 public class ComponentUtil {
 
     public static MutableText fromString(String message) {
-        MutableText result = Text.literal("");
+        MutableText result = (MutableText) Text.of("");
 
         try {
             Regex pattern = Regex.of("(§[a-f0-9lonmkrA-FLONMRK]|§x(§[a-f0-9A-F]){6})");
@@ -24,7 +24,7 @@ public class ComponentUtil {
                 int start = matcher.start();
                 String text = message.substring(lastIndex, start);
                 if (text.length() != 0) {
-                    MutableText t = Text.literal(text);
+                    MutableText t = (MutableText) Text.of(text);
                     t.setStyle(s);
                     result.append(t);
                 }
@@ -40,13 +40,13 @@ public class ComponentUtil {
             }
             String text = message.substring(lastIndex);
             if (text.length() != 0) {
-                MutableText t = Text.literal(text);
+                MutableText t = (MutableText) Text.of(text);
                 t.setStyle(s);
                 result.append(t);
             }
         } catch (Exception err) {
             err.printStackTrace();
-            return Text.literal("DFScript Text Error");
+            return (MutableText) Text.of("DFScript Text Error");
         }
 
         return result;
@@ -55,35 +55,39 @@ public class ComponentUtil {
     public static String toFormattedString(Text message) {
         StringBuilder result = new StringBuilder();
 
-        Style style = message.getStyle();
+        if(message.getSiblings().isEmpty()){
+            Style style = message.getStyle();
 
-        String format = "";
+            String format = "";
 
-        if (style.getColor() != null) {
-            format += "§x§" + String.join("§", String.format("%06X", style.getColor().getRgb()).split(""));
-        }
+            if (style.getColor() != null) {
+                format += "§x§" + String.join("§", String.format("%06X", style.getColor().getRgb()).split(""));
+            }
 
-        if (style.isBold()) {
-            format += "§l";
-        }
-        if (style.isItalic()) {
-            format += "§o";
-        }
-        if (style.isUnderlined()) {
-            format += "§n";
-        }
-        if (style.isStrikethrough()) {
-            format += "§m";
-        }
-        if (style.isObfuscated()) {
-            format += "§k";
-        }
+            if (style.isBold()) {
+                format += "§l";
+            }
+            if (style.isItalic()) {
+                format += "§o";
+            }
+            if (style.isUnderlined()) {
+                format += "§n";
+            }
+            if (style.isStrikethrough()) {
+                format += "§m";
+            }
+            if (style.isObfuscated()) {
+                format += "§k";
+            }
 
-        result.append(format);
-        result.append(message.getString());
-
-        for (Text sibling : message.getSiblings()) {
-            result.append(toFormattedString(sibling));
+            result.append(format);
+            result.append(message.getString());
+        }
+        else {
+            for (Text sibling : message.getSiblings()) {
+                result.append("§r");
+                result.append(toFormattedString(sibling));
+            }
         }
 
         return result.toString();

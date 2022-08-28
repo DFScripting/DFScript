@@ -21,7 +21,7 @@ public class StringUtil {
 
     public static Text of(String... literalTexts) {
         int length = literalTexts.length;
-        MutableText text = Text.literal(literalTexts[0]);
+        MutableText text = (MutableText) Text.of(literalTexts[0]);
 
         if (length == 1) {
             return text;

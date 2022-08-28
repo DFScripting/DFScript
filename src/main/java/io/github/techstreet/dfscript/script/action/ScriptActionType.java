@@ -36,10 +36,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.enchantment.Enchantment;
@@ -54,6 +52,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -103,7 +102,7 @@ public enum ScriptActionType {
             }
 
             sb.deleteCharAt(sb.length() - 1);
-            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
+            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString());
         })),
 
     REPEAT_MULTIPLE(builder -> builder.name("RepeatMultiple")
@@ -960,11 +959,7 @@ public enum ScriptActionType {
                 }
 
                 if (ab instanceof LiteralArgumentBuilder lab) {
-                    if (ClientCommandManager.getActiveDispatcher() == null) {
-                        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(lab));
-                    } else {
-                        ClientCommandManager.getActiveDispatcher().register(lab);
-                    }
+                    ClientCommandManager.DISPATCHER.register(lab);
                 }
 
                 ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
@@ -1782,8 +1777,8 @@ public enum ScriptActionType {
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
 
-        item.setCustomName(Text.literal(name)
-            .fillStyle(Style.EMPTY
+        item.setCustomName(((LiteralText) Text.of(name))
+                .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
 
@@ -1791,24 +1786,24 @@ public enum ScriptActionType {
 
         if(isDeprecated())
         {
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("This action is deprecated!")
+            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("This action is deprecated!"))
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
                             .withItalic(false)))));
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("Use '" + deprecated.getName() + "'")
+            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("Use '" + deprecated.getName() + "'"))
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
                             .withItalic(false)))));
         }
 
         for (String descriptionLine: description) {
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
-                .fillStyle(Style.EMPTY
+            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of(descriptionLine))
+                    .fillStyle(Style.EMPTY
                       .withColor(Formatting.GRAY)
                       .withItalic(false)))));
         }
 
-        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
+        lore.add(NbtString.of(Text.Serializer.toJson(Text.of(""))));
 
         for (ScriptActionArgument arg : arguments) {
             lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));

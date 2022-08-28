@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MLocalPlayer {
 
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-    private void chat(String message, Text preview, CallbackInfo ci) {
+    private void chat(String message, CallbackInfo ci) {
         SendChatEvent event = new SendChatEvent(message);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {

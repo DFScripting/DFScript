@@ -26,7 +26,7 @@ public class CButton implements CWidget {
         this.width = width;
         this.height = height;
         this.textScale = textScale;
-        this.text = Text.literal(text);
+        this.text = Text.of(text);
         this.onClick = onClick;
         this.disabled = false;
     }
@@ -84,7 +84,7 @@ public class CButton implements CWidget {
     }
 
     public void setText(String text) {
-        this.text = Text.literal(text);
+        this.text = Text.of(text);
     }
 
     public void setText(Text text) {

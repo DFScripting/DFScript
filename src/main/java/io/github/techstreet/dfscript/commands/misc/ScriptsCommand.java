@@ -13,7 +13,7 @@ import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public class ScriptsCommand implements Command {
 

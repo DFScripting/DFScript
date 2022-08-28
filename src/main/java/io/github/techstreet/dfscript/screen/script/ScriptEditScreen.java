@@ -49,7 +49,7 @@ public class ScriptEditScreen extends CScreen {
         for (ScriptPart part : script.getParts()) {
             if (part instanceof ScriptEvent se) {
                 panel.add(new CItem(5, y, se.getType().getIcon()));
-                panel.add(new CText(15, y + 2, Text.literal(se.getType().getName())));
+                panel.add(new CText(15, y + 2, Text.of(se.getType().getName())));
                 indent = 5;
 
                 int currentIndex = index;
@@ -102,7 +102,7 @@ public class ScriptEditScreen extends CScreen {
                 }
 
                 panel.add(new CItem(5 + indent, y, sa.getType().getIcon()));
-                panel.add(new CText(15 + indent, y + 2, Text.literal(sa.getType().getName())));
+                panel.add(new CText(15 + indent, y + 2, Text.of(sa.getType().getName())));
 
                 for (int i = 0; i < indent; i += 5) {
                     int xpos = 8 + i;
