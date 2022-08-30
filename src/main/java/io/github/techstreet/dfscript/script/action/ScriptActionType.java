@@ -1624,7 +1624,7 @@ public enum ScriptActionType {
         })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
-            .description(new String[]{"Repeats for eternity.", "Make sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!", "There's a lagslayer for the repetition actions.", "It activates after 100000 iterations with no Wait."})
+            .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
             .icon(Items.GOLD_INGOT)
             .category(ScriptActionCategory.MISC)
             .hasChildren(true)
@@ -1633,7 +1633,7 @@ public enum ScriptActionType {
                 ctx.scheduleInner(null, context -> context.setLastIfResult(true));
             })),
     ELSE(builder -> builder.name("Else")
-        .description(new String[]{"Executes if the last IF condition failed.","And ELSE also works as a valid IF condition for ELSE."})
+        .description("Executes if the last IF condition failed.\nAnd ELSE also works as a valid IF condition for ELSE.")
         .icon(Items.END_STONE)
         .category(ScriptActionCategory.MISC)
         .group(ScriptGroup.CONDITION)
@@ -1682,7 +1682,7 @@ public enum ScriptActionType {
     })),
 
     REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
-            .description(new String[]{"Searches for part of a text", "using a regex and replaces it."})
+            .description("Searches for part of a text\nusing a regex and replaces it.")
             .icon(Items.LEAD, true)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text to change", ScriptActionArgumentType.TEXT)
@@ -1869,17 +1869,11 @@ public enum ScriptActionType {
 
     private ScriptActionType description(String description) {
         this.description.clear();
-        this.description.add(description);
+        this.description.addAll(Arrays.asList(description.split("\n", -1)));
+        
         return this;
     }
 
-    private ScriptActionType description(String[] description) {
-        this.description.clear();
-
-        this.description.addAll(Arrays.asList(description));
-
-        return this;
-    }
     private ScriptActionType group(ScriptGroup group) {
         this.group = group;
         return this;
