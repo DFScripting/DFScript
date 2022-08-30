@@ -1629,7 +1629,7 @@ public enum ScriptActionType {
         })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
-            .description("Repeats for eternity.", "Make sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
+            .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
             .icon(Items.GOLD_INGOT)
             .category(ScriptActionCategory.MISC)
             .hasChildren(true)
