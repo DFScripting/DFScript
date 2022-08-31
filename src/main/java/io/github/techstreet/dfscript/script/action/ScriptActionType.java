@@ -1644,7 +1644,25 @@ public enum ScriptActionType {
                 ctx.variable("Result").name(),
                 new ScriptNumberValue(result)
             );
-        })),    
+        })),
+        
+    RANDOM_NUMBER(builder -> builder.name("Random Number")
+        .description("Generates a random number between two other numbers.")
+        .icon(Items.HOPPER)
+        .category(ScriptActionCategory.NUMBERS)
+        .deprecate(RANDOM_DOUBLE)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Min", ScriptActionArgumentType.NUMBER)
+        .arg("Max", ScriptActionArgumentType.NUMBER)
+        .action(ctx -> {
+            double min = ctx.value("Min").asNumber();
+            double max = ctx.value("Max").asNumber();
+            double result = Math.random() * (max - min) + min;
+            ctx.context().setVariable(
+                ctx.variable("Result").name(),
+                new ScriptNumberValue(result)
+            );
+        })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
             .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
