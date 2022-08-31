@@ -1619,10 +1619,10 @@ public enum ScriptActionType {
         .arg("Min", ScriptActionArgumentType.NUMBER)
         .arg("Max", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
-            int min = ctx.value("Min").asNumber();
-            int max = ctx.value("Max").asNumber();
+            int min = (int) ctx.value("Min").asNumber();
+            int max = (int) ctx.value("Max").asNumber();
             Random random = new Random();
-            int result = random.nextInt((int) max + 1 - (int) min) + (int) min;
+            int result = random.nextInt(max + 1 - min) + min;
             ctx.context().setVariable(
                 ctx.variable("Result").name(),
                 new ScriptNumberValue(result)
