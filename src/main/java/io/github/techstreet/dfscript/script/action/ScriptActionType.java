@@ -1611,8 +1611,26 @@ public enum ScriptActionType {
             }
         })),
     
-    RANDOM_NUMBER(builder -> builder.name("Random Number")
-        .description("Generates a random number between two other numbers.")
+        RANDOM_INT(builder -> builder.name("Random Int")
+        .description("Generates a random whole number between two other numbers.")
+        .icon(Items.HOPPER)
+        .category(ScriptActionCategory.NUMBERS)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Min", ScriptActionArgumentType.NUMBER)
+        .arg("Max", ScriptActionArgumentType.NUMBER)
+        .action(ctx -> {
+            int min = ctx.value("Min").asNumber();
+            int max = ctx.value("Max").asNumber();
+            Random random = new Random();
+            int result = random.nextInt((int) max + 1 - (int) min) + (int) min;
+            ctx.context().setVariable(
+                ctx.variable("Result").name(),
+                new ScriptNumberValue(result)
+            );
+        })),
+
+    RANDOM_DOUBLE(builder -> builder.name("Random Double")
+        .description("Generates a random floating point number between two other numbers.")
         .icon(Items.HOPPER)
         .category(ScriptActionCategory.NUMBERS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -1626,7 +1644,7 @@ public enum ScriptActionType {
                 ctx.variable("Result").name(),
                 new ScriptNumberValue(result)
             );
-        })),
+        })),    
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
             .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
