@@ -12,6 +12,7 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
@@ -36,6 +37,8 @@ public class Script {
     private int version = 0;
     private String server;
     private final List<ScriptPart> parts;
+
+    private final List<ScriptOption> options;
     private final Logger LOGGER;
     private final ScriptContext context = new ScriptContext();
     private File file;
@@ -48,6 +51,7 @@ public class Script {
         this.parts = parts;
         this.disabled = disabled;
         this.version = version;
+        this.options = new ArrayList<>();
 
         LOGGER = LogManager.getLogger("Script." + name);
     }
@@ -256,6 +260,10 @@ public class Script {
                 }
             }
         }
+    }
+
+    public List<ScriptOption> getOptions() {
+        return options;
     }
 
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
