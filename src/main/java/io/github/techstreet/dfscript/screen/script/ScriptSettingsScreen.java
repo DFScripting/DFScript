@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
+import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
@@ -41,6 +42,12 @@ public class ScriptSettingsScreen extends CScreen {
 
             index++;
         }
+
+        CButton add = new CButton(37, y, 46, 8, "Add", () -> {
+            DFScript.MC.setScreen(new ScriptAddSettingScreen(script, script.getOptions().size()));
+        });
+
+        panel.add(add);
 
         panel.setScroll(scroll);
     }

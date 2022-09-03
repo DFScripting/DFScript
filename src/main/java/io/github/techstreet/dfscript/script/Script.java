@@ -266,6 +266,10 @@ public class Script {
         return options;
     }
 
+    public void addOption(int pos, ScriptOption option) {
+        options.add(pos, option);
+    }
+
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
         @Override
         public Script deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

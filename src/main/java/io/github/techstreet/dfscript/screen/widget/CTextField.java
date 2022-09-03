@@ -12,6 +12,8 @@ import net.minecraft.util.math.Vector4f;
 public class CTextField implements CWidget {
 
     final int x, y, width, height;
+
+    boolean selected;
     boolean editable;
     public int textColor = 0xFFFFFFFF;
     String text;
@@ -28,6 +30,7 @@ public class CTextField implements CWidget {
         this.width = width;
         this.height = height;
         this.editable = editable;
+        this.selected = false;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class CTextField implements CWidget {
         }
         stack.pop();
 
-        if (editable) {
+        if (editable && selected) {
             int cursorLine = getCursorLineIndex();
             int cursorLinePos = getIndexInCursorLine();
 
@@ -111,7 +114,7 @@ public class CTextField implements CWidget {
             return;
         }
 
-        if (editable) {
+        if (editable && selected) {
             if (hasSelection) {
                 int selectionStart = Math.min(selectionPos, cursorPos);
                 int selectionEnd = Math.max(selectionPos, cursorPos);
@@ -128,7 +131,7 @@ public class CTextField implements CWidget {
 
     @Override
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (editable) {
+        if (editable && selected) {
             String lastText = text;
             TextRenderer f = DFScript.MC.textRenderer;
             boolean createSelection = modifiers != 0;
@@ -258,6 +261,7 @@ public class CTextField implements CWidget {
         if (editable) {
             if (button == 0) {
                 if (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
+                    this.selected = true;
                     TextRenderer f = DFScript.MC.textRenderer;
 
                     x -= 1 + this.x;
@@ -275,16 +279,24 @@ public class CTextField implements CWidget {
                     if (hasSelection) {
                         hasSelection = false;
                     }
-                    return true;
+                    //return true;
+                }
+                else
+                {
+                    this.selected = false;
                 }
             }
+        }
+        else
+        {
+            this.selected = false;
         }
         return false;
     }
 
     @Override
     public void mouseScrolled(double mouseX, double mouseY, double amount) {
-        if (editable) {
+        if (editable && selected) {
             scroll += amount * 5;
             TextRenderer f = DFScript.MC.textRenderer;
             scroll = Math.min(0, Math.max(scroll, -(getLines().length + 1) * f.fontHeight / 2 + height - 2));
