@@ -5,8 +5,6 @@ import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.text.Text;
 
 public interface ScriptOption {
-    String name = "Default Config Option Name";
-
     ScriptValue getValue();
 
     String getName();

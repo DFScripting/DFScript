@@ -12,18 +12,22 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +42,7 @@ public class Script {
     private String server;
     private final List<ScriptPart> parts;
 
-    private final List<ScriptOption> options;
+    private final List<ScriptNamedOption> options;
     private final Logger LOGGER;
     private final ScriptContext context = new ScriptContext();
     private File file;
@@ -262,12 +266,45 @@ public class Script {
         }
     }
 
-    public List<ScriptOption> getOptions() {
+    public List<ScriptNamedOption> getOptions() {
         return options;
     }
 
-    public void addOption(int pos, ScriptOption option) {
+    public void addOption(int pos, ScriptNamedOption option) {
         options.add(pos, option);
+    }
+
+    public boolean optionExists(String option) {
+        for(ScriptNamedOption o : getOptions())
+        {
+            if(Objects.equals(o.getName(), option)) return true;
+        }
+
+        return false;
+    }
+
+    public ScriptValue getOption(String option) {
+        for(ScriptNamedOption o : getOptions())
+        {
+            if(Objects.equals(o.getName(), option)) return o.getValue();
+        }
+
+        return new ScriptUnknownValue();
+    }
+
+    public String getUnnamedOption() {
+        for(int i = 1; ; i++) {
+
+            String name = "Option";
+
+            if(i != 1) {
+                name = name + " " + i;
+            }
+
+            if(!optionExists(name)) {
+                return name;
+            }
+        }
     }
 
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {

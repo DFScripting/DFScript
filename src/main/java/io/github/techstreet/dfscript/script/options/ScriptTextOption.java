@@ -15,7 +15,7 @@ public class ScriptTextOption implements ScriptOption {
     }
 
     @Override
-    public String getName() { return name; }
+    public String getName() { return "Text"; }
 
     @Override
     public int create(CScrollPanel panel, int x, int y, int width) {

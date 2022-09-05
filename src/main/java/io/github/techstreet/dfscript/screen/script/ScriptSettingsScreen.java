@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawableHelper;
@@ -48,9 +49,9 @@ public class ScriptSettingsScreen extends CScreen {
 
         y += 22;
 
-        for(ScriptOption option : script.getOptions())
+        for(ScriptNamedOption option : script.getOptions())
         {
-            String name = option.getName() + ":";
+            String name = option.getFullName();
 
             Text text = Text.of(name);
 
@@ -95,6 +96,10 @@ public class ScriptSettingsScreen extends CScreen {
                                 contextMenu.add(delete);
                             });
                         }
+                        else
+                        {
+                            DFScript.MC.setScreen(new ScriptEditSettingScreen(script, option));
+                        }
                         return true;
                     }
                     return false;
@@ -104,7 +109,7 @@ public class ScriptSettingsScreen extends CScreen {
             y += height;
             y++;
 
-            y = option.create(panel, 5, y, 105);
+            y = option.create(panel, 5, y);
 
             index++;
         }
