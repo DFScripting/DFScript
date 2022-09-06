@@ -1,7 +1,10 @@
 package io.github.techstreet.dfscript.script.options;
 
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 public class ScriptNamedOption {
     String name;
@@ -13,14 +16,14 @@ public class ScriptNamedOption {
     }
 
     public String getFullName() {
-        return getName() + " (" + option.getName() + "):";
+        return getName() + " (" + option.getName() + ")";
     }
 
     public String getName() {
         return name;
     }
 
-    public ScriptValue getValue() {
+    public ScriptArgument getValue() {
         return option.getValue();
     }
 
@@ -30,5 +33,9 @@ public class ScriptNamedOption {
 
     public void setName(String text) {
         name = text;
+    }
+
+    public ItemStack getIcon() {
+        return new ItemStack(option.getIcon()).setCustomName(Text.literal(getName()).fillStyle(Style.EMPTY.withItalic(false)));
     }
 }

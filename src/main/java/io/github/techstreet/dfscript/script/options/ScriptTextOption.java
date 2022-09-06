@@ -2,16 +2,19 @@ package io.github.techstreet.dfscript.script.options;
 
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
+import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
 import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class ScriptTextOption implements ScriptOption {
 
     String value = "";
 
     @Override
-    public ScriptValue getValue() {
-        return new ScriptTextValue(value);
+    public ScriptArgument getValue() {
+        return new ScriptTextArgument(value);
     }
 
     @Override
@@ -24,5 +27,10 @@ public class ScriptTextOption implements ScriptOption {
         panel.add(field);
 
         return y + 12;
+    }
+
+    @Override
+    public Item getIcon() {
+        return Items.BOOK;
     }
 }

@@ -12,8 +12,9 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptUnknownArgument;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
-import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
@@ -44,7 +45,7 @@ public class Script {
 
     private final List<ScriptNamedOption> options;
     private final Logger LOGGER;
-    private final ScriptContext context = new ScriptContext();
+    private final ScriptContext context = new ScriptContext(this);
     private File file;
     private boolean disabled;
 
@@ -275,21 +276,19 @@ public class Script {
     }
 
     public boolean optionExists(String option) {
-        for(ScriptNamedOption o : getOptions())
-        {
+        for(ScriptNamedOption o : getOptions()) {
             if(Objects.equals(o.getName(), option)) return true;
         }
 
         return false;
     }
 
-    public ScriptValue getOption(String option) {
-        for(ScriptNamedOption o : getOptions())
-        {
+    public ScriptArgument getOption(String option) {
+        for(ScriptNamedOption o : getOptions()) {
             if(Objects.equals(o.getName(), option)) return o.getValue();
         }
 
-        return new ScriptUnknownValue();
+        return new ScriptUnknownArgument();
     }
 
     public String getUnnamedOption() {
@@ -303,6 +302,22 @@ public class Script {
 
             if(!optionExists(name)) {
                 return name;
+            }
+        }
+    }
+
+    public ScriptNamedOption getNamedOption(String option) {
+        for(ScriptNamedOption o : getOptions()) {
+            if(Objects.equals(o.getName(), option)) return o;
+        }
+
+        return null;
+    }
+
+    private void updateScriptReferences() {
+        for(ScriptPart part : getParts()) {
+            if(part instanceof ScriptAction a) {
+                a.updateScriptReferences(this);
             }
         }
     }
@@ -335,6 +350,8 @@ public class Script {
 
             Script script = new Script(name, owner, serverId, parts, disabled, version);
             script.setDescription(description);
+
+            script.updateScriptReferences();
 
             return script;
         }

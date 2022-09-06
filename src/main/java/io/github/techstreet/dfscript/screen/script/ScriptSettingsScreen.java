@@ -51,7 +51,7 @@ public class ScriptSettingsScreen extends CScreen {
 
         for(ScriptNamedOption option : script.getOptions())
         {
-            String name = option.getFullName();
+            String name = option.getFullName() + ":";
 
             Text text = Text.of(name);
 

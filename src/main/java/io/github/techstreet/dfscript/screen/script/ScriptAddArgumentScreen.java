@@ -42,10 +42,16 @@ public class ScriptAddArgumentScreen extends CScreen {
         clientValueIcon.setCustomName(Text.literal("Client Value")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
+        ItemStack configValueIcon = new ItemStack(Items.INK_SAC);
+        configValueIcon.setCustomName(Text.literal("Config Value")
+            .fillStyle(Style.EMPTY.withItalic(false)));
+
+
         CItem addNumber = new CItem(2, 40, numberIcon);
         CItem addText = new CItem(12, 40, textIcon);
         CItem addVariable = new CItem(22, 40, variableIcon);
         CItem addClientValue = new CItem(32, 40, clientValueIcon);
+        CItem addConfigValue = new CItem(42, 40, configValueIcon);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
@@ -73,11 +79,16 @@ public class ScriptAddArgumentScreen extends CScreen {
             DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index));
         });
 
+        addConfigValue.setClickListener((btn) -> {
+            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index));
+        });
+
         widgets.add(input);
         widgets.add(addNumber);
         widgets.add(addText);
         widgets.add(addVariable);
         widgets.add(addClientValue);
+        widgets.add(addConfigValue);
     }
 
     @Override

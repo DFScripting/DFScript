@@ -9,6 +9,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
@@ -51,6 +52,14 @@ public class ScriptAction implements ScriptPart {
     @Override
     public ScriptGroup getGroup() {
         return getType().getGroup();
+    }
+
+    public void updateScriptReferences(Script script) {
+        for(ScriptArgument arg : getArguments()) {
+            if (arg instanceof ScriptConfigArgument carg) {
+                carg.setScript(script);
+            }
+        }
     }
 
     public static class Serializer implements JsonSerializer<ScriptAction> {
