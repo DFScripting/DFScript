@@ -7,6 +7,8 @@ import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 
+import java.util.Objects;
+
 public class ScriptEditSettingScreen extends CScreen {
     private final Script script;
     private final ScriptNamedOption option;
@@ -20,8 +22,8 @@ public class ScriptEditSettingScreen extends CScreen {
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
-        CButton confirm = new CButton(0, 35, 50, 15, "Confirm Rename", () -> {
-            if(option.getName() != input.getText()) {
+        CButton confirm = new CButton(2, 37, 46, 10, "Confirm Rename", () -> {
+            if(!Objects.equals(option.getName(), input.getText())) {
                 if(script.optionExists(input.getText())) {
                     input.textColor = 0xFF3333;
                 } else {
@@ -33,7 +35,7 @@ public class ScriptEditSettingScreen extends CScreen {
             }
         });
 
-        CButton cancel = new CButton(50, 35, 50, 15, "Cancel", this::close);
+        CButton cancel = new CButton(52, 37, 46, 10, "Cancel", this::close);
 
         widgets.add(input);
         widgets.add(confirm);
