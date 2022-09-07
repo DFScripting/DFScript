@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -1019,12 +1020,31 @@ public enum ScriptActionType {
             String separator = ctx.value("Separator").asText();
             List<ScriptValue> split = new ArrayList<>();
 
-            for (String s : text.split(separator)) {
+            for (String s : text.split(Pattern.quote(separator))) {
                 split.add(new ScriptTextValue(s));
             }
 
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
         })),
+
+    REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
+            .description("Splits a text into a list of texts\nusing a regex as a separator.")
+            .icon(Items.SHEARS, true)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .arg("Separator (Regex)", ScriptActionArgumentType.TEXT)
+            .action(ctx -> {
+                String text = ctx.value("Text").asText();
+                String separator = ctx.value("Separator (Regex)").asText();
+                List<ScriptValue> split = new ArrayList<>();
+
+                for (String s : text.split(separator)) {
+                    split.add(new ScriptTextValue(s));
+                }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+            })),
 
     STOP(builder -> builder.name("Stop Codeline")
         .description("Stops the current codeline.")

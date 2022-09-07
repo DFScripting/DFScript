@@ -34,7 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 3;
+    public static int scriptVersion = 4;
 
     private String name;
     private String owner;
@@ -359,7 +359,7 @@ public class Script {
             Script script = new Script(name, owner, serverId, parts, disabled, version);
             script.setDescription(description);
 
-            for (JsonElement element : object.get("config").getAsJsonArray()) {
+            if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
                 ScriptNamedOption option = context.deserialize(element, ScriptNamedOption.class);
                 script.addOption(script.getOptions().size(), option);
             }
