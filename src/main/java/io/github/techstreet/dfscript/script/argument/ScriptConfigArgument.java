@@ -46,6 +46,10 @@ public final class ScriptConfigArgument implements ScriptArgument {
         return option;
     }
 
+    public void setOption(String newOption) {
+        option = newOption;
+    }
+
     public static class Serializer implements JsonSerializer<ScriptConfigArgument> {
 
         @Override

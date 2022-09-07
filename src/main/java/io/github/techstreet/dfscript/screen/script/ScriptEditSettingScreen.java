@@ -27,6 +27,7 @@ public class ScriptEditSettingScreen extends CScreen {
                 if(script.optionExists(input.getText())) {
                     input.textColor = 0xFF3333;
                 } else {
+                    script.replaceOption(option.getName(), input.getText());
                     option.setName(input.getText());
                     close();
                 }
@@ -44,6 +45,6 @@ public class ScriptEditSettingScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptSettingsScreen(script));
+        DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
     }
 }

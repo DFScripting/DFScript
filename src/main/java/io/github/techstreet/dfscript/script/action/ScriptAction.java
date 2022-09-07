@@ -62,6 +62,17 @@ public class ScriptAction implements ScriptPart {
         }
     }
 
+    public void updateConfigArguments(String oldOption, String newOption) {
+        for(ScriptArgument arg : getArguments()) {
+            if (arg instanceof ScriptConfigArgument carg) {
+                if(carg.getName() == oldOption)
+                {
+                    carg.setOption(newOption);
+                }
+            }
+        }
+    }
+
     public static class Serializer implements JsonSerializer<ScriptAction> {
 
         @Override

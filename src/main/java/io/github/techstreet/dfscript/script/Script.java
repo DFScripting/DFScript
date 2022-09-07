@@ -322,6 +322,14 @@ public class Script {
         }
     }
 
+    public void replaceOption(String oldOption, String newOption) {
+        for(ScriptPart part : getParts()) {
+            if(part instanceof ScriptAction a) {
+                a.updateConfigArguments(oldOption, newOption);
+            }
+        }
+    }
+
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
         @Override
         public Script deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -34,7 +34,7 @@ public class ScriptAddSettingScreen extends CScreen {
                     ChatUtil.error(String.valueOf(e.getCause()));
                 }
 
-                DFScript.MC.setScreen(new ScriptSettingsScreen(script));
+                DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
             });
 
             widgets.add(citem);
@@ -49,6 +49,6 @@ public class ScriptAddSettingScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptSettingsScreen(script));
+        DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
     }
 }
