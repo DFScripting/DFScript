@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -77,7 +78,9 @@ public class ScriptNamedOption {
 
             object.addProperty("type", src.getOption().getType());
 
-            object.add("value", src.getOption().getJsonPrimitive());
+            JsonPrimitive primitive = src.getOption().getJsonPrimitive();
+
+            object.add("value", primitive);
 
             return object;
         }

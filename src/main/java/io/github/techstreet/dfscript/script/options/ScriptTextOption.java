@@ -48,7 +48,7 @@ public class ScriptTextOption implements ScriptOption {
     }
 
     @Override
-    public JsonElement getJsonPrimitive() {
+    public JsonPrimitive getJsonPrimitive() {
         return new JsonPrimitive(value);
     }
 }

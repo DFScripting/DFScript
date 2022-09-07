@@ -214,7 +214,7 @@ public class ScriptListScreen extends CScreen {
                 }
                 else {
                     //Script Settings Button
-                    CButton settings = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
+                    CButton settings = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":settings.png", () -> {
                         DFScript.MC.setScreen(new ScriptSettingsScreen(s, false));
                     }, 0, 0, 1, 0.5f, 0, 0.5f);
 

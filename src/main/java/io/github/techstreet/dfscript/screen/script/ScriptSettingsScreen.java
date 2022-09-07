@@ -137,7 +137,13 @@ public class ScriptSettingsScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(owned ? new ScriptEditScreen(script) : new ScriptListScreen(true));
+        if (owned) {
+            DFScript.MC.setScreen(new ScriptEditScreen(script));
+        }
+        else {
+            ScriptManager.getInstance().saveScript(script);
+            DFScript.MC.setScreen(new ScriptListScreen(true));
+        }
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
