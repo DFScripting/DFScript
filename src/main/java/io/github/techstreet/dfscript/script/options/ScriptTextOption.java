@@ -1,5 +1,7 @@
 package io.github.techstreet.dfscript.script.options;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
@@ -11,6 +13,12 @@ import net.minecraft.item.Items;
 public class ScriptTextOption implements ScriptOption {
 
     String value = "";
+
+    public ScriptTextOption(String value) {
+        this.value = value;
+    }
+
+    public ScriptTextOption() {}
 
     @Override
     public ScriptArgument getValue() {
@@ -32,5 +40,15 @@ public class ScriptTextOption implements ScriptOption {
     @Override
     public Item getIcon() {
         return Items.BOOK;
+    }
+
+    @Override
+    public String getType() {
+        return "TEXT";
+    }
+
+    @Override
+    public JsonElement getJsonPrimitive() {
+        return new JsonPrimitive(value);
     }
 }

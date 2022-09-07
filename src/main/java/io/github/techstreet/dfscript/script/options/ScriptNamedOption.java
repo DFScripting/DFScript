@@ -1,10 +1,18 @@
 package io.github.techstreet.dfscript.script.options;
 
+import com.google.gson.*;
+import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
+import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScriptNamedOption {
     String name;
@@ -27,6 +35,8 @@ public class ScriptNamedOption {
         return option.getValue();
     }
 
+    public ScriptOption getOption() { return option; }
+
     public int create(CScrollPanel panel, int x, int y) {
         return option.create(panel, x, y, 105);
     }
@@ -37,5 +47,39 @@ public class ScriptNamedOption {
 
     public ItemStack getIcon() {
         return new ItemStack(option.getIcon()).setCustomName(Text.literal(getName()).fillStyle(Style.EMPTY.withItalic(false)));
+    }
+
+    public static class Serializer implements JsonSerializer<ScriptNamedOption>, JsonDeserializer<ScriptNamedOption> {
+        @Override
+        public ScriptNamedOption deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject object = json.getAsJsonObject();
+            String name = object.get("name").getAsString();
+            String type = object.get("type").getAsString();
+
+            ScriptOption option;
+
+            switch(type)
+            {
+                case "TEXT" -> option = new ScriptTextOption(object.get("value").getAsString());
+                default -> throw new JsonParseException("Unknown option type: " + type);
+            }
+
+            ScriptNamedOption namedOption = new ScriptNamedOption(option, name);
+
+            return namedOption;
+        }
+
+        @Override
+        public JsonElement serialize(ScriptNamedOption src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject object = new JsonObject();
+
+            object.addProperty("name", src.name);
+
+            object.addProperty("type", src.getOption().getType());
+
+            object.add("value", src.getOption().getJsonPrimitive());
+
+            return object;
+        }
     }
 }

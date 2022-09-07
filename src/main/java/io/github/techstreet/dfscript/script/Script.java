@@ -351,6 +351,11 @@ public class Script {
             Script script = new Script(name, owner, serverId, parts, disabled, version);
             script.setDescription(description);
 
+            for (JsonElement element : object.get("config").getAsJsonArray()) {
+                ScriptNamedOption option = context.deserialize(element, ScriptNamedOption.class);
+                script.addOption(script.getOptions().size(), option);
+            }
+
             script.updateScriptReferences();
 
             return script;
@@ -369,7 +374,13 @@ public class Script {
                 array.add(context.serialize(part));
             }
 
+            JsonArray config = new JsonArray();
+            for (ScriptNamedOption option : src.getOptions()) {
+                config.add(context.serialize(option));
+            }
+
             object.add("actions", array);
+            object.add("config", config);
             object.addProperty("disabled", src.disabled);
             object.addProperty("version", src.version);
             return object;
