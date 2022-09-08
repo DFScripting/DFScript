@@ -1759,7 +1759,7 @@ public enum ScriptActionType {
     })),
 
     REMOVE_TEXT(builder -> builder.name("Remove Text")
-            .description("Searches for part of a text and replaces it.")
+            .description("Searches for part of a text and removes it.")
             .icon(Items.WRITABLE_BOOK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text to change", ScriptActionArgumentType.TEXT)
