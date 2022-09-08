@@ -330,6 +330,14 @@ public class Script {
         }
     }
 
+    public void removeOption(String option) {
+        for(ScriptPart part : getParts()) {
+            if(part instanceof ScriptAction a) {
+                a.removeConfigArguments(option);
+            }
+        }
+    }
+
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
         @Override
         public Script deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

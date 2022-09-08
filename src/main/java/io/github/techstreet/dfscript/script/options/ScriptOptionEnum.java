@@ -14,7 +14,10 @@ import net.minecraft.util.Formatting;
 import java.util.function.BiConsumer;
 
 public enum ScriptOptionEnum {
-    TEXT("Text Option", "A single option, no checks.", Items.BOOK, ScriptTextOption.class);
+    TEXT("Text Option", "A single option, no checks.", Items.BOOK, ScriptTextOption.class),
+    INT("Integer Option", "A single option, must be an int.", Items.SLIME_BALL, ScriptIntOption.class),
+    FLOAT("Floating-Point Option", "A single option, must be an int or a float.", Items.SLIME_BLOCK, ScriptFloatOption.class),
+    KEY("Key Option", "A single option, must be an int or a float.", Items.STONE_BUTTON, ScriptKeyOption.class);
 
     String name;
     String description;

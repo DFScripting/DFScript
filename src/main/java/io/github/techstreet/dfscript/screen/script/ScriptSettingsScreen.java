@@ -93,6 +93,7 @@ public class ScriptSettingsScreen extends CScreen {
                                 DFScript.MC.setScreen(new ScriptAddSettingScreen(script, finalIndex + 1));
                             });
                             CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
+                                script.removeOption(script.getOptions().get(finalIndex).getName());
                                 script.getOptions().remove(finalIndex);
                                 scroll = panel.getScroll();
                                 DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));

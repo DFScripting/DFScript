@@ -14,9 +14,13 @@ import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ScriptAction implements ScriptPart {
@@ -70,6 +74,23 @@ public class ScriptAction implements ScriptPart {
                     carg.setOption(newOption);
                 }
             }
+        }
+    }
+
+    public void removeConfigArguments(String option) {
+        int index = 0;
+
+        List<ScriptArgument> argList = getArguments();
+
+        while(index < argList.size()) {
+            if (argList.get(index) instanceof ScriptConfigArgument carg) {
+                if(Objects.equals(carg.getName(), option))
+                {
+                    argList.remove(index);
+                    continue;
+                }
+            }
+            index++;
         }
     }
 

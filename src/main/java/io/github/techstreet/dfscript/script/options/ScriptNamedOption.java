@@ -7,6 +7,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -62,6 +63,9 @@ public class ScriptNamedOption {
             switch(type)
             {
                 case "TEXT" -> option = new ScriptTextOption(object.get("value").getAsString());
+                case "INT" -> option = new ScriptIntOption(object.get("value").getAsInt());
+                case "FLOAT" -> option = new ScriptFloatOption(object.get("value").getAsDouble());
+                case "KEY" -> option = new ScriptKeyOption(InputUtil.fromTranslationKey(object.get("value").getAsString()));
                 default -> throw new JsonParseException("Unknown option type: " + type);
             }
 
