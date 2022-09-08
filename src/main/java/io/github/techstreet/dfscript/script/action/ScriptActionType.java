@@ -1631,8 +1631,26 @@ public enum ScriptActionType {
             }
         })),
     
-    RANDOM_NUMBER(builder -> builder.name("Random Number")
-        .description("Generates a random number between two other numbers.")
+        RANDOM_INT(builder -> builder.name("Random Int")
+        .description("Generates a random whole number between two other numbers.")
+        .icon(Items.HOPPER)
+        .category(ScriptActionCategory.NUMBERS)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Min", ScriptActionArgumentType.NUMBER)
+        .arg("Max", ScriptActionArgumentType.NUMBER)
+        .action(ctx -> {
+            int min = (int) ctx.value("Min").asNumber();
+            int max = (int) ctx.value("Max").asNumber();
+            Random random = new Random();
+            int result = random.nextInt(max + 1 - min) + min;
+            ctx.context().setVariable(
+                ctx.variable("Result").name(),
+                new ScriptNumberValue(result)
+            );
+        })),
+
+    RANDOM_DOUBLE(builder -> builder.name("Random Double")
+        .description("Generates a random floating point number between two other numbers.")
         .icon(Items.HOPPER)
         .category(ScriptActionCategory.NUMBERS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -1647,9 +1665,27 @@ public enum ScriptActionType {
                 new ScriptNumberValue(result)
             );
         })),
+        
+    RANDOM_NUMBER(builder -> builder.name("Random Number")
+        .description("Generates a random number between two other numbers.")
+        .icon(Items.HOPPER)
+        .category(ScriptActionCategory.NUMBERS)
+        .deprecate(RANDOM_DOUBLE)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Min", ScriptActionArgumentType.NUMBER)
+        .arg("Max", ScriptActionArgumentType.NUMBER)
+        .action(ctx -> {
+            double min = ctx.value("Min").asNumber();
+            double max = ctx.value("Max").asNumber();
+            double result = Math.random() * (max - min) + min;
+            ctx.context().setVariable(
+                ctx.variable("Result").name(),
+                new ScriptNumberValue(result)
+            );
+        })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
-            .description(new String[]{"Repeats for eternity.", "Make sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!", "There's a lagslayer for the repetition actions.", "It activates after 100000 iterations with no Wait."})
+            .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
             .icon(Items.GOLD_INGOT)
             .category(ScriptActionCategory.MISC)
             .hasChildren(true)
@@ -1658,7 +1694,7 @@ public enum ScriptActionType {
                 ctx.scheduleInner(null, context -> context.setLastIfResult(true));
             })),
     ELSE(builder -> builder.name("Else")
-        .description(new String[]{"Executes if the last IF condition failed.","And ELSE also works as a valid IF condition for ELSE."})
+        .description("Executes if the last IF condition failed.\nAnd ELSE also works as a valid IF condition for ELSE.")
         .icon(Items.END_STONE)
         .category(ScriptActionCategory.MISC)
         .group(ScriptGroup.CONDITION)
@@ -1707,7 +1743,7 @@ public enum ScriptActionType {
     })),
 
     REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
-            .description(new String[]{"Searches for part of a text", "using a regex and replaces it."})
+            .description("Searches for part of a text\nusing a regex and replaces it.")
             .icon(Items.LEAD, true)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text to change", ScriptActionArgumentType.TEXT)
@@ -1894,17 +1930,10 @@ public enum ScriptActionType {
 
     private ScriptActionType description(String description) {
         this.description.clear();
-        this.description.add(description);
+        this.description.addAll(Arrays.asList(description.split("\n", -1)));
         return this;
     }
 
-    private ScriptActionType description(String[] description) {
-        this.description.clear();
-
-        this.description.addAll(Arrays.asList(description));
-
-        return this;
-    }
     private ScriptActionType group(ScriptGroup group) {
         this.group = group;
         return this;
