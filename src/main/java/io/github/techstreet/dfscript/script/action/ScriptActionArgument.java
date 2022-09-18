@@ -4,6 +4,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.text.LiteralText;
 
 public class ScriptActionArgument {
 
@@ -46,13 +47,16 @@ public class ScriptActionArgument {
     public Text text() {
         MutableText t = type.text();
         if (plural) {
-            t.append(Text.literal("(s)").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+            t.append(((LiteralText) Text.of("(s)")).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
         }
+
         if (optional) {
-            t.append(Text.literal("*").fillStyle(Style.EMPTY.withItalic(true)));
+            t.append(((LiteralText) Text.of("*")).fillStyle(Style.EMPTY.withItalic(true)));
         }
-        return t.append(Text.literal(" - ").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)))
-            .append(Text.literal(name).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+
+        return t.append(((LiteralText) Text.of(" - ")).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)))
+            .append(((LiteralText) Text.of(name)).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+
     }
 
     public enum ScriptActionArgumentType {
@@ -64,7 +68,7 @@ public class ScriptActionArgument {
         ANY;
 
         public MutableText text() {
-            MutableText val = Text.literal(switch (this) {
+            MutableText val = (MutableText) Text.of(switch (this) {
                 case VARIABLE -> "Variable";
                 case NUMBER -> "Number";
                 case TEXT -> "Text";
