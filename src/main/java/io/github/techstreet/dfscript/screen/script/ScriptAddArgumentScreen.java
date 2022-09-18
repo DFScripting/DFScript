@@ -44,7 +44,7 @@ public class ScriptAddArgumentScreen extends CScreen {
                 .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack configValueIcon = new ItemStack(Items.INK_SAC);
-        configValueIcon.setCustomName(Text.literal("Config Value")
+        configValueIcon.setCustomName(new LiteralText("Config Value")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
 
