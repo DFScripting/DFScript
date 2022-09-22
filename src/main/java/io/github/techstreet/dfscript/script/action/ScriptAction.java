@@ -9,13 +9,18 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ScriptAction implements ScriptPart {
@@ -51,6 +56,42 @@ public class ScriptAction implements ScriptPart {
     @Override
     public ScriptGroup getGroup() {
         return getType().getGroup();
+    }
+
+    public void updateScriptReferences(Script script) {
+        for(ScriptArgument arg : getArguments()) {
+            if (arg instanceof ScriptConfigArgument carg) {
+                carg.setScript(script);
+            }
+        }
+    }
+
+    public void updateConfigArguments(String oldOption, String newOption) {
+        for(ScriptArgument arg : getArguments()) {
+            if (arg instanceof ScriptConfigArgument carg) {
+                if(carg.getName() == oldOption)
+                {
+                    carg.setOption(newOption);
+                }
+            }
+        }
+    }
+
+    public void removeConfigArguments(String option) {
+        int index = 0;
+
+        List<ScriptArgument> argList = getArguments();
+
+        while(index < argList.size()) {
+            if (argList.get(index) instanceof ScriptConfigArgument carg) {
+                if(Objects.equals(carg.getName(), option))
+                {
+                    argList.remove(index);
+                    continue;
+                }
+            }
+            index++;
+        }
     }
 
     public static class Serializer implements JsonSerializer<ScriptAction> {

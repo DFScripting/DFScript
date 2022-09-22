@@ -46,6 +46,15 @@ public class ScriptEditScreen extends CScreen {
         int y = 0;
         int index = 0;
         int indent = 0;
+
+        CButton settings = new CButton(37, y, 46, 8, "Settings", () -> {
+            DFScript.MC.setScreen(new ScriptSettingsScreen(this.script, true));
+        });
+
+        panel.add(settings);
+
+        y += 10;
+
         for (ScriptPart part : script.getParts()) {
             if (part instanceof ScriptEvent se) {
                 panel.add(new CItem(5, y, se.getType().getIcon()));

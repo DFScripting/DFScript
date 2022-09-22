@@ -16,13 +16,10 @@ import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.screen.script.ScriptAddScreen;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptClientValueArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
+import io.github.techstreet.dfscript.script.argument.*;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.event.ScriptStartUpEvent;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
@@ -52,6 +49,8 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
         .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
         .registerTypeAdapter(ScriptClientValueArgument.class, new ScriptClientValueArgument.Serializer())
+        .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
+        .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
         .registerTypeAdapter(ScriptAction.class, new ScriptAction.Serializer())
         .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
         .create();

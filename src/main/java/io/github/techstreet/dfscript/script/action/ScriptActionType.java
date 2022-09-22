@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -1014,12 +1015,31 @@ public enum ScriptActionType {
             String separator = ctx.value("Separator").asText();
             List<ScriptValue> split = new ArrayList<>();
 
-            for (String s : text.split(separator)) {
+            for (String s : text.split(Pattern.quote(separator))) {
                 split.add(new ScriptTextValue(s));
             }
 
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
         })),
+
+    REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
+            .description("Splits a text into a list of texts\nusing a regex as a separator.")
+            .icon(Items.SHEARS, true)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .arg("Separator (Regex)", ScriptActionArgumentType.TEXT)
+            .action(ctx -> {
+                String text = ctx.value("Text").asText();
+                String separator = ctx.value("Separator (Regex)").asText();
+                List<ScriptValue> split = new ArrayList<>();
+
+                for (String s : text.split(separator)) {
+                    split.add(new ScriptTextValue(s));
+                }
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+            })),
 
     STOP(builder -> builder.name("Stop Codeline")
         .description("Stops the current codeline.")
@@ -1617,7 +1637,7 @@ public enum ScriptActionType {
             int min = (int) ctx.value("Min").asNumber();
             int max = (int) ctx.value("Max").asNumber();
             Random random = new Random();
-            int result = random.nextInt(max + 1 -  min) + min;
+            int result = random.nextInt(max + 1 - min) + min;
             ctx.context().setVariable(
                 ctx.variable("Result").name(),
                 new ScriptNumberValue(result)
@@ -1734,7 +1754,7 @@ public enum ScriptActionType {
     })),
 
     REMOVE_TEXT(builder -> builder.name("Remove Text")
-            .description("Searches for part of a text and replaces it.")
+            .description("Searches for part of a text and removes it.")
             .icon(Items.WRITABLE_BOOK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text to change", ScriptActionArgumentType.TEXT)
@@ -1906,7 +1926,6 @@ public enum ScriptActionType {
     private ScriptActionType description(String description) {
         this.description.clear();
         this.description.addAll(Arrays.asList(description.split("\n", -1)));
-        
         return this;
     }
 

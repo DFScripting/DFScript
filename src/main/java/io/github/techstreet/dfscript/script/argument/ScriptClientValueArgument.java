@@ -133,7 +133,6 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             throw new IllegalStateException("The event is not a menu click event.");
         }
     }),
-
     PLAYER_UUID("Player UUID", "The UUID of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
             (event, context) -> new ScriptTextValue(DFScript.PLAYER_UUID)),
 
