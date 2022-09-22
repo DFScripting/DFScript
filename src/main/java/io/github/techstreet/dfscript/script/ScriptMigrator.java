@@ -23,6 +23,13 @@ public class ScriptMigrator {
             script.setVersion(3);
         }
 
+        if (script.getVersion() == 3) {
+            script.replaceAction(ScriptActionType.SPLIT_TEXT, ScriptActionType.REGEX_SPLIT_TEXT);
+            script.replaceAction(ScriptActionType.RANDOM_NUMBER, ScriptActionType.RANDOM_DOUBLE);
+
+            script.setVersion(4);
+        }
+
         if (previousVer != script.getVersion()) {
             ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer + " to version " + script.getVersion() + "!");
             ScriptManager.getInstance().saveScript(script);
