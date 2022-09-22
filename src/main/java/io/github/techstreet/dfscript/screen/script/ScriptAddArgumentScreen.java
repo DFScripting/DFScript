@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.LiteralText;
 
 public class ScriptAddArgumentScreen extends CScreen {
 
@@ -28,20 +27,20 @@ public class ScriptAddArgumentScreen extends CScreen {
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
-        textIcon.setCustomName(((LiteralText) Text.of("Text"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
+        textIcon.setCustomName(Text.literal("Text")
+            .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
-        numberIcon.setCustomName(((LiteralText) Text.of("Number"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
+        numberIcon.setCustomName(Text.literal("Number")
+            .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack variableIcon = new ItemStack(Items.MAGMA_CREAM);
-        variableIcon.setCustomName(((LiteralText) Text.of("Variable"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
+        variableIcon.setCustomName(Text.literal("Variable")
+            .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack clientValueIcon = new ItemStack(Items.NAME_TAG);
-        clientValueIcon.setCustomName(((LiteralText) Text.of("Client Value"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
+        clientValueIcon.setCustomName(Text.literal("Client Value")
+            .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack configValueIcon = new ItemStack(Items.INK_SAC);
         configValueIcon.setCustomName(new LiteralText("Config Value")

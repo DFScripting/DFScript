@@ -7,7 +7,6 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -26,7 +25,7 @@ public class ScriptActionCategoryScreen extends CScreen {
         this.script = script;
 
         ItemStack eventsItem = new ItemStack(Items.DIAMOND);
-        eventsItem.setCustomName(((LiteralText) Text.of("Events")).fillStyle(Style.EMPTY.withItalic(false)));
+        eventsItem.setCustomName(Text.literal("Events").fillStyle(Style.EMPTY.withItalic(false)));
 
         int x = 3;
         int y = 3;

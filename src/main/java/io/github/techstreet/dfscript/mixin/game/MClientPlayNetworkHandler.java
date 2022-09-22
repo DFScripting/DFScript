@@ -34,13 +34,13 @@ public class MClientPlayNetworkHandler {
             return;
         }
 
-        ReceiveChatEvent event = new ReceiveChatEvent(packet.getMessage());
+        ReceiveChatEvent event = new ReceiveChatEvent(packet.content());
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();
         }
 
-        String packetString = packet.getMessage().getString();
+        String packetString = packet.content().getString();
 
         if (packetString.equals("» You are now in dev mode.")) {
             DevModeEvent modeEvent = new DevModeEvent();
