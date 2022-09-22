@@ -3,7 +3,10 @@ package io.github.techstreet.dfscript.util.chat;
 import io.github.techstreet.dfscript.DFScript;
 import java.awt.Color;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 
 public class ChatUtil {
 
@@ -22,7 +25,7 @@ public class ChatUtil {
     }
 
     public static void chat(String message) {
-        DFScript.MC.player.sendChatMessage(message);
+        DFScript.MC.player.sendChatMessage(message, Text.literal(message));
     }
 
     public static void executeCommand(String command) {
@@ -39,7 +42,7 @@ public class ChatUtil {
     }
 
     public static void sendMessage(String text) {
-        sendMessage(Text.of(text), null);
+        sendMessage(Text.literal(text), null);
     }
 
     public static void sendMessage(Text text) {
@@ -47,7 +50,7 @@ public class ChatUtil {
     }
 
     public static void sendMessage(String text, ChatType prefixType) {
-        sendMessage(Text.of(text), prefixType);
+        sendMessage(Text.literal(text), prefixType);
     }
 
     public static void sendMessage(Text text, ChatType prefixType) {
@@ -56,7 +59,7 @@ public class ChatUtil {
         if (prefixType != null) {
             prefix = prefixType.getString();
         }
-        DFScript.MC.player.sendMessage(((LiteralText) Text.of(prefix)).append(text), false);
+        DFScript.MC.player.sendMessage(Text.literal(prefix).append(text), false);
     }
 
     public static MutableText setColor(MutableText component, Color color) {
