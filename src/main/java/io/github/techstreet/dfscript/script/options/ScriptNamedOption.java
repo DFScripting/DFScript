@@ -9,7 +9,6 @@ import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -49,7 +48,7 @@ public class ScriptNamedOption {
     }
 
     public ItemStack getIcon() {
-        return new ItemStack(option.getIcon()).setCustomName(new LiteralText(getName()).fillStyle(Style.EMPTY.withItalic(false)));
+        return new ItemStack(option.getIcon()).setCustomName(Text.literal(getName()).fillStyle(Style.EMPTY.withItalic(false)));
     }
 
     public static class Serializer implements JsonSerializer<ScriptNamedOption>, JsonDeserializer<ScriptNamedOption> {
