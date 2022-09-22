@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.LiteralText;
 
 public class ScriptAddArgumentScreen extends CScreen {
 
@@ -28,31 +27,25 @@ public class ScriptAddArgumentScreen extends CScreen {
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
-        textIcon.setCustomName(((LiteralText) Text.of("Text"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
-
-        ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
-        numberIcon.setCustomName(((LiteralText) Text.of("Number"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
-
-        ItemStack variableIcon = new ItemStack(Items.MAGMA_CREAM);
-        variableIcon.setCustomName(((LiteralText) Text.of("Variable"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
-
-        ItemStack clientValueIcon = new ItemStack(Items.NAME_TAG);
-        clientValueIcon.setCustomName(((LiteralText) Text.of("Client Value"))
-                .fillStyle(Style.EMPTY.withItalic(false)));
-
-        ItemStack configValueIcon = new ItemStack(Items.INK_SAC);
-        configValueIcon.setCustomName(new LiteralText("Config Value")
+        textIcon.setCustomName(Text.literal("Text")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
+        ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
+        numberIcon.setCustomName(Text.literal("Number")
+            .fillStyle(Style.EMPTY.withItalic(false)));
+
+        ItemStack variableIcon = new ItemStack(Items.MAGMA_CREAM);
+        variableIcon.setCustomName(Text.literal("Variable")
+            .fillStyle(Style.EMPTY.withItalic(false)));
+
+        ItemStack clientValueIcon = new ItemStack(Items.NAME_TAG);
+        clientValueIcon.setCustomName(Text.literal("Client Value")
+            .fillStyle(Style.EMPTY.withItalic(false)));
 
         CItem addNumber = new CItem(2, 40, numberIcon);
         CItem addText = new CItem(12, 40, textIcon);
         CItem addVariable = new CItem(22, 40, variableIcon);
         CItem addClientValue = new CItem(32, 40, clientValueIcon);
-        CItem addConfigValue = new CItem(42, 40, configValueIcon);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
@@ -80,16 +73,11 @@ public class ScriptAddArgumentScreen extends CScreen {
             DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index));
         });
 
-        addConfigValue.setClickListener((btn) -> {
-            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index));
-        });
-
         widgets.add(input);
         widgets.add(addNumber);
         widgets.add(addText);
         widgets.add(addVariable);
         widgets.add(addClientValue);
-        widgets.add(addConfigValue);
     }
 
     @Override

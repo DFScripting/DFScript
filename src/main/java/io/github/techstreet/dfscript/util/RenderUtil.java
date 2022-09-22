@@ -173,7 +173,7 @@ public class RenderUtil {
     }
 
     public static void sendToaster(String title, String description, SystemToast.Type type) {
-        sendToaster((MutableText) Text.of(title), (MutableText) Text.of(description), type);
+        sendToaster(Text.literal(title), Text.literal(description), type);
     }
 
     public static void sendToaster(MutableText title, MutableText description, SystemToast.Type type) {

@@ -8,8 +8,11 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
-import io.github.techstreet.dfscript.script.argument.*;
-
+import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptClientValueArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,15 +54,12 @@ public class ScriptEditActionScreen extends CScreen {
             } else if (arg instanceof ScriptClientValueArgument cva) {
                 icon = new ItemStack(Items.NAME_TAG);
                 text = cva.getName();
-            } else if (arg instanceof ScriptConfigArgument ca) {
-                icon = new ItemStack(Items.INK_SAC);
-                text = ca.getOption().getFullName();
             } else {
                 throw new IllegalArgumentException("Invalid argument type");
             }
 
             widgets.add(new CItem(5, y, icon));
-            widgets.add(new CText(15, y + 2, Text.of(text)));
+            widgets.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
 

@@ -35,10 +35,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.enchantment.Enchantment;
@@ -53,7 +54,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -103,7 +103,7 @@ public enum ScriptActionType {
             }
 
             sb.deleteCharAt(sb.length() - 1);
-            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString());
+            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
         })),
 
     REPEAT_MULTIPLE(builder -> builder.name("RepeatMultiple")
@@ -960,7 +960,11 @@ public enum ScriptActionType {
                 }
 
                 if (ab instanceof LiteralArgumentBuilder lab) {
-                    ClientCommandManager.DISPATCHER.register(lab);
+                    if (ClientCommandManager.getActiveDispatcher() == null) {
+                        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(lab));
+                    } else {
+                        ClientCommandManager.getActiveDispatcher().register(lab);
+                    }
                 }
 
                 ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
@@ -1015,31 +1019,12 @@ public enum ScriptActionType {
             String separator = ctx.value("Separator").asText();
             List<ScriptValue> split = new ArrayList<>();
 
-            for (String s : text.split(Pattern.quote(separator))) {
+            for (String s : text.split(separator)) {
                 split.add(new ScriptTextValue(s));
             }
 
             ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
         })),
-
-    REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
-            .description("Splits a text into a list of texts\nusing a regex as a separator.")
-            .icon(Items.SHEARS, true)
-            .category(ScriptActionCategory.TEXTS)
-            .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text", ScriptActionArgumentType.TEXT)
-            .arg("Separator (Regex)", ScriptActionArgumentType.TEXT)
-            .action(ctx -> {
-                String text = ctx.value("Text").asText();
-                String separator = ctx.value("Separator (Regex)").asText();
-                List<ScriptValue> split = new ArrayList<>();
-
-                for (String s : text.split(separator)) {
-                    split.add(new ScriptTextValue(s));
-                }
-
-                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
-            })),
 
     STOP(builder -> builder.name("Stop Codeline")
         .description("Stops the current codeline.")
@@ -1660,24 +1645,24 @@ public enum ScriptActionType {
                 new ScriptNumberValue(result)
             );
         })),
-
+        
     RANDOM_NUMBER(builder -> builder.name("Random Number")
-    .description("Generates a random number between two other numbers.")
-    .icon(Items.HOPPER)
-    .category(ScriptActionCategory.NUMBERS)
-    .deprecate(RANDOM_DOUBLE)
-    .arg("Result", ScriptActionArgumentType.VARIABLE)
-    .arg("Min", ScriptActionArgumentType.NUMBER)
-    .arg("Max", ScriptActionArgumentType.NUMBER)
-    .action(ctx -> {
-        double min = ctx.value("Min").asNumber();
-        double max = ctx.value("Max").asNumber();
-        double result = Math.random() * (max - min) + min;
-        ctx.context().setVariable(
-            ctx.variable("Result").name(),
-            new ScriptNumberValue(result)
-        );
-    })),
+        .description("Generates a random number between two other numbers.")
+        .icon(Items.HOPPER)
+        .category(ScriptActionCategory.NUMBERS)
+        .deprecate(RANDOM_DOUBLE)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Min", ScriptActionArgumentType.NUMBER)
+        .arg("Max", ScriptActionArgumentType.NUMBER)
+        .action(ctx -> {
+            double min = ctx.value("Min").asNumber();
+            double max = ctx.value("Max").asNumber();
+            double result = Math.random() * (max - min) + min;
+            ctx.context().setVariable(
+                ctx.variable("Result").name(),
+                new ScriptNumberValue(result)
+            );
+        })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
             .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
@@ -1754,7 +1739,7 @@ public enum ScriptActionType {
     })),
 
     REMOVE_TEXT(builder -> builder.name("Remove Text")
-            .description("Searches for part of a text and removes it.")
+            .description("Searches for part of a text and replaces it.")
             .icon(Items.WRITABLE_BOOK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Text to change", ScriptActionArgumentType.TEXT)
@@ -1833,8 +1818,8 @@ public enum ScriptActionType {
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
 
-        item.setCustomName(((LiteralText) Text.of(name))
-                .fillStyle(Style.EMPTY
+        item.setCustomName(Text.literal(name)
+            .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
 
@@ -1842,24 +1827,24 @@ public enum ScriptActionType {
 
         if(isDeprecated())
         {
-            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("This action is deprecated!"))
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("This action is deprecated!")
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
                             .withItalic(false)))));
-            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of("Use '" + deprecated.getName() + "'"))
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("Use '" + deprecated.getName() + "'")
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
                             .withItalic(false)))));
         }
 
         for (String descriptionLine: description) {
-            lore.add(NbtString.of(Text.Serializer.toJson(((LiteralText) Text.of(descriptionLine))
-                    .fillStyle(Style.EMPTY
+            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
+                .fillStyle(Style.EMPTY
                       .withColor(Formatting.GRAY)
                       .withItalic(false)))));
         }
 
-        lore.add(NbtString.of(Text.Serializer.toJson(Text.of(""))));
+        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
             lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));

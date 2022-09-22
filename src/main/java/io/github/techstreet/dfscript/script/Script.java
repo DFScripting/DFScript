@@ -12,29 +12,23 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptUnknownArgument;
-import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 4;
+    public static int scriptVersion = 3;
 
     private String name;
     private String owner;
@@ -42,10 +36,8 @@ public class Script {
     private int version = 0;
     private String server;
     private final List<ScriptPart> parts;
-
-    private final List<ScriptNamedOption> options;
     private final Logger LOGGER;
-    private final ScriptContext context = new ScriptContext(this);
+    private final ScriptContext context = new ScriptContext();
     private File file;
     private boolean disabled;
 
@@ -56,7 +48,6 @@ public class Script {
         this.parts = parts;
         this.disabled = disabled;
         this.version = version;
-        this.options = new ArrayList<>();
 
         LOGGER = LogManager.getLogger("Script." + name);
     }
@@ -267,77 +258,6 @@ public class Script {
         }
     }
 
-    public List<ScriptNamedOption> getOptions() {
-        return options;
-    }
-
-    public void addOption(int pos, ScriptNamedOption option) {
-        options.add(pos, option);
-    }
-
-    public boolean optionExists(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return true;
-        }
-
-        return false;
-    }
-
-    public ScriptArgument getOption(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return o.getValue();
-        }
-
-        return new ScriptUnknownArgument();
-    }
-
-    public String getUnnamedOption() {
-        for(int i = 1; ; i++) {
-
-            String name = "Option";
-
-            if(i != 1) {
-                name = name + " " + i;
-            }
-
-            if(!optionExists(name)) {
-                return name;
-            }
-        }
-    }
-
-    public ScriptNamedOption getNamedOption(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return o;
-        }
-
-        return null;
-    }
-
-    private void updateScriptReferences() {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.updateScriptReferences(this);
-            }
-        }
-    }
-
-    public void replaceOption(String oldOption, String newOption) {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.updateConfigArguments(oldOption, newOption);
-            }
-        }
-    }
-
-    public void removeOption(String option) {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.removeConfigArguments(option);
-            }
-        }
-    }
-
     public static class Serializer implements JsonSerializer<Script>, JsonDeserializer<Script> {
         @Override
         public Script deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -367,13 +287,6 @@ public class Script {
             Script script = new Script(name, owner, serverId, parts, disabled, version);
             script.setDescription(description);
 
-            if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
-                ScriptNamedOption option = context.deserialize(element, ScriptNamedOption.class);
-                script.addOption(script.getOptions().size(), option);
-            }
-
-            script.updateScriptReferences();
-
             return script;
         }
 
@@ -390,13 +303,7 @@ public class Script {
                 array.add(context.serialize(part));
             }
 
-            JsonArray config = new JsonArray();
-            for (ScriptNamedOption option : src.getOptions()) {
-                config.add(context.serialize(option));
-            }
-
             object.add("actions", array);
-            object.add("config", config);
             object.addProperty("disabled", src.disabled);
             object.addProperty("version", src.version);
             return object;
