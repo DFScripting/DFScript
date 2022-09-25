@@ -25,4 +25,8 @@ public interface CWidget {
     }
 
     Rectangle getBounds();
+
+    default boolean enableClosingOnEsc(){
+        return true;
+    }
 }

@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.InputUtil;
@@ -16,6 +17,8 @@ public class CKeyField implements CWidget {
 
     boolean selected;
     boolean editable;
+
+    boolean blockEsc = false;
     public int textColor = 0xFFFFFFFF;
     InputUtil.Key key;
     Runnable changedListener;
@@ -38,7 +41,14 @@ public class CKeyField implements CWidget {
         stack.push();
         stack.translate(x, y, 0);
 
-        DrawableHelper.fill(stack, 0, 0, width, height, 0xFF888888);
+        int outlineColor = 0xFF888888;
+
+        if(editable && selected)
+        {
+            outlineColor = 0xFFFFFF00;
+        }
+
+        DrawableHelper.fill(stack, 0, 0, width, height, outlineColor);
         DrawableHelper.fill(stack, 1, 1, width - 1, height - 1, 0xFF000000);
 
         Vector4f begin = new Vector4f(0, 0, 1, 1);
@@ -61,11 +71,15 @@ public class CKeyField implements CWidget {
 
         stack.push();
 
-        String line = null;
+        String line;
         int color = textColor;
 
         if(key != null) {
             line = key.getLocalizedText().getString();
+        }
+        else
+        {
+            line = "None";
         }
 
         if(editable && selected) {
@@ -89,23 +103,26 @@ public class CKeyField implements CWidget {
             if (button == 0) {
                 if (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
                     this.selected = true;
+                    blockEsc = true;
                 }
                 else {
                     this.selected = false;
+                    blockEsc = false;
                 }
             }
         }
         else {
             this.selected = false;
+            blockEsc = false;
         }
         return false;
     }
 
     @Override
-    public void keyPressed(int keyCode, int scanCode, int modifiers) { // wth github is having a seizure and is forcing me to make this comment what
+    public void keyPressed(int keyCode, int scanCode, int modifiers) {
         if(editable && selected) {
             if(keyCode != -1) {
-                if(keyCode == 10) {
+                if(keyCode == 256) {
                     key = null;
                 }
                 else
@@ -117,6 +134,10 @@ public class CKeyField implements CWidget {
             }
 
             selected = false;
+            blockEsc = true;
+        }
+        else {
+            blockEsc = false;
         }
     }
 
@@ -136,5 +157,9 @@ public class CKeyField implements CWidget {
     public void setKey(InputUtil.Key k) {
         key = k;
     }
-}
 
+    @Override
+    public boolean enableClosingOnEsc() {
+        return !blockEsc;
+    }
+}

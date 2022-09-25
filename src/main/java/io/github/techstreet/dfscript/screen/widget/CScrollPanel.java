@@ -157,4 +157,16 @@ public class CScrollPanel implements CWidget {
     public void remove(CWidget w) {
         children.remove(w);
     }
+
+    @Override
+    public boolean enableClosingOnEsc() {
+        for(CWidget widget : children) {
+            if(!widget.enableClosingOnEsc())
+            {
+                return false;
+            }
+        }
+
+        return CWidget.super.enableClosingOnEsc();
+    }
 }

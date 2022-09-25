@@ -114,4 +114,15 @@ public class CScreen extends Screen {
         mouseY += height/2f;
         return mouseY;
     }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        for(CWidget widget : widgets) {
+            if(!widget.enableClosingOnEsc()) {
+                return false;
+            }
+        }
+
+        return super.shouldCloseOnEsc();
+    }
 }
