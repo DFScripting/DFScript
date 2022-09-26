@@ -43,6 +43,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
@@ -1107,40 +1108,35 @@ public enum ScriptActionType {
                 pitch = ctx.value("Pitch").asNumber();
             }
 
-            SoundEvent snd = null;
+            Identifier sndid = null;
+            SoundManager sndManager = io.github.techstreet.dfscript.DFScript.MC.getSoundManager();
 
             try {
-                snd = Registry.SOUND_EVENT.get(new Identifier(sound));
-            } catch (Exception err) {
+                sndid = new Identifier(sound);
+            }
+            catch(Exception err) {
                 err.printStackTrace();
+                ChatUtil.error("Incorrect identifier: " + sound);
+                return;
             }
 
-            String jname = sound.toUpperCase().replaceAll("\\.", "_").replaceAll(" ", "_").toUpperCase();
-            if (snd == null) {
-                try {
-                    Class<SoundEvents> clazz = SoundEvents.class;
-                    Field field = clazz.getField(jname);
-                    snd = (SoundEvent) field.get(null);
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
-            }
-
-            if (snd != null) {
-                io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.master(snd, (float) volume, (float) pitch));
+            if (sndManager.getKeys().contains(sndid)) {
+                SoundEvent snd = new SoundEvent(sndid);
+                sndManager.play(PositionedSoundInstance.master(snd, (float) volume, (float) pitch));
             } else {
                 ChatUtil.error("Unknown sound: " + sound);
 
                 try {
-                    Class<SoundEvents> clazz = SoundEvents.class;
+                    String jname = StringUtil.fromSoundIDToRegistryID(sound);
 
                     List<String> similiar = new ArrayList<>();
 
                     int counter = 0;
-                    for (Field field : clazz.getFields()) {
-                        String name = field.getName();
+                    for (Identifier id : sndManager.getKeys()) {
+                        String sid = id.toString();
+                        String name = StringUtil.fromSoundIDToRegistryID(sid);
                         if (name.contains(jname)) {
-                            similiar.add(StringUtil.toTitleCase(name.replaceAll("_", " ")));
+                            similiar.add(sid);
                             counter++;
                             if (counter > 5) {
                                 break;
@@ -1149,7 +1145,7 @@ public enum ScriptActionType {
                     }
 
                     if (similiar.size() > 0) {
-                        ChatUtil.error("Did you mean: " + String.join(", ", similiar));
+                        ChatUtil.error("Did you mean: \n" + String.join(", \n", similiar));
                     }
                 } catch (Exception err) {
                     err.printStackTrace();
