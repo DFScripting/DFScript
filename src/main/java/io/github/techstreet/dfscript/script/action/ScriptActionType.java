@@ -394,6 +394,46 @@ public enum ScriptActionType {
             }
         })),
 
+    IF_WITHIN_RANGE(builder -> builder.name("If Number Within Range")
+            .description("Checks if a number is between\n2 different numbers (inclusive).")
+            .icon(Items.CHEST)
+            .category(ScriptActionCategory.NUMBERS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Minimum", ScriptActionArgumentType.NUMBER)
+            .arg("Maximum", ScriptActionArgumentType.NUMBER)
+            .hasChildren(true)
+            .group(ScriptGroup.CONDITION)
+            .action(ctx -> {
+                double value = ctx.value("Value").asNumber();
+
+                if (value >= ctx.value("Minimum").asNumber()) {
+                    if (value <= ctx.value("Maximum").asNumber()) {
+                        ctx.setLastIfResult(true);
+                    }
+                }
+            })),
+
+    IF_NOT_WITHIN_RANGE(builder -> builder.name("If Number Not Within Range")
+            .description("Checks if a number isn't between\n2 different numbers (inclusive).")
+            .icon(Items.TRAPPED_CHEST)
+            .category(ScriptActionCategory.NUMBERS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Minimum", ScriptActionArgumentType.NUMBER)
+            .arg("Maximum", ScriptActionArgumentType.NUMBER)
+            .hasChildren(true)
+            .group(ScriptGroup.CONDITION)
+            .action(ctx -> {
+                double value = ctx.value("Value").asNumber();
+
+                if (value >= ctx.value("Minimum").asNumber()) {
+                    if (value <= ctx.value("Maximum").asNumber()) {
+                        return;
+                    }
+                }
+
+                ctx.setLastIfResult(true);
+            })),
+
     CANCEL_EVENT(builder -> builder.name("Cancel Event")
         .description("Cancels the event.")
         .icon(Items.BARRIER)
