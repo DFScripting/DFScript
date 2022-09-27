@@ -1,13 +1,6 @@
 package io.github.techstreet.dfscript.script.event;
 
-import io.github.techstreet.dfscript.event.BuildModeEvent;
-import io.github.techstreet.dfscript.event.DevModeEvent;
-import io.github.techstreet.dfscript.event.HudRenderEvent;
-import io.github.techstreet.dfscript.event.KeyPressEvent;
-import io.github.techstreet.dfscript.event.PlayModeEvent;
-import io.github.techstreet.dfscript.event.ReceiveChatEvent;
-import io.github.techstreet.dfscript.event.SendChatEvent;
-import io.github.techstreet.dfscript.event.TickEvent;
+import io.github.techstreet.dfscript.event.*;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.menu.ScriptMenuClickButtonEvent;
 import net.minecraft.item.Item;
@@ -39,7 +32,9 @@ public enum ScriptEventType {
 
     OVERLAY_EVENT(HudRenderEvent.class, "OnOverlay", "Executed when the overlay is being rendered.", Items.GREEN_STAINED_GLASS_PANE),
 
-    MENU_BUTTON_EVENT(ScriptMenuClickButtonEvent.class, "OnMenuButtonClick", "Executed when a player clicks a button inside a custom menu.", Items.CHISELED_STONE_BRICKS);
+    MENU_BUTTON_EVENT(ScriptMenuClickButtonEvent.class, "OnMenuButtonClick", "Executed when a player clicks a button inside a custom menu.", Items.CHISELED_STONE_BRICKS),
+
+    RECEIVE_SOUND(RecieveSoundEvent.class, "OnReceiveSound", "Executed when a player receives a sound", Items.NAUTILUS_SHELL);
 
     private final String name;
     private final ItemStack icon;

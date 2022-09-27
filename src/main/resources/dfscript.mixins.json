@@ -10,7 +10,8 @@
     "player.MLocalPlayer",
     "render.MInGameHUD",
     "render.MMultiplayerScreen",
-    "render.MOptionsScreen"
+    "render.MOptionsScreen",
+    "sound.MSoundSystem"
   ],
   "client": [
   ],

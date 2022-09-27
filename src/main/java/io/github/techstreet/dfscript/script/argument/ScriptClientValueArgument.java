@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.KeyPressEvent;
 import io.github.techstreet.dfscript.event.ReceiveChatEvent;
+import io.github.techstreet.dfscript.event.RecieveSoundEvent;
 import io.github.techstreet.dfscript.event.SendChatEvent;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
@@ -137,7 +138,31 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (event, context) -> new ScriptTextValue(DFScript.PLAYER_UUID)),
 
     PLAYER_NAME("Player Name", "The name of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
-            (event, context) -> new ScriptTextValue(DFScript.PLAYER_NAME));
+            (event, context) -> new ScriptTextValue(DFScript.PLAYER_NAME)),
+
+    EVENT_SOUND("ReceivedSound", "The ID of the sound. (OnReceiveSound)", Items.NAUTILUS_SHELL, ScriptActionArgumentType.TEXT, (event, context) -> {
+        if(event instanceof RecieveSoundEvent e) {
+            return new ScriptTextValue(e.getSoundId().toString().replaceAll("^minecraft:", ""));
+        } else {
+            throw new IllegalStateException("The event is not a receive sound event.");
+        }
+    }),
+
+    EVENT_VOLUME("ReceivedSoundVolume", "The volume of the sound received. (OnReceiveSound)", Items.NOTE_BLOCK, ScriptActionArgumentType.NUMBER, (event, context) -> {
+        if(event instanceof RecieveSoundEvent e) {
+            return new ScriptNumberValue(e.getVolume());
+        } else {
+            throw new IllegalStateException("The event is not a receive sound event.");
+        }
+    }),
+
+    EVENT_PITCH("ReceivedSoundPitch", "The pitch of the sound received. (OnReceiveSound)", Items.JUKEBOX, ScriptActionArgumentType.NUMBER, (event, context) -> {
+        if(event instanceof RecieveSoundEvent e) {
+            return new ScriptNumberValue(e.getPitch());
+        } else {
+            throw new IllegalStateException("The event is not a receive sound event.");
+        }
+    });
 
     private final String name;
     private final ItemStack icon;

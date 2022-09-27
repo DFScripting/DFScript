@@ -1193,6 +1193,12 @@ public enum ScriptActionType {
             }
         })),
 
+    STOP_ALL_SOUNDS(builder -> builder.name("Stop All Sounds")
+            .description("Stops all sounds.")
+            .icon(Items.COAL)
+            .category(ScriptActionCategory.VISUALS)
+            .action(ctx -> DFScript.MC.getSoundManager().stopAll())),
+
     DISPLAY_TITLE(builder -> builder.name("Display Title")
         .description("Displays a title.")
         .icon(Items.WARPED_SIGN)
