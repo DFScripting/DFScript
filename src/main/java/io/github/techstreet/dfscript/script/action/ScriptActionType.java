@@ -519,6 +519,26 @@ public enum ScriptActionType {
             }
         })),
 
+    GET_VALUE_INDEX(builder -> builder.name("Get List Index of Value")
+            .description("Searches for a value in a list variable and gets the index if found.")
+            .icon(Items.FLINT)
+            .category(ScriptActionCategory.LISTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("List", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .action(ctx -> {
+                List<ScriptValue> list = ctx.value("List").asList();
+                ScriptValue value = ctx.value("Value");
+                int index = 0;
+                for(int i = 0; i < list.size(); i++) {
+                    if (list.get(i).valueEquals(value)) {
+                        index = i + 1;
+                        break;
+                    }
+                }
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(index));
+            })),
+
     SET_LIST_VALUE(builder -> builder.name("Set List Value")
         .description("Sets a value in a list.")
         .icon(Items.WRITABLE_BOOK)

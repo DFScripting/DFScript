@@ -66,6 +66,7 @@ public class ScriptNamedOption {
                 case "INT" -> option = new ScriptIntOption(object.get("value").getAsInt());
                 case "FLOAT" -> option = new ScriptFloatOption(object.get("value").getAsDouble());
                 case "KEY" -> option = new ScriptKeyOption(InputUtil.fromTranslationKey(object.get("value").getAsString()));
+                case "BOOL" -> option = new ScriptBoolOption(object.get("value").getAsBoolean());
                 default -> throw new JsonParseException("Unknown option type: " + type);
             }
 
