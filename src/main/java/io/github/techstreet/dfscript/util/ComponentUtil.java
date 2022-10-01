@@ -11,7 +11,7 @@ import net.minecraft.util.Formatting;
 public class ComponentUtil {
 
     public static MutableText fromString(String message) {
-        MutableText result = (MutableText) Text.of("");
+        MutableText result = Text.literal("");
 
         try {
             Regex pattern = Regex.of("(§[a-f0-9lonmkrA-FLONMRK]|§x(§[a-f0-9A-F]){6})");
@@ -24,7 +24,7 @@ public class ComponentUtil {
                 int start = matcher.start();
                 String text = message.substring(lastIndex, start);
                 if (text.length() != 0) {
-                    MutableText t = (MutableText) Text.of(text);
+                    MutableText t = Text.literal(text);
                     t.setStyle(s);
                     result.append(t);
                 }
@@ -40,13 +40,13 @@ public class ComponentUtil {
             }
             String text = message.substring(lastIndex);
             if (text.length() != 0) {
-                MutableText t = (MutableText) Text.of(text);
+                MutableText t = Text.literal(text);
                 t.setStyle(s);
                 result.append(t);
             }
         } catch (Exception err) {
             err.printStackTrace();
-            return (MutableText) Text.of("DFScript Text Error");
+            return Text.literal("DFScript Text Error");
         }
 
         return result;

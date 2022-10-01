@@ -110,4 +110,15 @@ public class CPlainPanel implements CWidget {
         return children.toArray(new CWidget[0]);
     }
 
+    @Override
+    public boolean enableClosingOnEsc() {
+        for(CWidget widget : children) {
+            if(!widget.enableClosingOnEsc())
+            {
+                return false;
+            }
+        }
+
+        return CWidget.super.enableClosingOnEsc();
+    }
 }

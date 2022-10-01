@@ -17,7 +17,7 @@ public class CScreen extends Screen {
     public final List<CWidget> widgets = new ArrayList<>();
 
     protected CScreen(int width, int height) {
-        super(Text.of("DFScript Screen"));
+        super(Text.literal("DFScript Screen"));
         this.width = width;
         this.height = height;
         DFScript.MC.keyboard.setRepeatEvents(true);
@@ -113,5 +113,16 @@ public class CScreen extends Screen {
         mouseY /= s;
         mouseY += height/2f;
         return mouseY;
+    }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        for(CWidget widget : widgets) {
+            if(!widget.enableClosingOnEsc()) {
+                return false;
+            }
+        }
+
+        return super.shouldCloseOnEsc();
     }
 }

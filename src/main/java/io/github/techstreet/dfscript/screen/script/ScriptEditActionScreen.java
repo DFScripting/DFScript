@@ -59,7 +59,7 @@ public class ScriptEditActionScreen extends CScreen {
             }
 
             widgets.add(new CItem(5, y, icon));
-            widgets.add(new CText(15, y + 2, Text.of(text)));
+            widgets.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
 

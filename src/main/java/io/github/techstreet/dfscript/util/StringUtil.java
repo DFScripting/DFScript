@@ -21,7 +21,7 @@ public class StringUtil {
 
     public static Text of(String... literalTexts) {
         int length = literalTexts.length;
-        MutableText text = (MutableText) Text.of(literalTexts[0]);
+        MutableText text = Text.literal(literalTexts[0]);
 
         if (length == 1) {
             return text;
@@ -148,5 +148,10 @@ public class StringUtil {
                 .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase())
                 .collect(Collectors.joining(" "));
 
+    }
+
+    // converts 'minecraft:entity.axolotl.attack' to 'ENTITY_AXOLOTL_ATTACK'
+    public static String fromSoundIDToRegistryID(String soundID) {
+        return soundID.toUpperCase().replaceAll("^minecraft:", "").replaceAll("\\.", "_").replaceAll(" ", "_");
     }
 }

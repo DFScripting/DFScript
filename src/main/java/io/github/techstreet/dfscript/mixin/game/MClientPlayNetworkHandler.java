@@ -15,11 +15,7 @@ import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
 import java.net.InetSocketAddress;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
+import net.minecraft.network.packet.s2c.play.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,13 +30,13 @@ public class MClientPlayNetworkHandler {
             return;
         }
 
-        ReceiveChatEvent event = new ReceiveChatEvent(packet.getMessage());
+        ReceiveChatEvent event = new ReceiveChatEvent(packet.content());
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();
         }
 
-        String packetString = packet.getMessage().getString();
+        String packetString = packet.content().getString();
 
         if (packetString.equals("» You are now in dev mode.")) {
             DevModeEvent modeEvent = new DevModeEvent();
@@ -94,7 +90,7 @@ public class MClientPlayNetworkHandler {
         EventManager.getInstance().dispatch(event);
     }
 
-    @Inject(method = "onPlaySound", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "onPlaySound", at = @At("HEAD"), cancellable = true)
     private void onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
         RecieveSoundEvent event = new RecieveSoundEvent(packet);
         EventManager.getInstance().dispatch(event);
@@ -103,4 +99,24 @@ public class MClientPlayNetworkHandler {
             ci.cancel();
         }
     }
+
+    @Inject(method = "onPlaySoundFromEntity", at = @At("HEAD"), cancellable = true)
+    private void onPlaySoundFromEntity(PlaySoundFromEntityS2CPacket packet, CallbackInfo ci) {
+        RecieveSoundEvent event = new RecieveSoundEvent(packet);
+        EventManager.getInstance().dispatch(event);
+
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "onPlaySoundId", at = @At("HEAD"), cancellable = true)
+    private void onPlaySoundId(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
+        RecieveSoundEvent event = new RecieveSoundEvent(packet);
+        EventManager.getInstance().dispatch(event);
+
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
+    }*/
 }
