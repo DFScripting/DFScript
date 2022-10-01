@@ -17,7 +17,7 @@ public class CScreen extends Screen {
     public final List<CWidget> widgets = new ArrayList<>();
 
     protected CScreen(int width, int height) {
-        super(Text.literal("DFScript Screen"));
+        super(Text.of("DFScript Screen"));
         this.width = width;
         this.height = height;
         DFScript.MC.keyboard.setRepeatEvents(true);

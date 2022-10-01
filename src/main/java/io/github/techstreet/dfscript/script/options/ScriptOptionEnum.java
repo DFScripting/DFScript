@@ -7,6 +7,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -36,11 +37,11 @@ public enum ScriptOptionEnum {
     {
         ItemStack item = new ItemStack(icon);
 
-        item.setCustomName(Text.literal(name).fillStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+        item.setCustomName(new LiteralText(name).fillStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
 
         NbtList lore = new NbtList();
 
-        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
+        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(description)
                 .fillStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(false))
         )));
 
