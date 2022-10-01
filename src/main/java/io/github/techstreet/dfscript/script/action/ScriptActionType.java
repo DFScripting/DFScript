@@ -1127,7 +1127,7 @@ public enum ScriptActionType {
             }
 
             if (snd != null) {
-                io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.master(snd, (float) volume, (float) pitch));
+                io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
                 ChatUtil.error("Unknown sound: " + sound);
 
