@@ -24,24 +24,6 @@ public class MLocalPlayer {
         }
     }
 
-    @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
-    private void command(String command, CallbackInfoReturnable<Boolean> ci) {
-        SendChatEvent event = new SendChatEvent(command);
-        EventManager.getInstance().dispatch(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "sendCommandInternal", at = @At("HEAD"), cancellable = true)
-    private void commandInterval(String command, @Nullable Text preview, CallbackInfo ci) {
-        SendChatEvent event = new SendChatEvent(command);
-        EventManager.getInstance().dispatch(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
-    }
-
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {
         EventManager.getInstance().dispatch(new TickEvent());
