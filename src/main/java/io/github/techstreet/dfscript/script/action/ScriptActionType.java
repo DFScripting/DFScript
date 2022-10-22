@@ -1182,7 +1182,7 @@ public enum ScriptActionType {
 
             if (sndManager.getKeys().contains(sndid)) {
                 SoundEvent snd = new SoundEvent(sndid);
-                sndManager.play(PositionedSoundInstance.master(snd, (float) volume, (float) pitch));
+                sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
                 ChatUtil.error("Unknown sound: " + sound);
 
