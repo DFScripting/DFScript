@@ -11,21 +11,24 @@ import net.minecraft.util.Identifier;
 public class RecieveSoundEvent implements CancellableEvent {
     private boolean cancelled = false;
 
-    private final SoundInstance sound;
+    private final Identifier soundId;
+    private final float volume, pitch;
 
-    public RecieveSoundEvent(SoundInstance sound) {
-        this.sound = sound;
+    public RecieveSoundEvent(Identifier soundId, float volume, float pitch) {
+        this.soundId = soundId;
+        this.volume = volume;
+        this.pitch = pitch;
     }
 
     public Identifier getSoundId() {
-        return sound.getId();
+        return soundId;
     }
     public float getVolume() {
-        return sound.getVolume();
+        return volume;
     }
 
     public float getPitch() {
-        return sound.getPitch();
+        return pitch;
     }
 
     @Override
