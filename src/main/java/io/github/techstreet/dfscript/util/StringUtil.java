@@ -149,4 +149,9 @@ public class StringUtil {
                 .collect(Collectors.joining(" "));
 
     }
+
+    // converts 'minecraft:entity.axolotl.attack' to 'ENTITY_AXOLOTL_ATTACK'
+    public static String fromSoundIDToRegistryID(String soundID) {
+        return soundID.toUpperCase().replaceAll("^minecraft:", "").replaceAll("\\.", "_").replaceAll(" ", "_");
+    }
 }

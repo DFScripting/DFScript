@@ -3,14 +3,7 @@ package io.github.techstreet.dfscript.script;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.event.BuildModeEvent;
-import io.github.techstreet.dfscript.event.DevModeEvent;
-import io.github.techstreet.dfscript.event.HudRenderEvent;
-import io.github.techstreet.dfscript.event.KeyPressEvent;
-import io.github.techstreet.dfscript.event.PlayModeEvent;
-import io.github.techstreet.dfscript.event.ReceiveChatEvent;
-import io.github.techstreet.dfscript.event.SendChatEvent;
-import io.github.techstreet.dfscript.event.TickEvent;
+import io.github.techstreet.dfscript.event.*;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
@@ -202,6 +195,7 @@ public class ScriptManager implements Loadable {
         manager.register(BuildModeEvent.class, this::handleEvent);
         manager.register(DevModeEvent.class, this::handleEvent);
         manager.register(HudRenderEvent.class, this::handleEvent);
+        manager.register(RecieveSoundEvent.class, this::handleEvent);
     }
 
     public void handleEvent(Event event) {

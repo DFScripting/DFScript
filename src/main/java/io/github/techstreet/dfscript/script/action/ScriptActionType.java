@@ -43,6 +43,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
@@ -393,6 +394,46 @@ public enum ScriptActionType {
             }
         })),
 
+    IF_WITHIN_RANGE(builder -> builder.name("If Number Within Range")
+            .description("Checks if a number is between\n2 different numbers (inclusive).")
+            .icon(Items.CHEST)
+            .category(ScriptActionCategory.NUMBERS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Minimum", ScriptActionArgumentType.NUMBER)
+            .arg("Maximum", ScriptActionArgumentType.NUMBER)
+            .hasChildren(true)
+            .group(ScriptGroup.CONDITION)
+            .action(ctx -> {
+                double value = ctx.value("Value").asNumber();
+
+                if (value >= ctx.value("Minimum").asNumber()) {
+                    if (value <= ctx.value("Maximum").asNumber()) {
+                        ctx.setLastIfResult(true);
+                    }
+                }
+            })),
+
+    IF_NOT_WITHIN_RANGE(builder -> builder.name("If Number Not Within Range")
+            .description("Checks if a number isn't between\n2 different numbers (inclusive).")
+            .icon(Items.TRAPPED_CHEST)
+            .category(ScriptActionCategory.NUMBERS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Minimum", ScriptActionArgumentType.NUMBER)
+            .arg("Maximum", ScriptActionArgumentType.NUMBER)
+            .hasChildren(true)
+            .group(ScriptGroup.CONDITION)
+            .action(ctx -> {
+                double value = ctx.value("Value").asNumber();
+
+                if (value >= ctx.value("Minimum").asNumber()) {
+                    if (value <= ctx.value("Maximum").asNumber()) {
+                        return;
+                    }
+                }
+
+                ctx.setLastIfResult(true);
+            })),
+
     CANCEL_EVENT(builder -> builder.name("Cancel Event")
         .description("Cancels the event.")
         .icon(Items.BARRIER)
@@ -477,6 +518,26 @@ public enum ScriptActionType {
                 ctx.context().setVariable(ctx.variable("Result").name(), list.get(index));
             }
         })),
+
+    GET_VALUE_INDEX(builder -> builder.name("Get List Index of Value")
+            .description("Searches for a value in a list variable and gets the index if found.")
+            .icon(Items.FLINT)
+            .category(ScriptActionCategory.LISTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("List", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .action(ctx -> {
+                List<ScriptValue> list = ctx.value("List").asList();
+                ScriptValue value = ctx.value("Value");
+                int index = 0;
+                for(int i = 0; i < list.size(); i++) {
+                    if (list.get(i).valueEquals(value)) {
+                        index = i + 1;
+                        break;
+                    }
+                }
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(index));
+            })),
 
     SET_LIST_VALUE(builder -> builder.name("Set List Value")
         .description("Sets a value in a list.")
@@ -1107,40 +1168,35 @@ public enum ScriptActionType {
                 pitch = ctx.value("Pitch").asNumber();
             }
 
-            SoundEvent snd = null;
+            Identifier sndid = null;
+            SoundManager sndManager = io.github.techstreet.dfscript.DFScript.MC.getSoundManager();
 
             try {
-                snd = Registry.SOUND_EVENT.get(new Identifier(sound));
-            } catch (Exception err) {
+                sndid = new Identifier(sound);
+            }
+            catch(Exception err) {
                 err.printStackTrace();
+                ChatUtil.error("Incorrect identifier: " + sound);
+                return;
             }
 
-            String jname = sound.toUpperCase().replaceAll("\\.", "_").replaceAll(" ", "_").toUpperCase();
-            if (snd == null) {
-                try {
-                    Class<SoundEvents> clazz = SoundEvents.class;
-                    Field field = clazz.getField(jname);
-                    snd = (SoundEvent) field.get(null);
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
-            }
-
-            if (snd != null) {
-                io.github.techstreet.dfscript.DFScript.MC.getSoundManager().play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
+            if (sndManager.getKeys().contains(sndid)) {
+                SoundEvent snd = new SoundEvent(sndid);
+                sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
                 ChatUtil.error("Unknown sound: " + sound);
 
                 try {
-                    Class<SoundEvents> clazz = SoundEvents.class;
+                    String jname = StringUtil.fromSoundIDToRegistryID(sound);
 
                     List<String> similiar = new ArrayList<>();
 
                     int counter = 0;
-                    for (Field field : clazz.getFields()) {
-                        String name = field.getName();
+                    for (Identifier id : sndManager.getKeys()) {
+                        String sid = id.toString();
+                        String name = StringUtil.fromSoundIDToRegistryID(sid);
                         if (name.contains(jname)) {
-                            similiar.add(StringUtil.toTitleCase(name.replaceAll("_", " ")));
+                            similiar.add(sid);
                             counter++;
                             if (counter > 5) {
                                 break;
@@ -1149,13 +1205,19 @@ public enum ScriptActionType {
                     }
 
                     if (similiar.size() > 0) {
-                        ChatUtil.error("Did you mean: " + String.join(", ", similiar));
+                        ChatUtil.error("Did you mean: \n" + String.join(", \n", similiar));
                     }
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
             }
         })),
+
+    STOP_ALL_SOUNDS(builder -> builder.name("Stop All Sounds")
+            .description("Stops all sounds.")
+            .icon(Items.COAL)
+            .category(ScriptActionCategory.VISUALS)
+            .action(ctx -> DFScript.MC.getSoundManager().stopAll())),
 
     DISPLAY_TITLE(builder -> builder.name("Display Title")
         .description("Displays a title.")

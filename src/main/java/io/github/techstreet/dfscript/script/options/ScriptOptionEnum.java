@@ -17,7 +17,8 @@ public enum ScriptOptionEnum {
     TEXT("Text Option", "A single option, no checks.", Items.BOOK, ScriptTextOption.class),
     INT("Integer Option", "A single option, must be an int.", Items.SLIME_BALL, ScriptIntOption.class),
     FLOAT("Floating-Point Option", "A single option, must be an int or a float.", Items.SLIME_BLOCK, ScriptFloatOption.class),
-    KEY("Key Option", "A single option, acts as a key bind.", Items.STONE_BUTTON, ScriptKeyOption.class);
+    KEY("Key Option", "A single option, acts as a key bind.", Items.STONE_BUTTON, ScriptKeyOption.class),
+    BOOL("Boolean Option", "A true/false option. Returns either \"true\" or \"false\".", Items.LEVER, ScriptBoolOption.class);
 
     String name;
     String description;

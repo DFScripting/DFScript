@@ -6,7 +6,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class CTexturedButton extends CButton {
 
-    private final String texture;
+    private String texture;
     private final float ux;
     private final float uy;
     private final float uw;
@@ -23,6 +23,10 @@ public class CTexturedButton extends CButton {
         this.uh = uh;
         this.hoverUx = hoverUx;
         this.hoverUy = hoverUy;
+    }
+
+    public void setTexture(String newTexture) {
+        texture = newTexture;
     }
 
     @Override
