@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import jdk.jfr.StackTrace;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -105,7 +106,17 @@ public enum ScriptActionType {
             }
 
             sb.deleteCharAt(sb.length() - 1);
-            io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
+
+            if(sb.toString().startsWith("/"))
+            {
+                sb.deleteCharAt(0);
+
+                io.github.techstreet.dfscript.DFScript.MC.player.sendCommand(sb.toString(), Text.literal(sb.toString()));
+            }
+            else
+            {
+                io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
+            }
         })),
 
     REPEAT_MULTIPLE(builder -> builder.name("RepeatMultiple")
@@ -1010,28 +1021,37 @@ public enum ScriptActionType {
         .arg("Commands", ScriptActionArgumentType.TEXT, b -> b.plural(true))
         .action(ctx -> {
             for (ScriptValue cmd : ctx.pluralValue("Commands")) {
-                String[] args = cmd.asText().split(" ", -1);
-                ArgumentBuilder<FabricClientCommandSource, ?> ab = RequiredArgumentBuilder.argument("args", StringArgumentType.greedyString());
+                try {
+                    String[] args = cmd.asText().split(" ", -1);
+                    ArgumentBuilder<FabricClientCommandSource, ?> ab = RequiredArgumentBuilder.argument("args", StringArgumentType.greedyString());
 
-                ab.executes(ctx2 -> 0);
+                    ab.executes(ctx2 -> 0);
 
-                for (int i = args.length - 1; i >= 0; i--) {
-                    LiteralArgumentBuilder<FabricClientCommandSource> l = LiteralArgumentBuilder.literal(args[i]);
-                    l.then(ab);
-                    ab = l;
-                }
-
-                if (ab instanceof LiteralArgumentBuilder lab) {
-                    if (ClientCommandManager.getActiveDispatcher() == null) {
-                        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(lab));
-                    } else {
-                        ClientCommandManager.getActiveDispatcher().register(lab);
+                    for (int i = args.length - 1; i >= 0; i--) {
+                        LiteralArgumentBuilder<FabricClientCommandSource> l = LiteralArgumentBuilder.literal(args[i]);
+                        l.then(ab);
+                        ab = l;
                     }
-                }
 
-                ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
-                if (nh != null) {
-                    nh.onCommandTree(new CommandTreeS2CPacket(nh.getCommandDispatcher().getRoot()));
+                    if (ab instanceof LiteralArgumentBuilder lab) {
+                        if (ClientCommandManager.getActiveDispatcher() == null) {
+                            ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(lab));
+                        } else {
+                            ClientCommandManager.getActiveDispatcher().register(lab);
+                        }
+                    }
+
+                    /*ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
+                    if (nh != null) {
+                        nh.onCommandTree(new CommandTreeS2CPacket(nh.getCommandDispatcher().getRoot()));
+                    }*/
+                }
+                catch(Exception e){
+                    ChatUtil.error("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
+
+                    for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                        DFScript.LOGGER.error(stackTraceElement.toString());
+                    }
                 }
             }
         })),
