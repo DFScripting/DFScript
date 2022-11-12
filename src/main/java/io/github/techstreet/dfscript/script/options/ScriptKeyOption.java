@@ -1,11 +1,14 @@
 package io.github.techstreet.dfscript.script.options;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import io.github.techstreet.dfscript.screen.widget.CKeyField;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.screen.widget.CTextField;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
+import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -14,15 +17,24 @@ public class ScriptKeyOption implements ScriptOption {
 
     InputUtil.Key value = null;
 
-    public ScriptKeyOption(InputUtil.Key value) {
-        this.value = value;
+    public ScriptKeyOption(JsonElement value) {
+        if(value.getAsString().equals("None")) {
+            return;
+        }
+
+        this.value = InputUtil.fromTranslationKey(value.getAsString());
     }
 
     public ScriptKeyOption() {}
 
     @Override
-    public ScriptArgument getValue() {
-        return new ScriptNumberArgument(value.getCode());
+    public ScriptValue getValue() {
+        return new ScriptNumberValue(value.getCode());
+    }
+
+    @Override
+    public boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg) {
+        return ScriptActionArgument.ScriptActionArgumentType.NUMBER.convertableTo(arg);
     }
 
     @Override
@@ -45,12 +57,11 @@ public class ScriptKeyOption implements ScriptOption {
     }
 
     @Override
-    public String getType() {
-        return "KEY";
-    }
+    public JsonElement getJsonElement() {
+        if(value == null) {
+            return new JsonPrimitive("None");
+        }
 
-    @Override
-    public JsonPrimitive getJsonPrimitive() {
         return new JsonPrimitive(value.getTranslationKey());
     }
 }

@@ -26,12 +26,12 @@ public final class ScriptConfigArgument implements ScriptArgument {
 
     @Override
     public ScriptValue getValue(Event event, ScriptContext context) {
-        return script.getOption(option).getValue(event, context);
+        return script.getOption(option);
     }
 
     @Override
     public boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType type) {
-        return script.getOption(option).convertableTo(type);
+        return script.getNamedOption(option).getOption().convertableTo(type);
     }
 
     public ScriptNamedOption getOption() {

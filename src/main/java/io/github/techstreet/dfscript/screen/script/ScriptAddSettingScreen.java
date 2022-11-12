@@ -23,19 +23,25 @@ public class ScriptAddSettingScreen extends CScreen {
         int x = 3;
         int y = 3;
 
-        for(ScriptOptionEnum option : ScriptOptionEnum.values())
-        {
+        for(ScriptOptionEnum option : ScriptOptionEnum.values()) {
             CItem citem = new CItem(x, y, option.getIcon());
 
-            citem.setClickListener((a) -> {
-                try {
-                    script.addOption(pos, new ScriptNamedOption(option.getOptionType().getConstructor().newInstance(), script.getUnnamedOption()));
-                } catch (Exception e) {
-                    ChatUtil.error(String.valueOf(e.getCause()));
-                }
+            if(option.getExtraTypes() == 0) {
+                citem.setClickListener((a) -> {
+                    try {
+                        script.addOption(pos, new ScriptNamedOption(option.getOptionType().getConstructor().newInstance(), script.getUnnamedOption()));
+                    } catch (Exception e) {
+                        ChatUtil.error(String.valueOf(e.getCause()));
+                    }
 
-                DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
-            });
+                    DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
+                });
+            }
+            else {
+                citem.setClickListener((a) -> {
+                    DFScript.MC.setScreen(new ScriptAddSettingSubtypeScreen(script, option, pos));
+                });
+            }
 
             widgets.add(citem);
 

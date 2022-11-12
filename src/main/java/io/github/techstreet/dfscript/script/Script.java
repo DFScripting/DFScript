@@ -283,12 +283,12 @@ public class Script {
         return false;
     }
 
-    public ScriptArgument getOption(String option) {
+    public ScriptValue getOption(String option) {
         for(ScriptNamedOption o : getOptions()) {
             if(Objects.equals(o.getName(), option)) return o.getValue();
         }
 
-        return new ScriptUnknownArgument();
+        return new ScriptUnknownValue();
     }
 
     public String getUnnamedOption() {
