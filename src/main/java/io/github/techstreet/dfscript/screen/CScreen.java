@@ -65,12 +65,21 @@ public class CScreen extends Screen {
         return super.charTyped(ch, keyCode);
     }
 
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         for (CWidget cWidget : widgets) {
             cWidget.keyPressed(keyCode, scanCode, modifiers);
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        for (CWidget cWidget : widgets) {
+            cWidget.keyReleased(keyCode, scanCode, modifiers);
+        }
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override

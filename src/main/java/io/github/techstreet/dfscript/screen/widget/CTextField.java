@@ -15,6 +15,8 @@ public class CTextField implements CWidget {
 
     boolean selected;
     boolean editable;
+
+    boolean xScrolling = false;
     public int textColor = 0xFFFFFFFF;
     String text;
     Runnable changedListener;
@@ -22,6 +24,7 @@ public class CTextField implements CWidget {
     boolean hasSelection = false;
     int selectionPos = 0;
     int scroll = 0;
+    int xScroll = 0;
 
     public CTextField(String text, int x, int y, int width, int height, boolean editable) {
         this.text = text;
@@ -63,7 +66,7 @@ public class CTextField implements CWidget {
             (int) (end.getY() - begin.getY())*guiScale
         );
 
-        stack.translate(2, 2 + scroll, 0);
+        stack.translate(2 + xScroll, 2 + scroll, 0);
         stack.scale(0.5f, 0.5f, 0);
 
         TextRenderer f = DFScript.MC.textRenderer;
@@ -129,8 +132,15 @@ public class CTextField implements CWidget {
         }
     }
 
+    public void keyReleased(int keyCode, int scanCode, int modifiers)
+    {
+        if(keyCode == 341) xScrolling = false; // left control
+    }
+
     @Override
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(keyCode == 341) xScrolling = true; // left control
+
         if (editable && selected) {
             String lastText = text;
             TextRenderer f = DFScript.MC.textRenderer;
@@ -296,11 +306,35 @@ public class CTextField implements CWidget {
 
     @Override
     public void mouseScrolled(double mouseX, double mouseY, double amount) {
-        if (editable && selected) {
-            scroll += amount * 5;
-            TextRenderer f = DFScript.MC.textRenderer;
-            scroll = Math.min(0, Math.max(scroll, -(getLines().length + 1) * f.fontHeight / 2 + height - 2));
+        if (!editable || !selected) {
+            return;
         }
+
+        TextRenderer f = DFScript.MC.textRenderer;
+
+        if(xScrolling)
+        {
+            int maxScroll = 0;
+
+            for (String line : getLines()) {
+                int lineWidth = f.getWidth(line);
+
+                if(maxScroll < lineWidth) {
+                    maxScroll = lineWidth;
+                }
+            }
+
+            maxScroll /= 2;
+            maxScroll -= width - 2;
+
+            xScroll += amount * 5;
+            xScroll = Math.min(0, Math.max(xScroll, -maxScroll));
+
+            return;
+        }
+
+        scroll += amount * 5;
+        scroll = Math.min(0, Math.max(scroll, -(getLines().length + 1) * f.fontHeight / 2 + height - 2));
     }
 
     public int getCursorLineIndex() {

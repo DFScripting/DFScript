@@ -11,6 +11,8 @@ import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.*;
 
 import java.awt.Rectangle;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.DrawableHelper;
@@ -41,7 +43,9 @@ public class ScriptEditActionScreen extends CScreen {
             } else if (arg instanceof ScriptNumberArgument na) {
                 icon = new ItemStack(Items.SLIME_BALL);
                 if (na.value() % 1 == 0) {
-                    text = String.valueOf((int) na.value());
+                    DecimalFormat df = new DecimalFormat("#");
+                    df.setRoundingMode(RoundingMode.UNNECESSARY);
+                    text = df.format(na.value());
                 } else {
                     text = String.valueOf(na.value());
                 }
