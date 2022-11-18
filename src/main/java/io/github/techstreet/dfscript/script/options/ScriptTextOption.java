@@ -32,20 +32,12 @@ public class ScriptTextOption implements ScriptOption {
     }
 
     @Override
-    public String getName() { return "Text"; }
-
-    @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
         CTextField field = new CTextField(value, x, y, width, 10, true);
         field.setChangedListener(() -> value = field.getText());
         panel.add(field);
 
         return y + 12;
-    }
-
-    @Override
-    public Item getIcon() {
-        return Items.BOOK;
     }
 
     @Override

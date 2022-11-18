@@ -30,8 +30,6 @@ public class ScriptFloatOption implements ScriptOption {
     public boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg) {
         return ScriptActionArgument.ScriptActionArgumentType.NUMBER.convertableTo(arg);
     }
-    @Override
-    public String getName() { return "Floating-Point Value"; }
 
     @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
@@ -48,11 +46,6 @@ public class ScriptFloatOption implements ScriptOption {
         panel.add(field);
 
         return y + 12;
-    }
-
-    @Override
-    public Item getIcon() {
-        return Items.SLIME_BLOCK;
     }
 
     @Override

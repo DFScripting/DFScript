@@ -38,9 +38,6 @@ public class ScriptKeyOption implements ScriptOption {
     }
 
     @Override
-    public String getName() { return "Key"; }
-
-    @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
         CKeyField field = new CKeyField(x, y, width, 10, true, value);
         field.setChangedListener(() -> {
@@ -49,11 +46,6 @@ public class ScriptKeyOption implements ScriptOption {
         panel.add(field);
 
         return y + 12;
-    }
-
-    @Override
-    public Item getIcon() {
-        return Items.STONE_BUTTON;
     }
 
     @Override

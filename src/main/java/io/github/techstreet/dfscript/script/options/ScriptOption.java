@@ -9,19 +9,30 @@ import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchExce
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.item.Item;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface ScriptOption {
     ScriptValue getValue();
     boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg);
 
-    String getName();
+    default String getName() {
+        String result = getType().getName();
+
+        if(getSubtypes().size() > 0)
+        {
+            result += "<" + String.join(", ", getSubtypes().stream().map(ScriptOptionEnum::getName).toList()) + ">";
+        }
+
+        return result;
+    }
 
     int create(CScrollPanel panel, int x, int y, int width); // the return value = new y
-
-    Item getIcon();
 
     default ScriptOptionEnum getType() {
         return ScriptOptionEnum.fromClass(getClass());
@@ -103,5 +114,14 @@ public interface ScriptOption {
         }*/
 
         return option;
+    }
+
+    static ScriptOption instantiate(ScriptOptionEnum type, List<ScriptOptionEnum> subtypes) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        if(subtypes.size() == 0) return type.getOptionType().getConstructor().newInstance();
+
+        Class<?>[] argTypes = new Class[type.getExtraTypes()];
+        Arrays.fill(argTypes, ScriptOptionEnum.class);
+
+        return type.getOptionType().getConstructor(argTypes).newInstance(subtypes.toArray());
     }
 }

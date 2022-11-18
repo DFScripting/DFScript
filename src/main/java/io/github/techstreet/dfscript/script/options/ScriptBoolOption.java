@@ -33,9 +33,6 @@ public class ScriptBoolOption implements ScriptOption {
     }
 
     @Override
-    public String getName() { return "Boolean"; }
-
-    @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
         CTexturedButton button = new CTexturedButton(x, y, 8, 8, getTexture(), null, 0, 0, 1, 0.5f, 0, 0.5f);
         button.setOnClick(() -> {
@@ -49,11 +46,6 @@ public class ScriptBoolOption implements ScriptOption {
 
     private String getTexture() {
         return DFScript.MOD_ID + (value ? ":on_button.png" : ":off_button.png");
-    }
-
-    @Override
-    public Item getIcon() {
-        return Items.LEVER;
     }
 
     @Override

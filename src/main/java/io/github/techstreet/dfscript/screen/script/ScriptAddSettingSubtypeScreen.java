@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CTexturedButton;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
+import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawableHelper;
@@ -118,10 +119,7 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
         if(noNull) {
             CTexturedButton button = new CTexturedButton(width - 10, 3, 8, 8, DFScript.MOD_ID + ":on_button.png", () -> {
                 try {
-                    Class<?>[] argTypes = new Class[option.getExtraTypes()];
-                    Arrays.fill(argTypes, ScriptOptionEnum.class);
-
-                    script.addOption(pos, new ScriptNamedOption(option.getOptionType().getConstructor(argTypes).newInstance(subtypes.toArray()), script.getUnnamedOption()));
+                    script.addOption(pos, new ScriptNamedOption(ScriptOption.instantiate(option, subtypes), script.getUnnamedOption()));
                 } catch (Exception e) {
                     ChatUtil.error(String.valueOf(e.getCause()));
                 }

@@ -17,7 +17,9 @@ public enum ScriptOptionEnum {
     FLOAT("Floating-Point", "A single option, must be an int or a float.", Items.SLIME_BLOCK, ScriptFloatOption.class),
     KEY("Key", "A single option, acts as a key bind.", Items.STONE_BUTTON, ScriptKeyOption.class),
     BOOL("Boolean", "A true/false option. Returns either \"true\" or \"false\".", Items.LEVER, ScriptBoolOption.class),
-    LIST("List", "A list of values, can contain a single type", Items.CHEST, ScriptListOption.class, 1);
+    DUAL("Dual", "Two values, two types", Items.HOPPER, ScriptDualOption.class, 2),
+    LIST("List", "A list of values, can contain a single type", Items.CHEST, ScriptListOption.class, 1),
+    DICTIONARY("Dictionary", "A dictionary of values, two types", Items.CHEST_MINECART, ScriptDictionaryOption.class, 2);
 
     String name;
     String description;

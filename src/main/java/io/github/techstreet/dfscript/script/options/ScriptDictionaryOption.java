@@ -2,38 +2,34 @@ package io.github.techstreet.dfscript.script.options;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.screen.script.ScriptAddSettingScreen;
-import io.github.techstreet.dfscript.screen.script.ScriptEditSettingScreen;
 import io.github.techstreet.dfscript.screen.script.ScriptSettingsScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
+import io.github.techstreet.dfscript.script.values.ScriptDictionaryValue;
 import io.github.techstreet.dfscript.script.values.ScriptListValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-public class ScriptListOption implements ScriptOption {
+public class ScriptDictionaryOption implements ScriptOption {
 
-    List<ScriptOption> value = new ArrayList<>();
-    ScriptOptionEnum valueType = null;
+    List<ScriptDualOption> value = new ArrayList<>();
+    ScriptOptionEnum[] valueTypes;
 
-    public ScriptListOption(JsonElement value, ScriptOptionEnum valueType) throws ScriptOptionSubtypeMismatchException {
-        this.valueType = valueType;
+    public ScriptDictionaryOption(JsonElement value, ScriptOptionEnum type1, ScriptOptionEnum type2) throws ScriptOptionSubtypeMismatchException {
+        valueTypes = new ScriptOptionEnum[]{type1,type2};
 
         if(!value.isJsonArray())
         {
@@ -42,48 +38,56 @@ public class ScriptListOption implements ScriptOption {
 
         for(JsonElement e : value.getAsJsonArray())
         {
-            this.value.add(ScriptOption.fromJson(e, valueType, new ArrayList<>()));
+            this.value.add((ScriptDualOption) ScriptOption.fromJson(e, ScriptOptionEnum.DUAL,
+                        List.of(type1, type2)
+                    ));
         }
 
         checkValidity();
     }
 
-    public ScriptListOption(ScriptOptionEnum valueType) throws ScriptOptionSubtypeMismatchException {
-        this.valueType = valueType;
+    public ScriptDictionaryOption(ScriptOptionEnum type1, ScriptOptionEnum type2) throws ScriptOptionSubtypeMismatchException {
+        valueTypes = new ScriptOptionEnum[]{type1,type2};
 
         checkValidity();
     }
 
     private void checkValidity() throws ScriptOptionSubtypeMismatchException {
-        if(valueType.getExtraTypes() != 0)
+        for(int i = 0; i < 2; i++)
         {
-            throw new ScriptOptionSubtypeMismatchException("Incorrect amount of extra types");
+            if(valueTypes[i].getExtraTypes() != 0)
+            {
+                throw new ScriptOptionSubtypeMismatchException("Incorrect amount of extra types");
+            }
         }
 
-        for(ScriptOption o : value)
+        for(ScriptDualOption o : value)
         {
-            if(valueType.getOptionType() != o.getClass())
-            {
-                throw new ScriptOptionSubtypeMismatchException("Incorrect type of an item");
+            for(int i = 0; i < 2; i++) {
+                if (valueTypes[i] != o.getSubtypes().get(i)) {
+                    throw new ScriptOptionSubtypeMismatchException("Incorrect type of an item");
+                }
             }
         }
     }
 
     @Override
     public ScriptValue getValue() {
-        List<ScriptValue> result = new ArrayList<>();
+        HashMap<String,ScriptValue> result = new HashMap<>();
 
         for(ScriptOption o : value)
         {
-            result.add(o.getValue());
+            List<ScriptValue> s = o.getValue().asList();
+
+            result.put(s.get(0).asText(),s.get(1));
         }
 
-        return new ScriptListValue(result);
+        return new ScriptDictionaryValue(result);
     }
 
     @Override
     public boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg) {
-        return ScriptActionArgument.ScriptActionArgumentType.LIST.convertableTo(arg);
+        return ScriptActionArgument.ScriptActionArgumentType.DICTIONARY.convertableTo(arg);
     }
 
     @Override
@@ -110,7 +114,7 @@ public class ScriptListOption implements ScriptOption {
                             if (DFScript.MC.currentScreen instanceof ScriptSettingsScreen s) {
                                 CButton insertBefore = new CButton((int) x, (int) y, 50, 8, "Insert Item Before", () -> {
                                     try {
-                                        value.add(finalI, valueType.getOptionType().getConstructor().newInstance());
+                                        value.add(finalI, (ScriptDualOption) ScriptOption.instantiate(ScriptOptionEnum.DUAL, List.of(valueTypes[0],valueTypes[1])));
                                     } catch (Exception e) {
                                         ChatUtil.error(String.valueOf(e.getCause()));
                                     }
@@ -118,7 +122,7 @@ public class ScriptListOption implements ScriptOption {
                                 });
                                 CButton insertAfter = new CButton((int) x, (int) y + 8, 50, 8, "Insert Item After", () -> {
                                     try {
-                                        value.add(finalI + 1, valueType.getOptionType().getConstructor().newInstance());
+                                        value.add(finalI + 1, (ScriptDualOption) ScriptOption.instantiate(ScriptOptionEnum.DUAL, List.of(valueTypes[0],valueTypes[1])));
                                     } catch (Exception e) {
                                         ChatUtil.error(String.valueOf(e.getCause()));
                                     }
@@ -141,7 +145,7 @@ public class ScriptListOption implements ScriptOption {
 
         CButton button = new CButton(x+5, y, width-5, 8, "Add Item", ()->{
             try {
-                value.add(valueType.getOptionType().getConstructor().newInstance());
+                value.add((ScriptDualOption) ScriptOption.instantiate(ScriptOptionEnum.DUAL, List.of(valueTypes[0],valueTypes[1])));
             } catch (Exception e) {
                 ChatUtil.error(String.valueOf(e.getCause()));
             }
@@ -168,6 +172,6 @@ public class ScriptListOption implements ScriptOption {
 
     @Override
     public List<ScriptOptionEnum> getSubtypes() {
-        return Arrays.stream(new ScriptOptionEnum[]{valueType}).toList();
+        return Arrays.stream(valueTypes).toList();
     }
 }

@@ -46,7 +46,7 @@ public class ScriptNamedOption {
     }
 
     public ItemStack getIcon() {
-        return new ItemStack(option.getIcon()).setCustomName(Text.literal(getName()).fillStyle(Style.EMPTY.withItalic(false)));
+        return option.getType().getIcon().setCustomName(Text.literal(getFullName()).fillStyle(Style.EMPTY.withItalic(false)));
     }
 
     public static class Serializer implements JsonSerializer<ScriptNamedOption>, JsonDeserializer<ScriptNamedOption> {
