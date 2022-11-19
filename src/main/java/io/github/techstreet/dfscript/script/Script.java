@@ -116,6 +116,8 @@ public class Script {
                                     break;
                                 }
                             }
+                        } else if (nextPart instanceof ScriptComment) {
+                            // ignore comments
                         } else {
                             throw new IllegalStateException("Unexpected script part type: " + nextPart.getClass().getName());
                         }
@@ -160,6 +162,8 @@ public class Script {
                     context.breakLoop(-1);
                     task.stack().pop(); // don't use endScope() because of the fact that endScope runs the condition to see if it is false before ending the scope
                 }
+            } else if (part instanceof ScriptComment) {
+                // ignore the comment lol
             } else {
                 throw new IllegalArgumentException("Invalid script part");
             }
