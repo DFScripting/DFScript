@@ -3,6 +3,8 @@ package io.github.techstreet.dfscript;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.techstreet.dfscript.commands.CommandManager;
+import io.github.techstreet.dfscript.commands.arguments.StringFuncArgumentType;
+import io.github.techstreet.dfscript.commands.arguments.serializers.StringFuncArgumentSerializer;
 import io.github.techstreet.dfscript.features.AuthHandler;
 import io.github.techstreet.dfscript.features.UpdateAlerts;
 import io.github.techstreet.dfscript.loader.Loader;
@@ -27,9 +29,13 @@ import java.util.zip.GZIPOutputStream;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.command.argument.serialize.StringArgumentSerializer;
+import net.minecraft.util.Identifier;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +71,8 @@ public class DFScript implements ModInitializer {
         PLAYER_NAME = MC.getSession().getUsername();
 
         MOD_VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).get().getMetadata().getVersion().getFriendlyString();
+
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("tutorial", "uuid"), StringFuncArgumentType.class, new StringFuncArgumentSerializer());
 
         Loader loader = Loader.getInstance();
         loader.load(new CommandManager());

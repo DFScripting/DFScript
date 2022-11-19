@@ -17,6 +17,9 @@ public interface CWidget {
     default void keyPressed(int keyCode, int scanCode, int modifiers) {
     }
 
+    default void keyReleased(int keyCode, int scanCode, int modifiers) {
+    }
+
     default void mouseScrolled(double mouseX, double mouseY, double amount) {
     }
 

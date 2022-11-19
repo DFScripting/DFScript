@@ -37,6 +37,10 @@ public interface ScriptPart {
                     String event = obj.get("event").getAsString();
                     return new ScriptEvent(ScriptEventType.valueOf(event));
                 }
+                case "comment" -> {
+                    String comment = obj.get("comment").getAsString();
+                    return new ScriptComment(comment);
+                }
                 default -> throw new JsonParseException("Unknown script part type: " + type);
             }
         }

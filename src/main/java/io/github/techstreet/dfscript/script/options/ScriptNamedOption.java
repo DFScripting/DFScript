@@ -1,12 +1,10 @@
 package io.github.techstreet.dfscript.script.options;
 
 import com.google.gson.*;
-import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
+import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
@@ -33,7 +31,7 @@ public class ScriptNamedOption {
         return name;
     }
 
-    public ScriptArgument getValue() {
+    public ScriptValue getValue() {
         return option.getValue();
     }
 
@@ -48,7 +46,7 @@ public class ScriptNamedOption {
     }
 
     public ItemStack getIcon() {
-        return new ItemStack(option.getIcon()).setCustomName(Text.literal(getName()).fillStyle(Style.EMPTY.withItalic(false)));
+        return option.getType().getIcon().setCustomName(Text.literal(getFullName()).fillStyle(Style.EMPTY.withItalic(false)));
     }
 
     public static class Serializer implements JsonSerializer<ScriptNamedOption>, JsonDeserializer<ScriptNamedOption> {
@@ -56,18 +54,26 @@ public class ScriptNamedOption {
         public ScriptNamedOption deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
             String name = object.get("name").getAsString();
-            String type = object.get("type").getAsString();
+            ScriptOptionEnum type = ScriptOptionEnum.fromName(object.get("type").getAsString());
 
-            ScriptOption option;
+            JsonElement value = object.get("value");
 
-            switch(type)
-            {
-                case "TEXT" -> option = new ScriptTextOption(object.get("value").getAsString());
-                case "INT" -> option = new ScriptIntOption(object.get("value").getAsInt());
-                case "FLOAT" -> option = new ScriptFloatOption(object.get("value").getAsDouble());
-                case "KEY" -> option = new ScriptKeyOption(InputUtil.fromTranslationKey(object.get("value").getAsString()));
-                case "BOOL" -> option = new ScriptBoolOption(object.get("value").getAsBoolean());
-                default -> throw new JsonParseException("Unknown option type: " + type);
+            ScriptOption option = null;
+
+            List<ScriptOptionEnum> subtypes = new ArrayList<>();
+
+            if(object.has("subtypes")) {
+                JsonArray jsonSubtypes = object.get("subtypes").getAsJsonArray();
+
+                for(JsonElement subtype : jsonSubtypes) {
+                    subtypes.add(ScriptOptionEnum.fromName(subtype.getAsString()));
+                }
+            }
+
+            try {
+                option = ScriptOption.fromJson(value, type, subtypes);
+            } catch (ScriptOptionSubtypeMismatchException e) {
+                throw new JsonParseException("Option types don't match: " + e.getMessage());
             }
 
             ScriptNamedOption namedOption = new ScriptNamedOption(option, name);
@@ -81,11 +87,25 @@ public class ScriptNamedOption {
 
             object.addProperty("name", src.name);
 
-            object.addProperty("type", src.getOption().getType());
+            object.addProperty("type", src.getOption().getType().name());
 
-            JsonPrimitive primitive = src.getOption().getJsonPrimitive();
+            JsonElement primitive = src.getOption().getJsonElement();
 
             object.add("value", primitive);
+
+            List<ScriptOptionEnum> subtypes = src.getOption().getSubtypes();
+
+            if(subtypes.size() != src.getOption().getType().getExtraTypes()) {
+                throw new JsonParseException("Incorrect amount of extra types");
+            }
+
+            if(subtypes.size() > 0) {
+                JsonArray jsonSubtypes = new JsonArray();
+
+                subtypes.stream().forEachOrdered((a) -> jsonSubtypes.add(a.name()));
+
+                object.add("subtypes", jsonSubtypes);
+            }
 
             return object;
         }

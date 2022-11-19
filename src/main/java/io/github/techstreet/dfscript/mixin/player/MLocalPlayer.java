@@ -26,7 +26,7 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
     private void command(String command, CallbackInfoReturnable<Boolean> ci) {
-        SendChatEvent event = new SendChatEvent(command);
+        SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();
@@ -35,7 +35,7 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommandInternal", at = @At("HEAD"), cancellable = true)
     private void commandInterval(String command, @Nullable Text preview, CallbackInfo ci) {
-        SendChatEvent event = new SendChatEvent(command);
+        SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();

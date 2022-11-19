@@ -38,6 +38,15 @@ public class ScriptSettingsScreen extends CScreen {
 
         widgets.add(panel);
 
+        reloadMenu();
+
+        panel.setScroll(scroll);
+    }
+
+    public void reloadMenu() {
+        clearContextMenu();
+        panel.clear();
+
         int y = 3;
         int index = 0;
 
@@ -98,14 +107,7 @@ public class ScriptSettingsScreen extends CScreen {
                                 scroll = panel.getScroll();
                                 DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
                             });
-                            DFScript.MC.send(() -> {
-                                panel.add(insertBefore);
-                                panel.add(insertAfter);
-                                panel.add(delete);
-                                contextMenu.add(insertBefore);
-                                contextMenu.add(insertAfter);
-                                contextMenu.add(delete);
-                            });
+                            newContextMenu(new CButton[]{insertBefore, insertAfter, delete});
                         }
                         else
                         {
@@ -132,8 +134,6 @@ public class ScriptSettingsScreen extends CScreen {
             });
             panel.add(add);
         }
-
-        panel.setScroll(scroll);
     }
 
     @Override
@@ -151,6 +151,17 @@ public class ScriptSettingsScreen extends CScreen {
         boolean b = super.mouseClicked(mouseX, mouseY, button);
         clearContextMenu();
         return b;
+    }
+
+    public void newContextMenu(CButton[] buttons) {
+        clearContextMenu();
+
+        DFScript.MC.send(() -> {
+            for(CButton button : buttons) {
+                panel.add(button);
+                contextMenu.add(button);
+            }
+        });
     }
     private void clearContextMenu() {
         for (CWidget w : contextMenu) {

@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
+import io.github.techstreet.dfscript.script.action.ScriptActionCategoryExtra;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.event.ScriptEventType;
@@ -32,6 +33,23 @@ public class ScriptAddActionScreen extends CScreen {
                 item.setClickListener((btn) -> {
                     ScriptEvent event = new ScriptEvent(type);
                     script.getParts().add(insertIndex, event);
+                    DFScript.MC.setScreen(new ScriptEditScreen(script));
+                });
+                widgets.add(item);
+                x += 10;
+                if (x >= size - 10) {
+                    x = 3;
+                    y += 10;
+                }
+            }
+        }
+
+        if (category != null)
+        {
+            for(ScriptActionCategoryExtra extra : category.getExtras()) {
+                CItem item = new CItem(x, y, extra.getIcon());
+                item.setClickListener((btn) -> {
+                    script.getParts().add(insertIndex, extra.getPart());
                     DFScript.MC.setScreen(new ScriptEditScreen(script));
                 });
                 widgets.add(item);
@@ -70,6 +88,7 @@ public class ScriptAddActionScreen extends CScreen {
         if (category == null) {
             amount = ScriptEventType.values().length;
         } else {
+            amount += category.getExtras().size();
             for (ScriptActionType type : ScriptActionType.values()) {
                 if (type.getCategory() == category) {
                     amount++;

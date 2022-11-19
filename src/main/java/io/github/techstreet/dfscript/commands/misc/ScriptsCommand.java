@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
+import static io.github.techstreet.dfscript.commands.arguments.StringFuncArgumentFunctions.SCRIPTS;
+
 public class ScriptsCommand implements Command {
 
     @Override
@@ -33,13 +35,7 @@ public class ScriptsCommand implements Command {
                     })
                 )
                 .then(literal("vars")
-                    .then(argument("script", new StringFuncArgumentType((v) -> {
-                            List<String> possible = new ArrayList<>();
-                            for (Script s : ScriptManager.getInstance().getScripts()) {
-                                possible.add(s.getName().replaceAll(" ", "_"));
-                            }
-                            return possible;
-                            }, false)
+                    .then(argument("script", new StringFuncArgumentType(SCRIPTS, false)
                         )
                         .executes(ctx -> {
                             listVars(ctx.getArgument("script", String.class), "");

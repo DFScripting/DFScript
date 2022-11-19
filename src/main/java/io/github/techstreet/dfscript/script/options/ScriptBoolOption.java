@@ -1,12 +1,14 @@
 package io.github.techstreet.dfscript.script.options;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.screen.widget.CTexturedButton;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
+import io.github.techstreet.dfscript.script.values.ScriptTextValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
@@ -14,19 +16,21 @@ public class ScriptBoolOption implements ScriptOption {
 
     boolean value = false;
 
-    public ScriptBoolOption(boolean value) {
-        this.value = value;
+    public ScriptBoolOption(JsonElement value) {
+        this.value = value.getAsBoolean();
     }
 
     public ScriptBoolOption() {}
 
     @Override
-    public ScriptArgument getValue() {
-        return new ScriptTextArgument(value ? "true" : "false");
+    public ScriptValue getValue() {
+        return new ScriptTextValue(value ? "true" : "false");
     }
 
     @Override
-    public String getName() { return "Boolean"; }
+    public boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg) {
+        return ScriptActionArgument.ScriptActionArgumentType.TEXT.convertableTo(arg);
+    }
 
     @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
@@ -45,17 +49,7 @@ public class ScriptBoolOption implements ScriptOption {
     }
 
     @Override
-    public Item getIcon() {
-        return Items.LEVER;
-    }
-
-    @Override
-    public String getType() {
-        return "BOOL";
-    }
-
-    @Override
-    public JsonPrimitive getJsonPrimitive() {
+    public JsonElement getJsonElement() {
         return new JsonPrimitive(value);
     }
 }

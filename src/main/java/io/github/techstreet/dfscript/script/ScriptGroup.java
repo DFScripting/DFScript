@@ -6,5 +6,7 @@ public enum ScriptGroup {
     ACTION,
     CONDITION,
     REPETITION,
-    EVENT
+    EVENT,
+
+    COMMENT
 }

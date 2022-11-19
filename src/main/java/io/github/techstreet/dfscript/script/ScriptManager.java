@@ -46,6 +46,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
         .registerTypeAdapter(ScriptAction.class, new ScriptAction.Serializer())
         .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
+        .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
         .create();
 
     public ScriptManager() {
