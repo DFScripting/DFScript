@@ -27,7 +27,6 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommand(Ljava/lang/String;)Z", at = @At("HEAD"), cancellable = true)
     private void command(String command, CallbackInfoReturnable<Boolean> ci) {
-        ChatUtil.info("sendCommand: "+command);
         SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
@@ -37,7 +36,6 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommand(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
     private void command2(String command, Text preview, CallbackInfo ci) {
-        ChatUtil.info("sendCommandInternal: "+command);
         SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
