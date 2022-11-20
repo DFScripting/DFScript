@@ -1041,10 +1041,10 @@ public enum ScriptActionType {
                         }
                     }
 
-                    /*ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
+                    ClientPlayNetworkHandler nh = DFScript.MC.getNetworkHandler();
                     if (nh != null) {
                         nh.onCommandTree(new CommandTreeS2CPacket(nh.getCommandDispatcher().getRoot()));
-                    }*/
+                    }
                 }
                 catch(Exception e){
                     ChatUtil.error("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
