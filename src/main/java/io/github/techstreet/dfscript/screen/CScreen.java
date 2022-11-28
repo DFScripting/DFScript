@@ -31,8 +31,9 @@ public class CScreen extends Screen {
 
         stack.translate(mc.currentScreen.width/2f, mc.currentScreen.height/2f, 0);
 
-        float s = (float) mc.getWindow().getScaleFactor();
-        stack.scale(s,s,0);
+//        float scaleFactor = (float) mc.getWindow().getScaleFactor();
+        float scaleFactor = 2;
+        stack.scale(scaleFactor,scaleFactor,0);
 
         stack.translate(-width/2f, -height/2f, 0);
 
@@ -41,8 +42,8 @@ public class CScreen extends Screen {
         mouseX += -mc.currentScreen.width/2;
         mouseY += -mc.currentScreen.height/2;
 
-        mouseX /= s;
-        mouseY /= s;
+        mouseX /= scaleFactor;
+        mouseY /= scaleFactor;
 
         mouseX += width/2;
         mouseY += height/2;
@@ -108,18 +109,20 @@ public class CScreen extends Screen {
 
     public double translateMouseX(double mouseX) {
         MinecraftClient mc = DFScript.MC;
-        float s = (float) mc.getWindow().getScaleFactor();
+//        float s = (float) mc.getWindow().getScaleFactor();
+        float scaleFactor = 2;
         mouseX += -mc.currentScreen.width/2f;
-        mouseX /= s;
+        mouseX /= scaleFactor;
         mouseX += width/2f;
         return mouseX;
     }
 
     public double translateMouseY(double mouseY) {
         MinecraftClient mc = DFScript.MC;
-        float s = (float) mc.getWindow().getScaleFactor();
+//        float scaleFactor = (float) mc.getWindow().getScaleFactor();
+        float scaleFactor = 2;
         mouseY += -mc.currentScreen.height/2f;
-        mouseY /= s;
+        mouseY /= scaleFactor;
         mouseY += height/2f;
         return mouseY;
     }
