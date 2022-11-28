@@ -1,16 +1,17 @@
 package io.github.techstreet.dfscript.commands.misc;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.commands.Command;
 import io.github.techstreet.dfscript.commands.arguments.StringFuncArgumentType;
+import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -48,6 +49,14 @@ public class ScriptsCommand implements Command {
                             })
                         )
                     )
+                )
+                .then(literal("recursion")
+                    .then(argument("limit", IntegerArgumentType.integer(-1)).executes(ctx -> {
+                        int limit = IntegerArgumentType.getInteger(ctx,"limit");
+                        EventManager.getInstance().setEventLimit(limit);
+                        ChatUtil.info("Set events per tick limit to " + limit);
+                        return 0;
+                    }))
                 )
         );
     }

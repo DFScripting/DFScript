@@ -45,7 +45,9 @@ public class MLocalPlayer {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {
-        EventManager.getInstance().dispatch(new TickEvent());
+        EventManager em = EventManager.getInstance();
+        em.dispatch(new TickEvent());
+        em.resetEvents();
     }
 
 }

@@ -8,6 +8,8 @@ import java.util.function.Consumer;
 public class EventManager {
 
     private static EventManager instance;
+    private int events = 0;
+    private int eventLimit = 100;
     private final HashMap<Class<? extends Event>, List<Consumer<Event>>> listeners = new HashMap<>();
 
     public EventManager() {
@@ -31,7 +33,17 @@ public class EventManager {
 
     public void dispatch(Event event) {
         for (Consumer<Event> consumer : listeners.getOrDefault(event.getClass(), new ArrayList<>())) {
+            if(events == eventLimit) return;
+            events++;
             consumer.accept(event);
         }
+    }
+
+    public void resetEvents() {
+        this.events = 0;
+    }
+
+    public void setEventLimit(int eventLimit) {
+        this.eventLimit = eventLimit;
     }
 }
