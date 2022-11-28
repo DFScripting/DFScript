@@ -3,10 +3,8 @@ package io.github.techstreet.dfscript.mixin.player;
 import io.github.techstreet.dfscript.event.SendChatEvent;
 import io.github.techstreet.dfscript.event.TickEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +25,7 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommand(Ljava/lang/String;)Z", at = @At("HEAD"), cancellable = true)
     private void command(String command, CallbackInfoReturnable<Boolean> ci) {
+        if(command.startsWith("scripts")) return;
         SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
@@ -36,6 +35,7 @@ public class MLocalPlayer {
 
     @Inject(method = "sendCommand(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
     private void command2(String command, Text preview, CallbackInfo ci) {
+        if(command.startsWith("scripts")) return;
         SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
