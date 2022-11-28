@@ -90,9 +90,11 @@ public class ScriptsCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "[blue]/scripts[reset]\n" +
-                "\n" +
-                "Opens a GUI to edit custom DFScript scripts.\n";
+        return """
+                [blue]/scripts[reset]
+
+                Opens a GUI to edit custom DFScript scripts.
+                """;
     }
 
     @Override
