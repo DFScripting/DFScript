@@ -129,7 +129,7 @@ public class ScriptSettingsScreen extends CScreen {
 
         if(owned)
         {
-            CButton add = new CButton(37, y, 46, 8, "Add", () -> {
+            CButton add = new CButton(37, y, 48, 9, "Add Option", () -> {
                 DFScript.MC.setScreen(new ScriptAddSettingScreen(script, script.getOptions().size()));
             });
             panel.add(add);
