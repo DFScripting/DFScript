@@ -55,7 +55,7 @@ public class ScriptListScreen extends CScreen {
             }
 
             if (s.disabled()) {
-                text = text.formatted(Formatting.GRAY);
+                text = text.formatted(Formatting.STRIKETHROUGH);
             }
 
             panel.add(new CText(6, y + 2, text));
