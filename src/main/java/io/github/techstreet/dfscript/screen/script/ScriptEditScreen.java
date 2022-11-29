@@ -50,9 +50,9 @@ public class ScriptEditScreen extends CScreen {
         int index = 0;
         int indent = 0;
 
-        CButton settings = new CButton(37, y, 46, 8, "Settings", () -> {
+        CButton settings = new CTexturedButton(120-8, y, 8, 8, DFScript.MOD_ID + ":settings.png", () -> {
             DFScript.MC.setScreen(new ScriptSettingsScreen(this.script, true));
-        });
+        }, 0, 0, 1, 0.5f, 0, 0.5f);
 
         panel.add(settings);
 
