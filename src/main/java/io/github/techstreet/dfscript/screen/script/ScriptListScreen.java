@@ -7,31 +7,25 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
-import java.awt.Rectangle;
+import io.github.techstreet.dfscript.script.VirtualScript;
+import io.github.techstreet.dfscript.script.util.UploadResponse;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import org.apache.commons.codec.binary.Base64;
+
+import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.GZIPOutputStream;
-
-import io.github.techstreet.dfscript.script.VirtualScript;
-import io.github.techstreet.dfscript.script.util.UploadResponse;
-import io.github.techstreet.dfscript.util.chat.ChatType;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import org.apache.commons.codec.binary.Base64;
 
 public class ScriptListScreen extends CScreen {
     private final List<CWidget> contextMenu = new ArrayList<>();
