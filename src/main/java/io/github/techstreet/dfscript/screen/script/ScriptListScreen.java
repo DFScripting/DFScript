@@ -138,12 +138,12 @@ public class ScriptListScreen extends CScreen {
                             obj.addProperty("data", scriptData);
 
                             try (OutputStream os = con.getOutputStream()) {
-                                byte[] input = obj.toString().getBytes("utf-8");
+                                byte[] input = obj.toString().getBytes(StandardCharsets.UTF_8);
                                 os.write(input, 0, input.length);
                             }
 
                             // Parse the response and get the scripts ID
-                            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                                 StringBuilder response = new StringBuilder();
                                 String responseLine;
 
@@ -180,12 +180,12 @@ public class ScriptListScreen extends CScreen {
                                 obj.addProperty("id", s.getServer());
 
                                 try (OutputStream os = con.getOutputStream()) {
-                                    byte[] input = obj.toString().getBytes("utf-8");
+                                    byte[] input = obj.toString().getBytes(StandardCharsets.UTF_8);
                                     os.write(input, 0, input.length);
                                 }
 
                                 try {
-                                    try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                                    try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                                         s.setServer("None");
                                         ScriptManager.getInstance().saveScript(s);
                                         DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "Successfully removed the script from the server!"));
