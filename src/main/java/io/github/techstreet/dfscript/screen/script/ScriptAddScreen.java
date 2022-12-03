@@ -73,48 +73,48 @@ public class ScriptAddScreen extends CScreen {
 
     public static void getScripts() {
         ArrayList<VirtualScript> scripts = new ArrayList<>();
-
-        try {
-            URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/check/");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("authorization", AuthHandler.getAuthCode());
-            con.setDoOutput(true);
-
-            con.getInputStream();
-            if (con.getResponseCode() != 204) {
-                AuthHandler.regen();
-            }
-        } catch (Exception e) {
-            AuthHandler.regen();
-            e.printStackTrace();
-        }
-
-        try {
-            InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/scripts/get").openStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            JsonObject obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
-
-            for (String key : obj.keySet()) {
-                JsonObject scriptObject = obj.getAsJsonObject(key);
-
-                VirtualScript script = new VirtualScript(scriptObject.get("name").getAsString(), scriptObject.get("owner").getAsString(), key);
-                script.setApproved(scriptObject.get("approved").getAsBoolean());
-                script.setApprover((scriptObject.get("approvedBy").isJsonNull() ? "None" : scriptObject.get("approvedBy").getAsString()));
-
-                scripts.add(script);
-            }
-
-            is.close();
-
-            for (VirtualScript s : scripts) {
-                ScriptAddScreen.scriptHash.put(s.getId(), s);
-            }
-
-            ScriptAddScreen.scripts = scripts;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //TODO: replace this with new network manager
+//        try {
+//            URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/check/");
+//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//            con.setRequestMethod("GET");
+//            con.setRequestProperty("authorization", AuthHandler.getAuthCode());
+//            con.setDoOutput(true);
+//
+//            con.getInputStream();
+//            if (con.getResponseCode() != 204) {
+//                AuthHandler.regen();
+//            }
+//        } catch (Exception e) {
+//            AuthHandler.regen();
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/scripts/get").openStream();
+//            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+//            JsonObject obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
+//
+//            for (String key : obj.keySet()) {
+//                JsonObject scriptObject = obj.getAsJsonObject(key);
+//
+//                VirtualScript script = new VirtualScript(scriptObject.get("name").getAsString(), scriptObject.get("owner").getAsString(), key);
+//                script.setApproved(scriptObject.get("approved").getAsBoolean());
+//                script.setApprover((scriptObject.get("approvedBy").isJsonNull() ? "None" : scriptObject.get("approvedBy").getAsString()));
+//
+//                scripts.add(script);
+//            }
+//
+//            is.close();
+//
+//            for (VirtualScript s : scripts) {
+//                ScriptAddScreen.scriptHash.put(s.getId(), s);
+//            }
+//
+//            ScriptAddScreen.scripts = scripts;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static String readAll(Reader rd) throws IOException {
