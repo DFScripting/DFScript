@@ -3,9 +3,15 @@
   "id": "dfscript",
   "version": "${project.version}",
   "name": "DFScript",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "description": "A scripting mod for the DiamondFire minecraft server.",
+  "authors": [
+    "TechStreetDev",
+    "GeorgeRNG"
+  ],
+  "contact": {
+    "issues": "https://github.com/DFOnline/DFScript/issues",
+    "homepage": "https://dfonline.dev/scripts"
+  },
   "license": "LGPL-3.0",
   "icon": "assets/dfscript/icon.png",
   "environment": "client",
@@ -18,7 +24,7 @@
     "dfscript.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.14.11",
     "fabric": "*",
     "minecraft": "~1.19",
     "java": ">=17"

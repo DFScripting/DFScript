@@ -7,7 +7,8 @@ import java.util.List;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vector4f;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
 
 public class CTextField implements CWidget {
 
@@ -55,15 +56,15 @@ public class CTextField implements CWidget {
 
         Vector4f begin = new Vector4f(0, 0, 1, 1);
         Vector4f end = new Vector4f(width, height, 1, 1);
-        begin.transform(stack.peek().getPositionMatrix());
-        end.transform(stack.peek().getPositionMatrix());
+//        begin.add((Vector4fc) stack.peek().getPositionMatrix());
+//        end.add((Vector4fc) stack.peek().getPositionMatrix());
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-            (int) begin.getX()*guiScale,
-            (int) begin.getY()*guiScale,
-            (int) (end.getX() - begin.getX())*guiScale,
-            (int) (end.getY() - begin.getY())*guiScale
+            (int) begin.x()*guiScale,
+            (int) begin.y()*guiScale,
+            (int) (end.x() - begin.x())*guiScale,
+            (int) (end.y() - begin.y())*guiScale
         );
 
         stack.translate(2 + xScroll, 2 + scroll, 0);

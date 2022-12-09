@@ -17,7 +17,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vector4f;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL11;
 
 public class RenderUtil {
@@ -28,7 +29,7 @@ public class RenderUtil {
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, new Identifier(image));
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.disableCull();
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -163,8 +164,8 @@ public class RenderUtil {
         stack.push();
         ItemRenderer renderer = DFScript.MC.getItemRenderer();
         Vector4f pos = new Vector4f(0, 0, 0, 1);
-        pos.transform(stack.peek().getPositionMatrix());
-        renderer.renderGuiItemIcon(item, (int) pos.getX(), (int) pos.getY());
+        pos.add((Vector4fc) stack.peek().getPositionMatrix());
+        renderer.renderGuiItemIcon(item, (int) pos.x(), (int) pos.y());
         stack.pop();
     }
 

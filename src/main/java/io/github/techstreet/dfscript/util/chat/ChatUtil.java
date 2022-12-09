@@ -25,7 +25,7 @@ public class ChatUtil {
     }
 
     public static void chat(String message) {
-        DFScript.MC.player.sendChatMessage(message, Text.literal(message));
+        DFScript.MC.getNetworkHandler().sendChatMessage(message);
     }
 
     public static void executeCommand(String command) {

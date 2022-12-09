@@ -30,7 +30,6 @@ import io.github.techstreet.dfscript.util.Scheduler;
 import io.github.techstreet.dfscript.util.StringUtil;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -38,14 +37,12 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import jdk.jfr.StackTrace;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,12 +51,10 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameMode;
 public enum ScriptActionType {
 
@@ -111,11 +106,11 @@ public enum ScriptActionType {
             {
                 sb.deleteCharAt(0);
 
-                io.github.techstreet.dfscript.DFScript.MC.player.sendCommand(sb.toString(), Text.literal(sb.toString()));
+                io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler().sendCommand(sb.toString());
             }
             else
             {
-                io.github.techstreet.dfscript.DFScript.MC.player.sendChatMessage(sb.toString(), Text.literal(sb.toString()));
+                io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler().sendChatMessage(sb.toString());
             }
         })),
 
@@ -1201,7 +1196,7 @@ public enum ScriptActionType {
             }
 
             if (sndManager.getKeys().contains(sndid)) {
-                SoundEvent snd = new SoundEvent(sndid);
+                SoundEvent snd = SoundEvent.of(sndid,0);
                 sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
                 ChatUtil.error("Unknown sound: " + sound);

@@ -66,7 +66,7 @@ public class CButton implements CWidget {
         Rectangle rect = new Rectangle(this.x, this.y, width, height);
 
         if (rect.contains(x, y)) {
-            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
             onClick.run();
             return true;
         }
