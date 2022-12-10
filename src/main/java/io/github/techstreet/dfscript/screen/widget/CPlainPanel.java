@@ -26,25 +26,25 @@ public class CPlainPanel implements CWidget {
         stack.push();
         stack.translate(x, y, 0);
 
-        Vector4f begin = new Vector4f(0, 0, 1, 1);
-        Vector4f end = new Vector4f(width, height, 1, 1);
-//        begin.add(stack.peek().getPositionMatrix().transform(new Vector4f(0,0,0,0)));
-//        end.add(stack.peek().getPositionMatrix().transform(new Vector4f(0,0,0,0)));
+        float xpos = stack.peek().getPositionMatrix().m30() + x;
+        float ypos = stack.peek().getPositionMatrix().m31() - y;
 
-        // FIXME: this breaks
+        Vector4f begin = new Vector4f(xpos, ypos, 1, 1);
+        Vector4f end = new Vector4f(xpos + (width * 2), ypos + (height * 2), 1, 1);
+
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
-//        RenderUtil.pushScissor(
-//            (int) begin.x()*guiScale,
-//            (int) begin.y()*guiScale,
-//            (int) (end.x() - begin.x())*guiScale,
-//            (int) (end.y() - begin.y())*guiScale
-//        );
+        RenderUtil.pushScissor(
+                (int) begin.x()*guiScale,
+                (int) begin.y()*guiScale,
+                (int) (end.x() - begin.x())*guiScale,
+                (int) (end.y() - begin.y())*guiScale
+        );
 
         for (CWidget child : children) {
             child.render(stack, mouseX, mouseY, tickDelta);
         }
 
-//        RenderUtil.popScissor();
+        RenderUtil.popScissor();
         stack.pop();
     }
 

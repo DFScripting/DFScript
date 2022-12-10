@@ -25,9 +25,6 @@ public class ScriptListScreen extends CScreen {
         CScrollPanel panel = new CScrollPanel(0, 5, 160, 94);
         widgets.add(panel);
 
-        CText test = new CText(0,0,Text.literal("Debug"));
-        widgets.add(test);
-
         int y = 0;
         for (Script s : ScriptManager.getInstance().getScripts()) {
             MutableText text = Text.literal(s.getName());
