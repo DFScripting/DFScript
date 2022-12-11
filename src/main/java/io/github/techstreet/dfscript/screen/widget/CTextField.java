@@ -8,7 +8,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 public class CTextField implements CWidget {
 
@@ -55,10 +54,10 @@ public class CTextField implements CWidget {
         DrawableHelper.fill(stack, 1, 1, width - 1, height - 1, 0xFF000000);
 
         float xpos = stack.peek().getPositionMatrix().m30() + x;
-        float ypos = stack.peek().getPositionMatrix().m31() - y;
+        float ypos = stack.peek().getPositionMatrix().m31();
 
-        Vector4f begin = new Vector4f(xpos, ypos, 1, 1);
-        Vector4f end = new Vector4f(xpos + (width * 2), ypos + (height * 2), 1, 1);
+        Vector4f begin = new Vector4f(xpos - 2, ypos + 2, 1, 1);
+        Vector4f end = new Vector4f((xpos + (width * 2)) - 7, (ypos + (height * 2)), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(

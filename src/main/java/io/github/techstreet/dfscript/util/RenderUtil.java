@@ -2,14 +2,8 @@ package io.github.techstreet.dfscript.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.techstreet.dfscript.DFScript;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
@@ -18,8 +12,10 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RenderUtil {
 
@@ -163,8 +159,7 @@ public class RenderUtil {
     public static void renderGuiItem(MatrixStack stack, ItemStack item) {
         stack.push();
         ItemRenderer renderer = DFScript.MC.getItemRenderer();
-        Vector4f pos = new Vector4f(0, 0, 0, 1);
-        pos.add((Vector4fc) stack.peek().getPositionMatrix());
+        Vector4f pos = new Vector4f(stack.peek().getPositionMatrix().m30(), stack.peek().getPositionMatrix().m31(), 0, 1);
         renderer.renderGuiItemIcon(item, (int) pos.x(), (int) pos.y());
         stack.pop();
     }
