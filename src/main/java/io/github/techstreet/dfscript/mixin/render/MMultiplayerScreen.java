@@ -21,8 +21,8 @@ public class MMultiplayerScreen extends Screen {
         super(title);
     }
 
-    @Inject(at = @At("HEAD"), method = "render", cancellable = true)
-    private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "init", cancellable = true)
+    private void init(CallbackInfo ci) {
         this.addDrawableChild(new BlendableTexturedButtonWidget(5, 5, 20, 20, 0, 0, 20, identifier_main, 20, 40, (button) -> {
             ScriptListScreen screen = new ScriptListScreen(false);
             DFScript.MC.setScreen(screen);
