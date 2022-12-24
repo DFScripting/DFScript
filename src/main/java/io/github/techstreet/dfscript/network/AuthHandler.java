@@ -5,6 +5,7 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.network.request.ForbiddenException;
+import io.github.techstreet.dfscript.network.request.ReadBody;
 import io.github.techstreet.dfscript.network.request.ServerCodeResponse;
 import net.minecraft.client.util.Session;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -19,13 +20,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class AuthHandler implements Loadable {
-    protected String commonSecret;
+    public static AuthHandler instance;
+
+    private String commonSecret;
     protected boolean valid = false;
 
     @Override
     public void load() {
         try {
             regen();
+            instance = this;
         }
         catch (IOException e) {
             DFScript.LOGGER.error(e);
@@ -81,16 +85,9 @@ public class AuthHandler implements Loadable {
             os.write(input, 0, input.length);
         }
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-            StringBuilder response = new StringBuilder();
-            String responseLine;
+        ServerCodeResponse servercodeResponse = DFScript.GSON.fromJson(ReadBody.getResponse(connection.getInputStream()), ServerCodeResponse.class);
+        return DigestUtils.sha256Hex(clientCode + servercodeResponse.getServerCode());
 
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-            ServerCodeResponse servercodeResponse = DFScript.GSON.fromJson(response.toString(), ServerCodeResponse.class);
-            return DigestUtils.sha256Hex(clientCode + servercodeResponse.getServerCode());
-        }
     }
 
     /**
@@ -122,5 +119,9 @@ public class AuthHandler implements Loadable {
             throw new IOException("Unexpected response code from backend: " + status);
         }
         // It worked.
+    }
+
+    public void addAuthorization(HttpURLConnection connection) {
+        connection.addRequestProperty("Authorization",commonSecret);
     }
 }
