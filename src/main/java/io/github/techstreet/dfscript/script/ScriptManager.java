@@ -172,7 +172,7 @@ public class ScriptManager implements Loadable {
             LOGGER.info("Loaded script: " + file.getName());
         } catch (Exception e) {
             LOGGER.error("Failed to load script: " + file.getName());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -181,7 +181,7 @@ public class ScriptManager implements Loadable {
             FileUtil.writeFile(script.getFile().toPath(), GSON.toJson(script));
         } catch (Exception e) {
             LOGGER.error("Failed to save script: " + script.getFile().getName());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -232,7 +232,7 @@ public class ScriptManager implements Loadable {
             file = FileUtil.folder("Scripts").resolve(name + ".json").toFile();
         } catch (InvalidPathException e) {
             LOGGER.error("Failed to save script: " + script.getFile().getName());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         script.setFile(file);

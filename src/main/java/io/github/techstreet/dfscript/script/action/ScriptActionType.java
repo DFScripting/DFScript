@@ -1372,7 +1372,7 @@ public enum ScriptActionType {
                         ScriptValue value = ScriptValueJson.fromJson(json);
                         ctx.context().setVariable(ctx.variable("Result").name(), value);
                     } catch (IOException e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                         ChatUtil.error("Internal error while reading file.");
                     }
                 }
@@ -1397,7 +1397,7 @@ public enum ScriptActionType {
                     f.toFile().getParentFile().mkdirs();
                     FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
                 } catch (IOException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     ChatUtil.error("Internal error while writing file.");
                 }
             } else {

@@ -78,7 +78,7 @@ public class VirtualScript {
             Files.write(file.toPath(), content.getBytes());
             DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(true), "Successfully installed '" + name + "' by " + owner + "!"));
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 }

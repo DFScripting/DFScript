@@ -83,7 +83,7 @@ public class AuthHandler implements Loadable {
                 DFScript.MC.getSessionService().joinServer(session.getProfile(), session.getAccessToken(), commonSecret);
             } catch (AuthenticationException e) {
                 DFScript.LOGGER.error(e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             // Authorization step two - Generate the authcode
@@ -118,7 +118,7 @@ public class AuthHandler implements Loadable {
                 DFScript.LOGGER.info("Server authorization code successfully generated!");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         try {
@@ -140,7 +140,7 @@ public class AuthHandler implements Loadable {
                 staff = false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

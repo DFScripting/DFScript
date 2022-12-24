@@ -101,11 +101,11 @@ public class ScriptInstallScreen extends CScreen {
                 if (e.getMessage().contains("403")) {
                     DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptInstallScreen(script), "You don't have permission to " + (!approved ? "un" : "") + "approve this script!"));
                 } else {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

@@ -160,7 +160,7 @@ public class ScriptListScreen extends CScreen {
                             }
                         } catch (Exception e) {
                             DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "Failed to upload script to the server, please report this to a DFScript developer!"));
-                            e.printStackTrace();
+//                            e.printStackTrace();
                         }
                     }, 0, 0, 1, 0.5f, 0, 0.5f);
 
@@ -194,12 +194,12 @@ public class ScriptListScreen extends CScreen {
                                     if (e.getMessage().contains("401")) {
                                         DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "You don't have permission to delete this script!"));
                                     } else {
-                                        e.printStackTrace();
+//                                        e.printStackTrace();
                                     }
                                 }
                             } catch (Exception e) {
                                 DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "Failed to remove the script from the server, please try again!"));
-                                e.printStackTrace();
+//                                e.printStackTrace();
                             }
                         }, 0, 0, 1, 0.5f, 0, 0.5f);
                     }
