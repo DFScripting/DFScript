@@ -1,8 +1,11 @@
 package io.github.techstreet.dfscript.mixin.render;
 
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.event.HudRenderEvent;
+import io.github.techstreet.dfscript.event.system.EventManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,5 +20,12 @@ public class MInGameHUD {
         if (client.options.debugEnabled) {
             info.cancel();
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "render")
+    private void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
+        EventManager em = EventManager.getInstance();
+        em.dispatch(new HudRenderEvent(matrices));
+        em.resetEvents();
     }
 }

@@ -1492,7 +1492,7 @@ public enum ScriptActionType {
         })),
 
     DRAW_TEXT(builder -> builder.name("Draw Text")
-        .description("Draws text on the screen.")
+        .description("Draws text on the screen. (Only works in the overlay event)")
         .icon(Items.NAME_TAG)
         .category(ScriptActionCategory.VISUALS)
         .arg("Text", ScriptActionArgumentType.TEXT)
