@@ -10,42 +10,23 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
+import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.menu.ScriptMenu;
-import io.github.techstreet.dfscript.script.menu.ScriptMenuButton;
-import io.github.techstreet.dfscript.script.menu.ScriptMenuItem;
-import io.github.techstreet.dfscript.script.menu.ScriptMenuText;
-import io.github.techstreet.dfscript.script.menu.ScriptMenuTextField;
-import io.github.techstreet.dfscript.script.menu.ScriptWidget;
+import io.github.techstreet.dfscript.script.menu.*;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
 import io.github.techstreet.dfscript.script.util.ScriptValueJson;
 import io.github.techstreet.dfscript.script.values.*;
-import io.github.techstreet.dfscript.util.ComponentUtil;
-import io.github.techstreet.dfscript.util.FileUtil;
-import io.github.techstreet.dfscript.util.ItemUtil;
-import io.github.techstreet.dfscript.util.Scheduler;
-import io.github.techstreet.dfscript.util.StringUtil;
+import io.github.techstreet.dfscript.util.*;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import jdk.jfr.StackTrace;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,13 +35,19 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameMode;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 public enum ScriptActionType {
 
     DISPLAY_CHAT(builder -> builder.name("DisplayChat")
@@ -767,7 +754,7 @@ public enum ScriptActionType {
         .arg("Values", ScriptActionArgumentType.LIST, b -> b.optional(true))
         .action(ctx -> {
 
-            HashMap<String, ScriptValue> dict = new HashMap<String, ScriptValue>();
+            HashMap<String, ScriptValue> dict = new HashMap<>();
 
                 if (ctx.argMap().containsKey("Keys") && ctx.argMap().containsKey("Values")) {
                     List<ScriptValue> keys = ctx.value("Keys").asList();
@@ -1047,7 +1034,7 @@ public enum ScriptActionType {
                     }
                 }
                 catch(Exception e){
-                    ChatUtil.error("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
+                    OverlayManager.getInstance().add("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
 
                     for (StackTraceElement stackTraceElement : e.getStackTrace()) {
                         DFScript.LOGGER.error(stackTraceElement.toString());
@@ -1196,7 +1183,7 @@ public enum ScriptActionType {
             }
             catch(Exception err) {
                 err.printStackTrace();
-                ChatUtil.error("Incorrect identifier: " + sound);
+                OverlayManager.getInstance().add("Incorrect identifier: " + sound);
                 return;
             }
 
@@ -1204,7 +1191,7 @@ public enum ScriptActionType {
                 SoundEvent snd = new SoundEvent(sndid);
                 sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
-                ChatUtil.error("Unknown sound: " + sound);
+                OverlayManager.getInstance().add("Unknown sound: " + sound);
 
                 try {
                     String jname = StringUtil.fromSoundIDToRegistryID(sound);
@@ -1225,7 +1212,7 @@ public enum ScriptActionType {
                     }
 
                     if (similiar.size() > 0) {
-                        ChatUtil.error("Did you mean: \n" + String.join(", \n", similiar));
+                        OverlayManager.getInstance().add("Did you mean: \n" + String.join(", \n", similiar));
                     }
                 } catch (Exception err) {
                     err.printStackTrace();
@@ -1363,7 +1350,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
 
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.script().getFile().getName()+"-files").resolve(filename);
                 if (Files.exists(f)) {
                     try {
@@ -1372,12 +1359,11 @@ public enum ScriptActionType {
                         ScriptValue value = ScriptValueJson.fromJson(json);
                         ctx.context().setVariable(ctx.variable("Result").name(), value);
                     } catch (IOException e) {
-//                        e.printStackTrace();
-                        ChatUtil.error("Internal error while reading file.");
+                        OverlayManager.getInstance().add("Internal error while reading file: " + filename);
                     }
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -1391,17 +1377,17 @@ public enum ScriptActionType {
             String filename = ctx.value("Filename").asText();
             ScriptValue value = ctx.value("Content");
 
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.script().getFile().getName()+"-files").resolve(filename);
                 try {
                     f.toFile().getParentFile().mkdirs();
                     FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
                 } catch (IOException e) {
 //                    e.printStackTrace();
-                    ChatUtil.error("Internal error while writing file.");
+                    OverlayManager.getInstance().add("Internal error while writing file: " + filename);
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -1414,13 +1400,13 @@ public enum ScriptActionType {
         .group(ScriptGroup.CONDITION)
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.script().getFile().getName()+"-files").resolve(filename);
                 if (Files.exists(f)) {
                     ctx.setLastIfResult(true);
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -1433,13 +1419,13 @@ public enum ScriptActionType {
         .group(ScriptGroup.CONDITION)
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.script().getFile().getName()+"-files").resolve(filename);
                 if (!Files.exists(f)) {
                     ctx.setLastIfResult(true);
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -1472,7 +1458,7 @@ public enum ScriptActionType {
                 io.github.techstreet.dfscript.DFScript.MC.interactionManager.clickCreativeStack(item, slot + 36);
                 io.github.techstreet.dfscript.DFScript.MC.player.getInventory().setStack(slot, item);
             } else {
-                ChatUtil.error("Unable to set hotbar item! (Not in creative mode)");
+                OverlayManager.getInstance().add("Unable to set hotbar item! (Not in creative mode)");
             }
         })),
 
@@ -1487,7 +1473,7 @@ public enum ScriptActionType {
             if (io.github.techstreet.dfscript.DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
                 ItemUtil.giveCreativeItem(item,true);
             } else {
-                ChatUtil.error("Unable to set hotbar item! (Not in creative mode)");
+                OverlayManager.getInstance().add("Unable to set give item! (Not in creative mode)");
             }
         })),
 
@@ -1557,10 +1543,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.script())) {
                     menu.widgets.add(new ScriptMenuButton(x,y,width,height,text,identifier,ctx.script()));
                 } else {
-                    ChatUtil.error("Unable to add button to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add button to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add button to menu! (Unknown menu type)");
             }
         })),
 
@@ -1582,10 +1568,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.script())) {
                     menu.widgets.add(new ScriptMenuItem(x,y,item,identifier));
                 } else {
-                    ChatUtil.error("Unable to add item to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add item to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add item to menu! (Unknown menu type)");
             }
         })),
 
@@ -1608,10 +1594,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.script())) {
                     menu.widgets.add(new ScriptMenuText(x,y,text,0x333333, 1, false, false,identifier));
                 } else {
-                    ChatUtil.error("Unable to add text to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add text to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add text to menu! (Unknown menu type)");
             }
         })),
 
@@ -1635,10 +1621,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.script())) {
                     menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,true,identifier));
                 } else {
-                    ChatUtil.error("Unable to add text field to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add text field to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add text field to menu! (Unknown menu type)");
             }
         })),
 
@@ -1653,10 +1639,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.script())) {
                     menu.removeChild(identifier);
                 } else {
-                    ChatUtil.error("Unable to remove element from menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to remove element from menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to remove element from menu! (Unknown menu type)");
             }
         })),
 
@@ -1678,13 +1664,13 @@ public enum ScriptActionType {
                             new ScriptTextValue(field.getText())
                         );
                     } else {
-                        ChatUtil.error("Unable to get text field value! (Unknown widget type)");
+                        OverlayManager.getInstance().add("Unable to get text field value! (Unknown widget type)");
                     }
                 } else {
-                    ChatUtil.error("Unable to get text field value! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to get text field value! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to get text field value! (Unknown menu type)");
             }
         })),
 
@@ -1703,13 +1689,13 @@ public enum ScriptActionType {
                     if (w instanceof ScriptMenuTextField field) {
                         field.setText(ctx.value("Value").asText());
                     } else {
-                        ChatUtil.error("Unable to set text field value! (Unknown widget type)");
+                        OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
                     }
                 } else {
-                    ChatUtil.error("Unable to set text field value! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to set text field value! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
             }
         })),
     
@@ -1767,7 +1753,7 @@ public enum ScriptActionType {
         })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
-            .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
+            .description("Repeats forever.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
             .icon(Items.GOLD_INGOT)
             .category(ScriptActionCategory.MISC)
             .hasChildren(true)
@@ -1792,7 +1778,7 @@ public enum ScriptActionType {
         .arg("List", ScriptActionArgumentType.LIST, b -> b.optional(true))
         .category(ScriptActionCategory.LISTS)
         .action(ctx -> {
-            List<ScriptValue> list = null;
+            List<ScriptValue> list;
 
             if(ctx.argMap().containsKey("List"))
             {
@@ -1852,8 +1838,8 @@ public enum ScriptActionType {
 
                 List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
 
-                for(int i = 0; i < textsToRemove.size(); i++) {
-                    result = result.replace(textsToRemove.get(i).asText(), "");
+                for (ScriptValue scriptValue : textsToRemove) {
+                    result = result.replace(scriptValue.asText(), "");
                 }
 
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
@@ -1866,7 +1852,7 @@ public enum ScriptActionType {
             .arg("Text", ScriptActionArgumentType.TEXT, b -> b.optional(true))
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = null;
+                String result;
 
                 if (ctx.argMap().containsKey("Text")) {
                     result = ctx.value("Text").asText();
@@ -1892,10 +1878,7 @@ public enum ScriptActionType {
                 String input = ctx.value("Text to repeat").asText();
                 int times = (int) ctx.value("Times to repeat").asNumber();
 
-                for(int i = 0; i < times; i++)
-                {
-                    result += input;
-                }
+                result = input.repeat(times);
 
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
     }));
@@ -1908,7 +1891,7 @@ public enum ScriptActionType {
     private String name = "Unnamed Action";
     private boolean hasChildren = false;
     private ScriptActionCategory category = ScriptActionCategory.MISC;
-    private List<String> description = new ArrayList();
+    private final List<String> description = new ArrayList<>();
     private ScriptGroup group = ScriptGroup.ACTION;
 
     private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
@@ -2079,7 +2062,7 @@ public enum ScriptActionType {
             }
         }
 
-        ChatUtil.error("Invalid arguments for " + name + ".");
+        OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
     }
 
     private void generatePossibilities(List<List<ScriptActionArgument>> possibilities, ArrayList<ScriptActionArgument> current, List<ScriptActionArgument> arguments, int pos) {

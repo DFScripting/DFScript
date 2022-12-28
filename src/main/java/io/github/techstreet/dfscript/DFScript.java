@@ -8,6 +8,7 @@ import io.github.techstreet.dfscript.commands.arguments.serializers.StringFuncAr
 import io.github.techstreet.dfscript.features.AuthHandler;
 import io.github.techstreet.dfscript.features.UpdateAlerts;
 import io.github.techstreet.dfscript.loader.Loader;
+import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.util.AuthcodeResponse;
@@ -80,6 +81,7 @@ public class DFScript implements ModInitializer {
         loader.load(new ScriptManager());
         loader.load(new Scheduler());
         loader.load(new UpdateAlerts());
+        loader.load(new OverlayManager());
 
         LOGGER.info("Initialized");
     }

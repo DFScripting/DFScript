@@ -3,6 +3,7 @@ package io.github.techstreet.dfscript.mixin.render;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
+import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,6 +25,7 @@ public class MInGameHUD {
 
     @Inject(at = @At("HEAD"), method = "render")
     private void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
+        OverlayManager.getInstance().render(matrices);
         EventManager em = EventManager.getInstance();
         em.dispatch(new HudRenderEvent(matrices));
         em.resetEvents();
