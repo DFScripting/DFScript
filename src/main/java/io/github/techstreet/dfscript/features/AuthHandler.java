@@ -9,11 +9,8 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.script.util.AuthcodeResponse;
 import io.github.techstreet.dfscript.script.util.ServercodeResponse;
-import io.github.techstreet.dfscript.util.chat.ChatType;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.util.Session;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,7 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -60,11 +57,11 @@ public class AuthHandler implements Loadable {
             obj.addProperty("clientcode", clientCode);
 
             try (OutputStream os = con.getOutputStream()) {
-                byte[] input = obj.toString().getBytes("utf-8");
+                byte[] input = obj.toString().getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                 StringBuilder response = new StringBuilder();
                 String responseLine;
 
@@ -82,7 +79,7 @@ public class AuthHandler implements Loadable {
                 Session session = DFScript.MC.getSession();
                 DFScript.MC.getSessionService().joinServer(session.getProfile(), session.getAccessToken(), commonSecret);
             } catch (AuthenticationException e) {
-                DFScript.LOGGER.error(e.getMessage());
+//                DFScript.LOGGER.error(e.getMessage());
 //                e.printStackTrace();
             }
 
@@ -101,11 +98,11 @@ public class AuthHandler implements Loadable {
             obj.addProperty("uuid", DFScript.PLAYER_UUID);
 
             try (OutputStream os = con.getOutputStream()) {
-                byte[] input = obj.toString().getBytes("utf-8");
+                byte[] input = obj.toString().getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                 StringBuilder response = new StringBuilder();
                 String responseLine;
 
@@ -123,7 +120,7 @@ public class AuthHandler implements Loadable {
 
         try {
             InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/staff/").openStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
 
             JsonArray array = obj.get("staff").getAsJsonArray();
