@@ -4,7 +4,7 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import net.minecraft.text.Text;
 
-public class ScriptMenuText extends CText implements CWidget {
+public class ScriptMenuText extends CText implements CWidget, ScriptWidget {
 
     private final String identifier;
     public ScriptMenuText(int x, int y, Text text, int color, float scale, boolean centered, boolean shadow, String identifier) {
@@ -12,6 +12,7 @@ public class ScriptMenuText extends CText implements CWidget {
         this.identifier = identifier;
     }
 
+    @Override
     public String getIdentifier() {
         return identifier;
     }
