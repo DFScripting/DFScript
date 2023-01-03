@@ -40,7 +40,7 @@ public class DFScript implements ModInitializer {
             .create();
 
     @Override
-    public void onInitialize(){
+    public void onInitialize() {
         LOGGER.info("Initializing");
         Runtime.getRuntime().addShutdownHook(new Thread(this::onClose));
 
