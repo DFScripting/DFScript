@@ -71,8 +71,8 @@ public class AuthHandler implements Loadable {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Accept", "application/json");
         connection.setDoOutput(true);
-        connection.setReadTimeout(5000);
-        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(1000);
+        connection.setConnectTimeout(1000);
 
         String clientCode = UUID.randomUUID().toString();
 

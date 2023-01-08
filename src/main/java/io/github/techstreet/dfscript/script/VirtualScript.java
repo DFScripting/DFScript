@@ -57,8 +57,8 @@ public class VirtualScript {
 
     public void download(boolean update) {
         try {
-            InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/scripts/get/" + id).openStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            InputStream inputStream = new URL(DFScript.BACKEND + "/script/" + id + "/raw").openStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
             File file = FileUtil.folder("Scripts").resolve(name + ".json").toFile();
 
@@ -70,7 +70,7 @@ public class VirtualScript {
                 }
             }
 
-            JsonObject obj = JsonParser.parseReader(rd).getAsJsonObject();
+            JsonObject obj = JsonParser.parseReader(bufferedReader).getAsJsonObject();
             obj.addProperty("disabled", false);
             obj.addProperty("server", id);
             String content = obj.toString();
