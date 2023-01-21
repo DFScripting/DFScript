@@ -1,4 +1,5 @@
-[![Build](https://github.com/DFOnline/DFScript/actions/workflows/build.yml/badge.svg)](https://github.com/DFOnline/DFScript/actions/workflows/build.yml)
+[![Build](https://github.com/DFOnline/DFScript/actions/workflows/build.yml/badge.svg)
+](https://github.com/DFOnline/DFScript/actions/workflows/build.yml)
 # DFScript
 DFScript is a mod created for DiamondFire to allow scripting on the client. This mod is a seperation and improvement from the shutdown mod [CodeUtilities](https://github.com/CodeUtilities/CodeUtilities).
 
@@ -102,6 +103,13 @@ To access script files go to `%appdata%\.minecraft\DFScript` on your machine. He
 
 You can easily back up scripts here by copy and pasting the json file into another location. Pasting and deleting json files from this folder will do the same in-game, so be careful about what you change.
 ___
+
+<p>
+<img src="https://img.shields.io/github/downloads/DFOnline/DFScript/total?color=blue"/>
+<img src="https://img.shields.io/github/languages/code-size/DFOnline/DFScript"/>
+  <img src="https://img.shields.io/github/contributors/DFOnline/DFScript" />
+  <img src="https://img.shields.io/github/release-date/DFOnline/DFScript" /> 
+ </p>
 
 
 
