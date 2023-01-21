@@ -31,10 +31,9 @@ Here is what each of these actions do:
 - ![enter image description here](https://i.imgur.com/Av7lZmu.png)**/**![enter image description here](https://i.imgur.com/I8PXtvr.png) Toggle: Toggles your script on and off. When a script is off, it does not run at all. (Red means script is currently on, green means script is off)
 
 To edit your script, select the edit icon and a new menu will be opened. From here, you can add code, change your scripts description and add config options.
-___
 
 - ![Settings Icon](https://i.imgur.com/fy9SfQP.png) From here you can write a short description about your script to tell others who may use it any important information. 
-You can also add config options which users can change without accessing the code. The values of these options can be used in your code. (More info later)
+You can also add config options which users can change without accessing the code. The values of these options can be used in your code. (More info [later](https://github.com/not-first/DFScript-updated-readme-/edit/1.19.2/README.md#changing-parameters))
 
 
 
@@ -83,6 +82,9 @@ For example, if I had created Option 1 as a string, and the user had set it to `
 These can be nearly any value type, so pay attention to make sure the code block you are using supports the value type.
 
 *Currently, changing the order and contents of added parameters is not supported, so you will have to delete and redo if you make a mistake.*
+## Disabling Scripts - !!
+Sometimes when you are creating a script, you may accidentally make your client complete actions which are against DiamondFire rules, such as making your client spam, or other similar actions. If this is the case, immediately leave the server. In the top left if your multiplayer screen, there will be a button button (![Scripts icon](  https://i.imgur.com/Q2phpZz.png)) which will open up a version of the scripts menu where scripts can be disabled. When you rejoin the server the script will now be disabled. **You can edit code inside a disabled script, so make sure you have fixed the issue before re-enabling the script.**
+If the issue came from a script you did not make, report the script in the [discord](https://discord.gg/gtfFwWEapx) so it can be removed.
 ## Downloading Scripts
 To download a script that someone else has made, open the main scripts menu, select add, and there will be a list of scripts others have made as well as a search bar. Scripts with a star next to their name mean that they are verified and safe to use.
 
@@ -110,7 +112,3 @@ ___
   <img src="https://img.shields.io/github/contributors/DFOnline/DFScript" />
   <img src="https://img.shields.io/github/release-date/DFOnline/DFScript" /> 
  </p>
-
-
-
-
