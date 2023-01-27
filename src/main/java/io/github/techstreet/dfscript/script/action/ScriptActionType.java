@@ -44,6 +44,7 @@ import net.minecraft.world.GameMode;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -1881,7 +1882,21 @@ public enum ScriptActionType {
                 result = input.repeat(times);
 
                 ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
-    }));
+    })),
+
+    FORMAT_TIME(builder -> builder.name("Format Timestamp")
+            .description("Turns a timestamp (ms) into human readable time.")
+            .icon(Items.CLOCK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Timestamp", ScriptActionArgumentType.NUMBER)
+            .arg("Format", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                Date date = new Date((long) ctx.value("Timestamp").asNumber());
+                SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
+
+                ctx.context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(format.format(date)));
+            }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
     };
