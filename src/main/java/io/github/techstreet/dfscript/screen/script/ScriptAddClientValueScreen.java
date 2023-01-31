@@ -12,10 +12,10 @@ public class ScriptAddClientValueScreen extends CScreen {
     private final Script script;
     private final ScriptAction action;
     private final int insertIndex;
-    private static final int WIDTH = 55;
+    private static final int WIDTH = 58;
 
-    public ScriptAddClientValueScreen(ScriptAction action, Script script, int insertIndex) {
-        super(WIDTH, 52);
+    public ScriptAddClientValueScreen(ScriptAction action, Script script, int insertIndex, String overwrite) {
+        super(WIDTH, 58);
         this.script = script;
         this.action = action;
         this.insertIndex = insertIndex;
