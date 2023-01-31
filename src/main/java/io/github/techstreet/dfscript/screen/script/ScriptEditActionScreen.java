@@ -85,6 +85,8 @@ public class ScriptEditActionScreen extends CScreen {
                         if (button == 0) {
                             ScriptArgument argument = action.getArguments().get(currentIndex);
                             String value = "~";
+                            if(argument instanceof ScriptClientValueArgument clientValue) value = clientValue.getName();
+                            if(argument instanceof ScriptConfigArgument configArgument) value = configArgument.getName();
                             if(argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
                             if(argument instanceof ScriptTextArgument text) value = text.value();
                             if(argument instanceof ScriptVariableArgument var) value = var.name();
