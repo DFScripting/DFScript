@@ -25,6 +25,7 @@ public class ScriptAddClientValueScreen extends CScreen {
         for (ScriptClientValueArgument arg : ScriptClientValueArgument.values()) {
             CItem item = new CItem(x, y, arg.getIcon());
             item.setClickListener((btn) -> {
+                if(overwrite != null) action.getArguments().remove(insertIndex);
                 action.getArguments().add(insertIndex, arg);
                 DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
             });
