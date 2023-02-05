@@ -4,17 +4,19 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.ScriptClientValueArgument;
 
 public class ScriptAddClientValueScreen extends CScreen {
 
     private final Script script;
-    private final ScriptAction action;
+    private final ScriptParametrizedPart action;
     private final int insertIndex;
     private static final int WIDTH = 58;
 
-    public ScriptAddClientValueScreen(ScriptAction action, Script script, int insertIndex, String overwrite) {
+    public ScriptAddClientValueScreen(ScriptParametrizedPart action, Script script, int insertIndex, String overwrite) {
         super(WIDTH, 58);
         this.script = script;
         this.action = action;
@@ -27,7 +29,7 @@ public class ScriptAddClientValueScreen extends CScreen {
             item.setClickListener((btn) -> {
                 if(overwrite != null) action.getArguments().remove(insertIndex);
                 action.getArguments().add(insertIndex, arg);
-                DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+                DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
             });
             widgets.add(item);
             x += 10;

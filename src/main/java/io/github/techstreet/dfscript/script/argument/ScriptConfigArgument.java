@@ -8,6 +8,7 @@ import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
+import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 
@@ -25,7 +26,7 @@ public final class ScriptConfigArgument implements ScriptArgument {
     }
 
     @Override
-    public ScriptValue getValue(Event event, ScriptContext context) {
+    public ScriptValue getValue(ScriptTask task) {
         return script.getOption(option);
     }
 

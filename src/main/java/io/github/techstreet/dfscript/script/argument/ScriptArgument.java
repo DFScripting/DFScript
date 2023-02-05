@@ -8,12 +8,13 @@ import com.google.gson.JsonParseException;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
+import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import java.lang.reflect.Type;
 
 public interface ScriptArgument {
 
-    ScriptValue getValue(Event event, ScriptContext context);
+    ScriptValue getValue(ScriptTask task);
 
     boolean convertableTo(ScriptActionArgumentType type);
 

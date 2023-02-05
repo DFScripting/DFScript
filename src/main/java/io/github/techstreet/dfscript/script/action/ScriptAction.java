@@ -4,105 +4,32 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import io.github.techstreet.dfscript.event.system.Event;
+import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptGroup;
-import io.github.techstreet.dfscript.script.ScriptPart;
+import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
-import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
-import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
-import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
+import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
-public class ScriptAction implements ScriptPart {
+public abstract class ScriptAction extends ScriptParametrizedPart {
 
-    private ScriptActionType type;
-    private final List<ScriptArgument> arguments;
-
-    public ScriptAction(ScriptActionType type, List<ScriptArgument> arguments) {
-        this.type = type;
-        this.arguments = arguments;
-    }
-
-    public ScriptAction setType(ScriptActionType newType) {
-        type = newType;
-
-        return this;
-    }
-
-    public void invoke(Event event, ScriptContext context, Consumer<ScriptScopeVariables> inner, ScriptTask task, Script script) {
-        type.run(new ScriptActionContext(
-            context, arguments, event, inner, task, new HashMap<>(), script
-        ));
-    }
-
-    public ScriptActionType getType() {
-        return type;
-    }
-
-    public List<ScriptArgument> getArguments() {
-        return arguments;
+    public ScriptAction(List<ScriptArgument> arguments) {
+        super(arguments);
     }
 
     @Override
-    public ScriptGroup getGroup() {
-        return getType().getGroup();
+    public void run(ScriptTask task) {
+
     }
 
-    public void updateScriptReferences(Script script) {
-        for(ScriptArgument arg : getArguments()) {
-            if (arg instanceof ScriptConfigArgument carg) {
-                carg.setScript(script);
-            }
-        }
+    @Override
+    public boolean isDeprecated() {
+        return false;
     }
 
-    public void updateConfigArguments(String oldOption, String newOption) {
-        for(ScriptArgument arg : getArguments()) {
-            if (arg instanceof ScriptConfigArgument carg) {
-                if(carg.getName() == oldOption)
-                {
-                    carg.setOption(newOption);
-                }
-            }
-        }
-    }
-
-    public void removeConfigArguments(String option) {
-        int index = 0;
-
-        List<ScriptArgument> argList = getArguments();
-
-        while(index < argList.size()) {
-            if (argList.get(index) instanceof ScriptConfigArgument carg) {
-                if(Objects.equals(carg.getName(), option))
-                {
-                    argList.remove(index);
-                    continue;
-                }
-            }
-            index++;
-        }
-    }
-
-    public static class Serializer implements JsonSerializer<ScriptAction> {
-
-        @Override
-        public JsonElement serialize(ScriptAction src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject obj = new JsonObject();
-            obj.addProperty("type", "action");
-            obj.addProperty("action", src.getType().name());
-            obj.add("arguments", context.serialize(src.getArguments()));
-            return obj;
-        }
-    }
+    @Override
+    public void create(ScriptPartRender render, Script script) {}
 }

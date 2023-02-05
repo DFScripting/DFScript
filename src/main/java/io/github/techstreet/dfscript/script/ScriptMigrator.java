@@ -30,6 +30,10 @@ public class ScriptMigrator {
             script.setVersion(4);
         }
 
+        if (script.getVersion() == 4) {
+            script.setVersion(5);
+        }
+
         if (previousVer != script.getVersion()) {
             ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer + " to version " + script.getVersion() + "!");
             ScriptManager.getInstance().saveScript(script);

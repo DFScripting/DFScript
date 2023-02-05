@@ -4,22 +4,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import io.github.techstreet.dfscript.event.system.Event;
-import io.github.techstreet.dfscript.script.action.ScriptActionType;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
-import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
-import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
+import io.github.techstreet.dfscript.screen.script.ScriptEditScreen;
+import io.github.techstreet.dfscript.screen.widget.CItem;
+import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
+import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.render.ScriptPartRender;
+import io.github.techstreet.dfscript.script.render.ScriptPartRenderDynamicElement;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
-public class ScriptComment implements ScriptPart {
+public class ScriptComment extends ScriptPart {
 
     private String comment;
 
@@ -38,8 +38,36 @@ public class ScriptComment implements ScriptPart {
     }
 
     @Override
-    public ScriptGroup getGroup() {
-        return ScriptGroup.COMMENT;
+    public void run(ScriptTask task) {
+
+    }
+
+    @Override
+    public void create(ScriptPartRender render, Script script) {
+        render.addElement(new ScriptPartRenderDynamicElement((args) -> {
+            int y = args.y();
+            int indent = args.indent();
+            CScrollPanel panel = args.panel();
+
+            panel.add(new CItem(5+indent*5, y, new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false)))));
+
+            CTextField cTextField = new CTextField(getComment(),15+indent*5, y-1, ScriptEditScreen.width-(15+indent*5)-5, 10, true);
+
+            cTextField.setChangedListener(() -> setComment(cTextField.getText()));
+
+            panel.add(cTextField);
+            return y+10;
+        }));
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false)));
+    }
+
+    @Override
+    public String getName() {
+        return comment;
     }
 
     public static class Serializer implements JsonSerializer<ScriptComment> {

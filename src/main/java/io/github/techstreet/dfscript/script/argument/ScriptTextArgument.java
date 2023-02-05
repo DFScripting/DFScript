@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
+import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import java.lang.reflect.Type;
@@ -14,7 +15,7 @@ import java.lang.reflect.Type;
 public record ScriptTextArgument(String value) implements ScriptArgument {
 
     @Override
-    public ScriptValue getValue(Event event, ScriptContext context) {
+    public ScriptValue getValue(ScriptTask task) {
         return new ScriptTextValue(value);
     }
 

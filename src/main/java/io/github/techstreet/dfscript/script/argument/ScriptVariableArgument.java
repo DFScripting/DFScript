@@ -7,14 +7,15 @@ import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
+import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import java.lang.reflect.Type;
 
-public record ScriptVariableArgument(String name) implements ScriptArgument{
+public record ScriptVariableArgument(String name) implements ScriptArgument {
 
     @Override
-    public ScriptValue getValue(Event event, ScriptContext context) {
-        return context.getVariable(name);
+    public ScriptValue getValue(ScriptTask task) {
+        return task.context().getVariable(name);
     }
 
 
