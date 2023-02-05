@@ -19,7 +19,7 @@ public class ScriptAddConfigValueScreen extends CScreen {
     private static int WIDTH = 200;
     private static int HEIGHT = 94;
 
-    public ScriptAddConfigValueScreen(ScriptParametrizedPart action, Script script, int insertIndex) {
+    public ScriptAddConfigValueScreen(ScriptParametrizedPart action, Script script, int insertIndex, String overwrite) {
         super(WIDTH, HEIGHT);
         this.script = script;
         this.action = action;
@@ -30,6 +30,7 @@ public class ScriptAddConfigValueScreen extends CScreen {
         int x = 5;
         int y = 5;
         for (ScriptNamedOption arg : script.getOptions()) {
+            if(overwrite != null) action.getArguments().remove(insertIndex);
             CItem item = new CItem(x, y, arg.getIcon());
             item.setClickListener((btn) -> {
                 this.action.getArguments().add(insertIndex, new ScriptConfigArgument(arg.getName(), this.script));

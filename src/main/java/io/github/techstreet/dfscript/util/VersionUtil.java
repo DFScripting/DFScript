@@ -12,7 +12,7 @@ public class VersionUtil {
             JsonObject jsonObject = JsonParser.parseString(webContent).getAsJsonObject();
             return Integer.parseInt(jsonObject.get("name").getAsString().substring(6));
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return 0;
     }

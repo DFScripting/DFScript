@@ -22,11 +22,15 @@ public class ScriptAddArgumentScreen extends CScreen {
     private final ScriptParametrizedPart action;
 
     public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index) {
+        this(script,action,index,null);
+    }
+    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, String overwrite) {
         super(100, 50);
         this.script = script;
         this.action = action;
 
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
+        if(overwrite != null) input.setText(overwrite);
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
         textIcon.setCustomName(Text.literal("Text")
@@ -58,6 +62,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         addText.setClickListener((btn) -> {
+            if(overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
             DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
         });
@@ -65,6 +70,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         addNumber.setClickListener((btn) -> {
             try {
                 double number = Double.parseDouble(input.getText());
+                if(overwrite != null) action.getArguments().remove(index);
                 action.getArguments().add(index, new ScriptNumberArgument(number));
                 DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
             } catch (Exception err) {
@@ -73,16 +79,17 @@ public class ScriptAddArgumentScreen extends CScreen {
         });
 
         addVariable.setClickListener((btn) -> {
+            if(overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptVariableArgument(input.getText()));
             DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
         });
 
         addClientValue.setClickListener((btn) -> {
-            DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index));
+            DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index, overwrite));
         });
 
         addConfigValue.setClickListener((btn) -> {
-            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index));
+            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index, overwrite));
         });
 
         widgets.add(input);

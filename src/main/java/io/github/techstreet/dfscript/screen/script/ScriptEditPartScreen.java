@@ -83,6 +83,17 @@ public class ScriptEditPartScreen extends CScreen {
                     if (getBounds().contains(x, y)) {
                         DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
 
+                        if (button == 0) {
+                            ScriptArgument argument = action.getArguments().get(currentIndex);
+                            String value = "~";
+                            if(argument instanceof ScriptClientValueArgument clientValue) value = clientValue.getName();
+                            if(argument instanceof ScriptConfigArgument configArgument) value = configArgument.getName();
+                            if(argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
+                            if(argument instanceof ScriptTextArgument text) value = text.value();
+                            if(argument instanceof ScriptVariableArgument var) value = var.name();
+                            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, value));
+                        }
+
                         if (button != 0) {
                             CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
                                 DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex));

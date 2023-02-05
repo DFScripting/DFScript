@@ -14,10 +14,10 @@ public class ScriptAddClientValueScreen extends CScreen {
     private final Script script;
     private final ScriptParametrizedPart action;
     private final int insertIndex;
-    private static final int WIDTH = 55;
+    private static final int WIDTH = 58;
 
-    public ScriptAddClientValueScreen(ScriptParametrizedPart action, Script script, int insertIndex) {
-        super(WIDTH, 52);
+    public ScriptAddClientValueScreen(ScriptParametrizedPart action, Script script, int insertIndex, String overwrite) {
+        super(WIDTH, 58);
         this.script = script;
         this.action = action;
         this.insertIndex = insertIndex;
@@ -27,6 +27,7 @@ public class ScriptAddClientValueScreen extends CScreen {
         for (ScriptClientValueArgument arg : ScriptClientValueArgument.values()) {
             CItem item = new CItem(x, y, arg.getIcon());
             item.setClickListener((btn) -> {
+                if(overwrite != null) action.getArguments().remove(insertIndex);
                 action.getArguments().add(insertIndex, arg);
                 DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
             });

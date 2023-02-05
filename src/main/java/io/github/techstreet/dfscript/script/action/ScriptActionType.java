@@ -10,6 +10,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
+import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
@@ -21,14 +22,11 @@ import io.github.techstreet.dfscript.script.menu.ScriptMenuText;
 import io.github.techstreet.dfscript.script.menu.ScriptMenuTextField;
 import io.github.techstreet.dfscript.script.menu.ScriptWidget;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
+import io.github.techstreet.dfscript.script.menu.*;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
 import io.github.techstreet.dfscript.script.util.ScriptValueJson;
 import io.github.techstreet.dfscript.script.values.*;
-import io.github.techstreet.dfscript.util.ComponentUtil;
-import io.github.techstreet.dfscript.util.FileUtil;
-import io.github.techstreet.dfscript.util.ItemUtil;
-import io.github.techstreet.dfscript.util.Scheduler;
-import io.github.techstreet.dfscript.util.StringUtil;
+import io.github.techstreet.dfscript.util.*;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -62,6 +60,15 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameMode;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 public enum ScriptActionType {
 
     DISPLAY_CHAT(builder -> builder.name("DisplayChat")
@@ -478,7 +485,7 @@ public enum ScriptActionType {
         .arg("Values", ScriptActionArgumentType.LIST, b -> b.optional(true))
         .action(ctx -> {
 
-            HashMap<String, ScriptValue> dict = new HashMap<String, ScriptValue>();
+            HashMap<String, ScriptValue> dict = new HashMap<>();
 
                 if (ctx.argMap().containsKey("Keys") && ctx.argMap().containsKey("Values")) {
                     List<ScriptValue> keys = ctx.value("Keys").asList();
@@ -646,7 +653,7 @@ public enum ScriptActionType {
                     }
                 }
                 catch(Exception e){
-                    ChatUtil.error("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
+                    OverlayManager.getInstance().add("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
 
                     for (StackTraceElement stackTraceElement : e.getStackTrace()) {
                         DFScript.LOGGER.error(stackTraceElement.toString());
@@ -766,7 +773,7 @@ public enum ScriptActionType {
             }
             catch(Exception err) {
                 err.printStackTrace();
-                ChatUtil.error("Incorrect identifier: " + sound);
+                OverlayManager.getInstance().add("Incorrect identifier: " + sound);
                 return;
             }
 
@@ -774,7 +781,7 @@ public enum ScriptActionType {
                 SoundEvent snd = new SoundEvent(sndid);
                 sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
             } else {
-                ChatUtil.error("Unknown sound: " + sound);
+                OverlayManager.getInstance().add("Unknown sound: " + sound);
 
                 try {
                     String jname = StringUtil.fromSoundIDToRegistryID(sound);
@@ -921,7 +928,7 @@ public enum ScriptActionType {
         .arg("Text",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
+            ctx.context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
         })),
           
     READ_FILE(builder -> builder.name("Read File")
@@ -933,7 +940,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
 
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 if (Files.exists(f)) {
                     try {
@@ -942,12 +949,11 @@ public enum ScriptActionType {
                         ScriptValue value = ScriptValueJson.fromJson(json);
                         ctx.task().context().setVariable(ctx.variable("Result").name(), value);
                     } catch (IOException e) {
-                        e.printStackTrace();
-                        ChatUtil.error("Internal error while reading file.");
+                        OverlayManager.getInstance().add("Internal error while reading file: " + filename);
                     }
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -961,17 +967,17 @@ public enum ScriptActionType {
             String filename = ctx.value("Filename").asText();
             ScriptValue value = ctx.value("Content");
 
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 try {
                     f.toFile().getParentFile().mkdirs();
                     FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    ChatUtil.error("Internal error while writing file.");
+//                    e.printStackTrace();
+                    OverlayManager.getInstance().add("Internal error while writing file: " + filename);
                 }
             } else {
-                ChatUtil.error("Illegal filename: " + filename);
+                OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
 
@@ -1004,7 +1010,7 @@ public enum ScriptActionType {
                 io.github.techstreet.dfscript.DFScript.MC.interactionManager.clickCreativeStack(item, slot + 36);
                 io.github.techstreet.dfscript.DFScript.MC.player.getInventory().setStack(slot, item);
             } else {
-                ChatUtil.error("Unable to set hotbar item! (Not in creative mode)");
+                OverlayManager.getInstance().add("Unable to set hotbar item! (Not in creative mode)");
             }
         })),
 
@@ -1019,12 +1025,12 @@ public enum ScriptActionType {
             if (io.github.techstreet.dfscript.DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
                 ItemUtil.giveCreativeItem(item,true);
             } else {
-                ChatUtil.error("Unable to set hotbar item! (Not in creative mode)");
+                OverlayManager.getInstance().add("Unable to set give item! (Not in creative mode)");
             }
         })),
 
     DRAW_TEXT(builder -> builder.name("Draw Text")
-        .description("Draws text on the screen.")
+        .description("Draws text on the screen. (Only works in the overlay event)")
         .icon(Items.NAME_TAG)
         .category(ScriptActionCategory.VISUALS)
         .arg("Text", ScriptActionArgumentType.TEXT)
@@ -1089,10 +1095,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.widgets.add(new ScriptMenuButton(x,y,width,height,text,identifier,ctx.task().context().script()));
                 } else {
-                    ChatUtil.error("Unable to add button to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add button to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add button to menu! (Unknown menu type)");
             }
         })),
 
@@ -1114,10 +1120,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.widgets.add(new ScriptMenuItem(x,y,item,identifier));
                 } else {
-                    ChatUtil.error("Unable to add item to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add item to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add item to menu! (Unknown menu type)");
             }
         })),
 
@@ -1140,10 +1146,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.widgets.add(new ScriptMenuText(x,y,text,0x333333, 1, false, false,identifier));
                 } else {
-                    ChatUtil.error("Unable to add text to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add text to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add text to menu! (Unknown menu type)");
             }
         })),
 
@@ -1167,10 +1173,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,true,identifier));
                 } else {
-                    ChatUtil.error("Unable to add text field to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to add text field to menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to add text field to menu! (Unknown menu type)");
             }
         })),
 
@@ -1185,10 +1191,10 @@ public enum ScriptActionType {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.removeChild(identifier);
                 } else {
-                    ChatUtil.error("Unable to remove element from menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to remove element from menu! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to remove element from menu! (Unknown menu type)");
             }
         })),
 
@@ -1210,10 +1216,10 @@ public enum ScriptActionType {
                             new ScriptTextValue(field.getText())
                         );
                     } else {
-                        ChatUtil.error("Unable to get text field value! (Unknown widget type)");
+                        OverlayManager.getInstance().add("Unable to get text field value! (Unknown widget type)");
                     }
                 } else {
-                    ChatUtil.error("Unable to get text field value! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
                 }
             } else {
                 ChatUtil.error("Unable to get text field value! (Unknown menu type)");
@@ -1235,13 +1241,13 @@ public enum ScriptActionType {
                     if (w instanceof ScriptMenuTextField field) {
                         field.setText(ctx.value("Value").asText());
                     } else {
-                        ChatUtil.error("Unable to set text field value! (Unknown widget type)");
+                        OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
                     }
                 } else {
-                    ChatUtil.error("Unable to set text field value! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to set text field value! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
             }
         })),
     
@@ -1305,7 +1311,7 @@ public enum ScriptActionType {
         .arg("List", ScriptActionArgumentType.LIST, b -> b.optional(true))
         .category(ScriptActionCategory.LISTS)
         .action(ctx -> {
-            List<ScriptValue> list = null;
+            List<ScriptValue> list;
 
             if(ctx.argMap().containsKey("List"))
             {
@@ -1365,8 +1371,8 @@ public enum ScriptActionType {
 
                 List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
 
-                for(int i = 0; i < textsToRemove.size(); i++) {
-                    result = result.replace(textsToRemove.get(i).asText(), "");
+                for (ScriptValue scriptValue : textsToRemove) {
+                    result = result.replace(scriptValue.asText(), "");
                 }
 
                 ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
@@ -1379,7 +1385,7 @@ public enum ScriptActionType {
             .arg("Text", ScriptActionArgumentType.TEXT, b -> b.optional(true))
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = null;
+                String result;
 
                 if (ctx.argMap().containsKey("Text")) {
                     result = ctx.value("Text").asText();
@@ -1407,7 +1413,21 @@ public enum ScriptActionType {
                 String result = input.repeat(Math.max(0, times));
 
                 ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
-    }));
+    })),
+
+    FORMAT_TIME(builder -> builder.name("Format Timestamp")
+            .description("Turns a timestamp (ms) into human readable time.")
+            .icon(Items.CLOCK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Timestamp", ScriptActionArgumentType.NUMBER)
+            .arg("Format", ScriptActionArgumentType.TEXT)
+            .category(ScriptActionCategory.TEXTS)
+            .action(ctx -> {
+                Date date = new Date((long) ctx.value("Timestamp").asNumber());
+                SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
+
+                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(format.format(date)));
+            }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
     };

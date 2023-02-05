@@ -87,7 +87,7 @@ public class ScriptAddScreen extends CScreen {
             }
         } catch (Exception e) {
             AuthHandler.regen();
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         try {
@@ -113,7 +113,7 @@ public class ScriptAddScreen extends CScreen {
 
             ScriptAddScreen.scripts = scripts;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

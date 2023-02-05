@@ -30,7 +30,7 @@ public enum ScriptEventType {
 
     START_UP(ScriptStartUpEvent.class, "OnStartUp", "Executed when all scripts are being loaded.", Items.FIREWORK_ROCKET),
 
-    OVERLAY_EVENT(HudRenderEvent.class, "OnOverlay", "Executed when the overlay is being rendered.", Items.GREEN_STAINED_GLASS_PANE),
+    OVERLAY_EVENT(HudRenderEvent.class, "OnOverlay", "Executed when the HUD is being rendered.", Items.GREEN_STAINED_GLASS_PANE),
 
     MENU_BUTTON_EVENT(ScriptMenuClickButtonEvent.class, "OnMenuButtonClick", "Executed when a player clicks a button inside a custom menu.", Items.CHISELED_STONE_BRICKS),
 

@@ -8,39 +8,19 @@ import io.github.techstreet.dfscript.commands.arguments.serializers.StringFuncAr
 import io.github.techstreet.dfscript.features.AuthHandler;
 import io.github.techstreet.dfscript.features.UpdateAlerts;
 import io.github.techstreet.dfscript.loader.Loader;
-import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
+import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.ScriptManager;
-import io.github.techstreet.dfscript.script.util.AuthcodeResponse;
-import io.github.techstreet.dfscript.script.util.ServercodeResponse;
-import io.github.techstreet.dfscript.script.util.UploadResponse;
 import io.github.techstreet.dfscript.util.Scheduler;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.zip.GZIPOutputStream;
-
-import io.github.techstreet.dfscript.util.chat.ChatType;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Session;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.command.argument.serialize.StringArgumentSerializer;
 import net.minecraft.util.Identifier;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.jmx.Server;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DFScript implements ModInitializer {
 
@@ -80,6 +60,7 @@ public class DFScript implements ModInitializer {
         loader.load(new ScriptManager());
         loader.load(new Scheduler());
         loader.load(new UpdateAlerts());
+        loader.load(new OverlayManager());
 
         LOGGER.info("Initialized");
     }
