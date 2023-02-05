@@ -928,7 +928,7 @@ public enum ScriptActionType {
         .arg("Text",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            ctx.context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
+            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
         })),
           
     READ_FILE(builder -> builder.name("Read File")
