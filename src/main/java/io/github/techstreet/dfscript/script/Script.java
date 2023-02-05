@@ -83,7 +83,8 @@ public class Script {
     }
 
     public void invoke(Event event) {
-        int pos = 0;
+        if(disabled) return;
+
         for (ScriptHeader part : headers) {
             if (part instanceof ScriptEvent se) {
                 if (se.getType().getCodeutilitiesEvent().equals(event.getClass())) {
@@ -98,7 +99,6 @@ public class Script {
                     }
                 }
             }
-            pos++;
         }
     }
 
