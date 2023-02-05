@@ -8,6 +8,7 @@ import io.github.techstreet.dfscript.screen.script.ScriptEditScreen;
 import io.github.techstreet.dfscript.screen.script.ScriptPartCategoryScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
+import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
@@ -22,10 +23,13 @@ import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
+import io.github.techstreet.dfscript.util.RenderUtil;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import javax.naming.Context;
 import java.awt.*;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptSnippet extends ArrayList<ScriptPart> {
+    boolean hidden = false;
     ScriptSnippet() {
 
     }
@@ -44,8 +49,44 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
     }
 
     public int create(CScrollPanel panel, int y, int indent, Script script) {
-        int index = 0;
         ScriptSnippet thisSnippet = this;
+        panel.add(new CButton(3, y, 2, 8, "", () -> {
+            thisSnippet.hidden = !thisSnippet.hidden;
+            if(DFScript.MC.currentScreen instanceof ScriptEditScreen e) {
+                e.reload();
+            }
+        }) {
+            @Override
+            public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                Rectangle b = getBounds();
+
+                int color = 0xFF323232;
+
+                if(b.contains(mouseX, mouseY)) {
+                    color = 0xFF707070;
+                }
+
+                if(thisSnippet.hidden) {
+                    RenderUtil.renderLine(stack, b.x, b.y, b.x+b.width, b.y+(b.height/2f), color, 0.5f);
+                    RenderUtil.renderLine(stack, b.x, b.y+b.height, b.x+b.width, b.y+(b.height/2f), color, 0.5f);
+                }
+                else {
+                    RenderUtil.renderLine(stack, b.x, b.y, b.x+(b.width/2f), b.y+b.height, color, 0.5f);
+                    RenderUtil.renderLine(stack, b.x+b.width, b.y, b.x+(b.width/2f), b.y+b.height, color, 0.5f);
+                }
+            }
+        });
+
+        if(hidden) {
+            ScriptPartRender.createIndent(panel, indent, y, 8);
+
+            panel.add(new CText(15 + indent * 5, y + 2, Text.literal("...")));
+
+            return y+10;
+        }
+
+        int index = 0;
+
         for(ScriptPart part : this) {
             ScriptPartRender render = new ScriptPartRender();
             part.create(render, script);
@@ -215,6 +256,10 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                 snippet.add(context.deserialize(element, ScriptPart.class));
             }
 
+            if(obj.has("hidden")) {
+                snippet.hidden = obj.get("hidden").getAsBoolean();
+            }
+
             return snippet;
         }
 
@@ -228,6 +273,8 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
             }
 
             obj.add("parts", parts);
+            obj.addProperty("hidden", src.hidden);
+
             return obj;
         }
     }
