@@ -16,7 +16,10 @@ import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.render.ScriptPartRenderIconElement;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -29,15 +32,25 @@ public class ScriptBuiltinCondition extends ScriptCondition {
     }
 
     @Override
-    public void create(ScriptPartRender render, Script script) {
-        render.addElement(new ScriptPartRenderIconElement((isInverted() ? "Unless " : "If ") + getType().getName(), getType().getIcon()));
+    public void create(ScriptPartRender render, Script script, String prefix, String invertedPrefix) {
+        render.addElement(new ScriptPartRenderIconElement(getName(prefix, invertedPrefix), getIcon(prefix, invertedPrefix)));
 
-        super.create(render, script);
+        super.create(render, script, prefix, invertedPrefix);
     }
 
     @Override
     public boolean run(ScriptActionContext ctx) {
         return type.run(ctx) != isInverted();
+    }
+
+    @Override
+    public ItemStack getIcon(String prefix, String invertedPrefix) {
+        return type.getIcon((isInverted() ? invertedPrefix : prefix));
+    }
+
+    @Override
+    public String getName(String prefix, String invertedPrefix) {
+        return (isInverted() ? invertedPrefix : prefix) + " " + getType().getName();
     }
 
     public ScriptBuiltinCondition setType(ScriptConditionType newType) {

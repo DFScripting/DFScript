@@ -44,7 +44,7 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
         closeBracketIcon.getSubNbt("display")
                 .put("Lore", lore);
 
-        elseIcon.setCustomName(Text.literal(closeBracketName)
+        elseIcon.setCustomName(Text.literal(elseName)
                 .fillStyle(Style.EMPTY
                         .withColor(Formatting.WHITE)
                         .withItalic(false)));
@@ -69,7 +69,7 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
 
     @Override
     public void create(ScriptPartRender render, Script script) {
-        condition.create(render, script);
+        condition.create(render, script, "If", "Unless");
 
         render.addElement(container.createSnippet(0));
 
@@ -124,6 +124,16 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
         extra.add(new ContextMenuButton("Invert", () -> condition.invert()));
         extra.add(new ContextMenuButton(!hasElse ? "Add Else Statement" : "Remove Else Statement", this::setHasElse));
         return extra;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return condition.getIcon("If", "Unless");
+    }
+
+    @Override
+    public String getName() {
+        return condition.getName("If", "Unless");
     }
 
     public static class Serializer implements JsonSerializer<ScriptBranch> {

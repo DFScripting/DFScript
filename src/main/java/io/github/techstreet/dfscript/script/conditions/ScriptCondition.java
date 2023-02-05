@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class ScriptCondition {
     boolean inverted = false;
 
-    public void create(ScriptPartRender render, Script script) {
+    public void create(ScriptPartRender render, Script script, String prefix, String invertedPrefix) {
 
     }
 
@@ -45,6 +45,9 @@ public abstract class ScriptCondition {
     public boolean run(ScriptActionContext ctx) {
         return false;
     }
+
+    public abstract ItemStack getIcon(String prefix, String invertedPrefix);
+    public abstract String getName(String prefix, String invertedPrefix);
 
     public static class Serializer implements JsonDeserializer<ScriptCondition> {
 

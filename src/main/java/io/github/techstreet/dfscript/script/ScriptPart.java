@@ -14,6 +14,8 @@ import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,6 +32,10 @@ public abstract class ScriptPart implements ScriptRunnable {
     public List<ContextMenuButton> getContextMenu() {
         return new ArrayList<>();
     }
+
+    public abstract ItemStack getIcon();
+
+    public abstract String getName();
 
     public static class Serializer implements JsonDeserializer<ScriptPart> {
 

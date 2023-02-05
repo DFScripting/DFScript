@@ -89,7 +89,7 @@ public class ScriptAddPartScreen extends CScreen {
             if (type.getCategory() != category) continue;
             if (type.isDeprecated()) continue;
 
-            CItem item = new CItem(x, y, type.getIcon());
+            CItem item = new CItem(x, y, type.getIcon("If"));
             item.setClickListener((btn) -> {
                 ScriptBranch action = new ScriptBranch(new ArrayList<>(), new ScriptBuiltinCondition(type));
                 snippet.add(insertIndex, action);

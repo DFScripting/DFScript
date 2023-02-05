@@ -14,7 +14,7 @@ import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class ScriptAction extends ScriptParametrizedPart {
+public abstract class ScriptAction extends ScriptParametrizedPart {
 
     public ScriptAction(List<ScriptArgument> arguments) {
         super(arguments);

@@ -2,10 +2,7 @@ package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
-import io.github.techstreet.dfscript.screen.widget.CButton;
-import io.github.techstreet.dfscript.screen.widget.CItem;
-import io.github.techstreet.dfscript.screen.widget.CText;
-import io.github.techstreet.dfscript.screen.widget.CWidget;
+import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
 import io.github.techstreet.dfscript.script.ScriptPart;
@@ -27,13 +24,21 @@ import net.minecraft.text.Text;
 public class ScriptEditPartScreen extends CScreen {
 
     private final Script script;
+    private final CScrollPanel panel;
     private final List<CWidget> contextMenu = new ArrayList<>();
 
     public ScriptEditPartScreen(ScriptParametrizedPart action, Script script) {
         super(90, 100);
+        panel = new CScrollPanel(0, 0, 90, 100);
+
+        widgets.add(panel);
+
         this.script = script;
 
-        int y = 5;
+        panel.add(new CItem(5, 3, action.getIcon()));
+        panel.add(new CText(15, 5, Text.of(action.getName())));
+
+        int y = 15;
         int index = 0;
         for (ScriptArgument arg : action.getArguments()) {
             ItemStack icon;
@@ -63,13 +68,13 @@ public class ScriptEditPartScreen extends CScreen {
                 throw new IllegalArgumentException("Invalid argument type");
             }
 
-            widgets.add(new CItem(5, y, icon));
-            widgets.add(new CText(15, y + 2, Text.literal(text)));
+            panel.add(new CItem(5, y, icon));
+            panel.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
 
 
-            widgets.add(new CButton(5, y-1, 85, 10, "",() -> {}) {
+            panel.add(new CButton(5, y-1, 85, 10, "",() -> {}) {
                 @Override
                 public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
@@ -106,9 +111,9 @@ public class ScriptEditPartScreen extends CScreen {
                                 DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
                             });
                             DFScript.MC.send(() -> {
-                                widgets.add(insertBefore);
-                                widgets.add(insertAfter);
-                                widgets.add(delete);
+                                panel.add(insertBefore);
+                                panel.add(insertAfter);
+                                panel.add(delete);
                                 contextMenu.add(insertBefore);
                                 contextMenu.add(insertAfter);
                                 contextMenu.add(delete);
@@ -128,7 +133,7 @@ public class ScriptEditPartScreen extends CScreen {
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
             DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
         });
-        widgets.add(add);
+        panel.add(add);
     }
 
     @Override
@@ -145,7 +150,7 @@ public class ScriptEditPartScreen extends CScreen {
 
     private void clearContextMenu() {
         for (CWidget w : contextMenu) {
-            widgets.remove(w);
+            panel.remove(w);
         }
         contextMenu.clear();
     }

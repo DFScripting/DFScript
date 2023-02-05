@@ -14,6 +14,7 @@ import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.render.ScriptPartRenderIconElement;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
@@ -48,6 +49,16 @@ public class ScriptBuiltinRepetition extends ScriptRepetition {
     @Override
     public boolean isDeprecated() {
         return type.isDeprecated();
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return type.getIcon();
+    }
+
+    @Override
+    public String getName() {
+        return type.getName();
     }
 
     @Override

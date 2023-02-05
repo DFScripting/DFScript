@@ -60,6 +60,16 @@ public class ScriptComment extends ScriptPart {
         }));
     }
 
+    @Override
+    public ItemStack getIcon() {
+        return new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false)));
+    }
+
+    @Override
+    public String getName() {
+        return comment;
+    }
+
     public static class Serializer implements JsonSerializer<ScriptComment> {
 
         @Override

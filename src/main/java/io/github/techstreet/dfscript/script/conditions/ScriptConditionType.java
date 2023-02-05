@@ -288,7 +288,7 @@ public enum ScriptConditionType {
         .arg("Filename", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 if (Files.exists(f)) {
                     return true;
@@ -307,7 +307,7 @@ public enum ScriptConditionType {
         .deprecate(IF_FILE_EXISTS)
         .action(ctx -> {
             String filename = ctx.value("Filename").asText();
-            if (filename.matches("^[a-zA-Z\\d_\\-\\. ]+$")) {
+            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 if (!Files.exists(f)) {
                     return true;
@@ -340,10 +340,10 @@ public enum ScriptConditionType {
         description.add("No description provided.");
         builder.accept(this);
     }
-    public ItemStack getIcon() {
+    public ItemStack getIcon(String prefix) {
         ItemStack item = new ItemStack(icon);
 
-        item.setCustomName(Text.literal(name)
+        item.setCustomName(Text.literal(prefix + (prefix.equals("") ? "" : " ") + name)
             .fillStyle(Style.EMPTY
                 .withColor(Formatting.WHITE)
                 .withItalic(false)));
@@ -468,5 +468,9 @@ public enum ScriptConditionType {
             ChatUtil.error("Invalid arguments for " + name + ".");
             return false;
         }
+    }
+
+    public ItemStack getIcon() {
+        return getIcon("");
     }
 }
