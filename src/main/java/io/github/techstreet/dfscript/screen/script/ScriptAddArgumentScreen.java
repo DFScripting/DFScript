@@ -5,6 +5,8 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
@@ -17,9 +19,9 @@ import net.minecraft.text.Text;
 public class ScriptAddArgumentScreen extends CScreen {
 
     private final Script script;
-    private final ScriptAction action;
+    private final ScriptParametrizedPart action;
 
-    public ScriptAddArgumentScreen(Script script, ScriptAction action, int index) {
+    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index) {
         super(100, 50);
         this.script = script;
         this.action = action;
@@ -57,14 +59,14 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         addText.setClickListener((btn) -> {
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
-            DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+            DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
         });
 
         addNumber.setClickListener((btn) -> {
             try {
                 double number = Double.parseDouble(input.getText());
                 action.getArguments().add(index, new ScriptNumberArgument(number));
-                DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+                DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
             } catch (Exception err) {
                 input.textColor = 0xFF3333;
             }
@@ -72,7 +74,7 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         addVariable.setClickListener((btn) -> {
             action.getArguments().add(index, new ScriptVariableArgument(input.getText()));
-            DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+            DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
         });
 
         addClientValue.setClickListener((btn) -> {
@@ -93,6 +95,6 @@ public class ScriptAddArgumentScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+        DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
     }
 }

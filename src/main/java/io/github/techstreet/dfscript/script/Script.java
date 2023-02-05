@@ -12,14 +12,25 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptUnknownArgument;
+import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
+import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
+import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
+import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.event.ScriptEmptyHeader;
+import io.github.techstreet.dfscript.script.event.ScriptEventType;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
+import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
+import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
 import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatType;
@@ -34,14 +45,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 4;
+    public static int scriptVersion = 5;
 
     private String name;
     private String owner;
     private String description = "N/A";
     private int version = 0;
     private String server;
-    private final List<ScriptPart> parts;
+    // private final List<ScriptPart> parts;
+
+    private final List<ScriptHeader> headers;
 
     private final List<ScriptNamedOption> options;
     private final Logger LOGGER;
@@ -49,11 +62,11 @@ public class Script {
     private File file;
     private boolean disabled;
 
-    public Script(String name, String owner, String server, List<ScriptPart> parts, boolean disabled, int version) {
+    public Script(String name, String owner, String server, List<ScriptHeader> headers, boolean disabled, int version) {
         this.name = name;
         this.owner = owner;
         this.server = server;
-        this.parts = parts;
+        this.headers = headers;
         this.disabled = disabled;
         this.version = version;
         this.options = new ArrayList<>();
@@ -71,11 +84,13 @@ public class Script {
 
     public void invoke(Event event) {
         int pos = 0;
-        for (ScriptPart part : parts) {
+        for (ScriptHeader part : headers) {
             if (part instanceof ScriptEvent se) {
                 if (se.getType().getCodeutilitiesEvent().equals(event.getClass())) {
                     try {
-                        this.execute(new ScriptTask(new ScriptPosStack(pos+1), event,this));
+                        ScriptTask task = new ScriptTask(event,this);
+                        se.run(task);
+                        task.run();
                     } catch (Exception err) {
                         ChatUtil.sendMessage("Error while invoking event " + se.getType().getName() + " in script " + name + ": " + err.getMessage(), ChatType.FAIL);
                         LOGGER.error("Error while invoking event " + se.getType().getName(), err);
@@ -87,7 +102,7 @@ public class Script {
         }
     }
 
-    public void execute(ScriptTask task) {
+    /*public void execute(ScriptTask task) {
         if (disabled) { // don't run the code if it's disabled obviously
             return;
         }
@@ -201,9 +216,10 @@ public class Script {
         }
 
         return false;
-    }
-    public List<ScriptPart> getParts() {
-        return parts;
+    } */
+
+    public List<ScriptHeader> getHeaders() {
+        return headers;
     }
 
     public String getName() {
@@ -259,15 +275,20 @@ public class Script {
     }
 
     public void replaceAction(ScriptActionType oldAction, ScriptActionType newAction) {
-        for(int i = 0; i < parts.size(); i++)
-        {
-            if(parts.get(i) instanceof ScriptAction)
-            {
-                if(((ScriptAction) parts.get(i)).getType() == oldAction)
-                {
-                    parts.set(i, ((ScriptAction) parts.get(i)).setType(newAction));
-                }
-            }
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.replaceAction(oldAction, newAction));
+        }
+    }
+
+    public void replaceCondition(ScriptConditionType oldCondition, ScriptConditionType newCondition) {
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.replaceCondition(oldCondition, newCondition));
+        }
+    }
+
+    public void replaceRepetition(ScriptRepetitionType oldRepetition, ScriptRepetitionType newRepetition) {
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.replaceRepetition(oldRepetition, newRepetition));
         }
     }
 
@@ -319,26 +340,20 @@ public class Script {
     }
 
     private void updateScriptReferences() {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.updateScriptReferences(this);
-            }
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.updateScriptReferences(this));
         }
     }
 
     public void replaceOption(String oldOption, String newOption) {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.updateConfigArguments(oldOption, newOption);
-            }
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.replaceOption(oldOption, newOption));
         }
     }
 
     public void removeOption(String option) {
-        for(ScriptPart part : getParts()) {
-            if(part instanceof ScriptAction a) {
-                a.removeConfigArguments(option);
-            }
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.removeOption(option));
         }
     }
 
@@ -357,18 +372,26 @@ public class Script {
             String description = "N/A";
             if (object.get("description") != null) description = object.get("description").getAsString();
 
-            List<ScriptPart> parts = new ArrayList<>();
-            for (JsonElement element : object.get("actions").getAsJsonArray()) {
-                ScriptPart part = context.deserialize(element, ScriptPart.class);
-                parts.add(part);
+            List<ScriptHeader> headers = new ArrayList<>();
+
+            if(object.has("actions")) {
+                JsonArray parts = object.get("actions").getAsJsonArray();
+                legacyDeserialize(headers, parts, context);
             }
+            else {
+                for (JsonElement element : object.get("headers").getAsJsonArray()) {
+                    ScriptHeader header = context.deserialize(element, ScriptHeader.class);
+                    headers.add(header);
+                }
+            }
+
 
             boolean disabled = object.has("disabled") && object.get("disabled").getAsBoolean();
 
             int version = 0;
             if (object.get("version") != null) version = object.get("version").getAsInt();
 
-            Script script = new Script(name, owner, serverId, parts, disabled, version);
+            Script script = new Script(name, owner, serverId, headers, disabled, version);
             script.setDescription(description);
 
             if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
@@ -390,7 +413,7 @@ public class Script {
             object.addProperty("description", src.description);
 
             JsonArray array = new JsonArray();
-            for (ScriptPart part : src.getParts()) {
+            for (ScriptHeader part : src.getHeaders()) {
                 array.add(context.serialize(part));
             }
 
@@ -399,11 +422,123 @@ public class Script {
                 config.add(context.serialize(option));
             }
 
-            object.add("actions", array);
+            object.add("headers", array);
             object.add("config", config);
             object.addProperty("disabled", src.disabled);
             object.addProperty("version", src.version);
             return object;
+        }
+
+        public static void legacyDeserialize(List<ScriptHeader> headers, JsonArray parts, JsonDeserializationContext context) {
+            int pos = 0;
+
+            while(pos < parts.size()) {
+                ScriptHeader header;
+
+                JsonObject obj = parts.get(pos).getAsJsonObject();
+                String type = obj.get("type").getAsString();
+
+                DFScript.LOGGER.info(pos);
+                DFScript.LOGGER.info(obj);
+
+                if(Objects.equals(type, "event")) {
+                    header = new ScriptEvent(ScriptEventType.valueOf(obj.get("event").getAsString()));
+                    pos++;
+                }
+                else {
+                    header = new ScriptEmptyHeader();
+                }
+
+                ScriptSnippet snippet = new ScriptSnippet();
+                pos = legacyDeserializeActions(pos, parts, snippet, context);
+
+                if(snippet.size() > 0) {
+                    header.container().setSnippet(0, snippet);
+                    headers.add(header);
+                }
+            }
+        }
+
+        private static int legacyDeserializeActions(int pos, JsonArray parts, ScriptSnippet snippet, JsonDeserializationContext context) {
+            boolean parity = false;
+
+            while(pos < parts.size()) {
+                JsonObject obj = parts.get(pos).getAsJsonObject();
+                String type = obj.get("type").getAsString();
+                boolean breakOut = false;
+                switch(type) {
+                    case "event" -> {
+                        breakOut = true;
+                    }
+                    case "comment" -> {
+                        parity = false;
+                        ScriptComment comment = new ScriptComment(obj.get("comment").getAsString());
+                        snippet.add(comment);
+                    }
+                    case "action" -> {
+                        String action = obj.get("action").getAsString();
+
+                        switch(action) {
+                            case "CLOSE_BRACKET" -> {
+                                breakOut = true;
+                            }
+                            case "ELSE" -> {
+                                ScriptPart latestPart = snippet.get(snippet.size()-1);
+
+                                ScriptSnippet elseSnippet = new ScriptSnippet();
+
+                                pos = legacyDeserializeActions(pos+1, parts, elseSnippet, context);
+
+                                if(latestPart instanceof ScriptBranch b) {
+                                    if(!b.hasElse()) b.setHasElse();
+                                    b.container().getSnippet(parity ? 0 : 1).addAll(elseSnippet);
+                                    parity = !parity;
+                                }
+                                else {
+                                    ScriptCondition condition = new ScriptBuiltinCondition(ScriptConditionType.TRUE).invert();
+                                    ScriptBranch b = new ScriptBranch(new ArrayList<>(), condition);
+                                    snippet.add(b);
+                                }
+                            }
+                            default -> {
+                                parity = false;
+
+                                List<ScriptArgument> args = new ArrayList<>();
+                                for (JsonElement arg : obj.get("arguments").getAsJsonArray()) {
+                                    args.add(context.deserialize(arg, ScriptArgument.class));
+                                }
+
+                                try {
+                                    ScriptActionType innerType = ScriptActionType.valueOf(action);
+
+                                    snippet.add(new ScriptBuiltinAction(innerType, args));
+                                }
+                                catch(IllegalArgumentException e) {
+                                    ScriptSnippet innerSnippet = new ScriptSnippet();
+                                    pos = legacyDeserializeActions(pos+1, parts, innerSnippet, context);
+
+                                    try {
+                                        ScriptRepetitionType innerType = ScriptRepetitionType.valueOf(action);
+                                        ScriptBuiltinRepetition part = new ScriptBuiltinRepetition(args, innerType);
+                                        part.container().setSnippet(0, innerSnippet);
+                                        snippet.add(part);
+                                    }
+                                    catch(IllegalArgumentException e2) {
+                                        ScriptConditionType innerType = ScriptConditionType.valueOf(action);
+                                        ScriptBranch part = new ScriptBranch(args, new ScriptBuiltinCondition(innerType));
+                                        part.container().setSnippet(0, innerSnippet);
+                                        snippet.add(part);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if(breakOut) break;
+                pos++;
+            }
+
+            return pos;
         }
     }
 }

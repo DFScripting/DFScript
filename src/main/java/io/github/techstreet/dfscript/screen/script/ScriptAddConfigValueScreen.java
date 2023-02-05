@@ -5,20 +5,21 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
-import io.github.techstreet.dfscript.script.argument.ScriptClientValueArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 
 public class ScriptAddConfigValueScreen extends CScreen {
     private final Script script;
-    private final ScriptAction action;
+    private final ScriptParametrizedPart action;
     private final int insertIndex;
 
     private static int WIDTH = 200;
     private static int HEIGHT = 94;
 
-    public ScriptAddConfigValueScreen(ScriptAction action, Script script, int insertIndex) {
+    public ScriptAddConfigValueScreen(ScriptParametrizedPart action, Script script, int insertIndex) {
         super(WIDTH, HEIGHT);
         this.script = script;
         this.action = action;
@@ -32,7 +33,7 @@ public class ScriptAddConfigValueScreen extends CScreen {
             CItem item = new CItem(x, y, arg.getIcon());
             item.setClickListener((btn) -> {
                 this.action.getArguments().add(insertIndex, new ScriptConfigArgument(arg.getName(), this.script));
-                DFScript.MC.setScreen(new ScriptEditActionScreen(this.action, this.script));
+                DFScript.MC.setScreen(new ScriptEditPartScreen(this.action, this.script));
             });
             panel.add(item);
             x += 10;

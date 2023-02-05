@@ -7,7 +7,8 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
+import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.*;
 
 import java.awt.Rectangle;
@@ -23,12 +24,12 @@ import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
-public class ScriptEditActionScreen extends CScreen {
+public class ScriptEditPartScreen extends CScreen {
 
     private final Script script;
     private final List<CWidget> contextMenu = new ArrayList<>();
 
-    public ScriptEditActionScreen(ScriptAction action, Script script) {
+    public ScriptEditPartScreen(ScriptParametrizedPart action, Script script) {
         super(90, 100);
         this.script = script;
 
@@ -91,7 +92,7 @@ public class ScriptEditActionScreen extends CScreen {
                             });
                             CButton delete = new CButton((int) x, (int) y + 16, 40, 8, "Delete", () -> {
                                 action.getArguments().remove(currentIndex);
-                                DFScript.MC.setScreen(new ScriptEditActionScreen(action, script));
+                                DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
                             });
                             DFScript.MC.send(() -> {
                                 widgets.add(insertBefore);
