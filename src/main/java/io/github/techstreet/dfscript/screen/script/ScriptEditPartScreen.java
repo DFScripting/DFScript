@@ -1,11 +1,12 @@
 package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.screen.CReloadableScreen;
 import io.github.techstreet.dfscript.screen.CScreen;
+import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
-import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.*;
 
 import java.awt.Rectangle;
@@ -13,6 +14,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,9 +24,10 @@ import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
-public class ScriptEditPartScreen extends CScreen {
+public class ScriptEditPartScreen extends CReloadableScreen {
 
     private final Script script;
+    private final ScriptParametrizedPart action;
     private final CScrollPanel panel;
     private final List<CWidget> contextMenu = new ArrayList<>();
 
@@ -34,6 +38,57 @@ public class ScriptEditPartScreen extends CScreen {
         widgets.add(panel);
 
         this.script = script;
+        this.action = action;
+
+        reload();
+    }
+
+    @Override
+    public void close() {
+        DFScript.MC.setScreen(new ScriptEditScreen(script));
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean b = super.mouseClicked(mouseX, mouseY, button);
+        clearContextMenu();
+        return b;
+    }
+
+    private void clearContextMenu() {
+        for (CWidget w : contextMenu) {
+            panel.remove(w);
+        }
+        contextMenu.clear();
+    }
+
+    public void contextMenu(int x, int y, List<ContextMenuButton> contextMenuButtons) {
+        clearContextMenu();
+
+        int maxWidth = 0;
+
+        for(ContextMenuButton w : contextMenuButtons)
+        {
+            TextRenderer t = DFScript.MC.textRenderer;
+            int width = t.getWidth(w.getName())/2 + 4;
+
+            if(width > maxWidth) maxWidth = width;
+        }
+
+        for(ContextMenuButton w : contextMenuButtons)
+        {
+            CButton button = new CButton(x, y, maxWidth, 8, w.getName(), w.getOnClick());
+            y += 8;
+
+            panel.add(button);
+            contextMenu.add(button);
+        }
+    }
+
+    @Override
+    public void reload() {
+        clearContextMenu();
+        panel.clear();
 
         panel.add(new CItem(5, 3, action.getIcon()));
         panel.add(new CText(15, 5, Text.of(action.getName())));
@@ -41,32 +96,8 @@ public class ScriptEditPartScreen extends CScreen {
         int y = 15;
         int index = 0;
         for (ScriptArgument arg : action.getArguments()) {
-            ItemStack icon;
-            String text;
-            if (arg instanceof ScriptTextArgument ta) {
-                icon = new ItemStack(Items.BOOK);
-                text = ta.value();
-            } else if (arg instanceof ScriptNumberArgument na) {
-                icon = new ItemStack(Items.SLIME_BALL);
-                if (na.value() % 1 == 0) {
-                    DecimalFormat df = new DecimalFormat("#");
-                    df.setRoundingMode(RoundingMode.UNNECESSARY);
-                    text = df.format(na.value());
-                } else {
-                    text = String.valueOf(na.value());
-                }
-            } else if (arg instanceof ScriptVariableArgument va) {
-                icon = new ItemStack(Items.MAGMA_CREAM);
-                text = va.name();
-            } else if (arg instanceof ScriptClientValueArgument cva) {
-                icon = new ItemStack(Items.NAME_TAG);
-                text = cva.getName();
-            } else if (arg instanceof ScriptConfigArgument ca) {
-                icon = new ItemStack(Items.INK_SAC);
-                text = ca.getOption().getFullName();
-            } else {
-                throw new IllegalArgumentException("Invalid argument type");
-            }
+            ItemStack icon = arg.getArgIcon();
+            String text = arg.getArgText();
 
             panel.add(new CItem(5, y, icon));
             panel.add(new CText(15, y + 2, Text.literal(text)));
@@ -100,23 +131,21 @@ public class ScriptEditPartScreen extends CScreen {
                         }
 
                         if (button != 0) {
-                            CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
+                            List<ContextMenuButton> contextMenuButtons = new ArrayList<>();
+                            contextMenuButtons.add(new ContextMenuButton("Insert Before", () -> {
                                 DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex));
-                            });
-                            CButton insertAfter = new CButton((int) x, (int) y+8, 40, 8, "Insert After", () -> {
+                            }, false));
+                            contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
                                 DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1));
-                            });
-                            CButton delete = new CButton((int) x, (int) y + 16, 40, 8, "Delete", () -> {
+                            }, false));
+                            contextMenuButtons.add(new ContextMenuButton("Delete", () -> {
                                 action.getArguments().remove(currentIndex);
-                                DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
-                            });
+                            }));
+                            contextMenuButtons.addAll(action.getArguments().get(currentIndex).getContextMenu());
                             DFScript.MC.send(() -> {
-                                panel.add(insertBefore);
-                                panel.add(insertAfter);
-                                panel.add(delete);
-                                contextMenu.add(insertBefore);
-                                contextMenu.add(insertAfter);
-                                contextMenu.add(delete);
+                                if(DFScript.MC.currentScreen instanceof ScriptEditPartScreen screen) {
+                                    screen.contextMenu((int) x, (int) y, contextMenuButtons);
+                                }
                             });
                         }
                         return true;
@@ -134,24 +163,5 @@ public class ScriptEditPartScreen extends CScreen {
             DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
         });
         panel.add(add);
-    }
-
-    @Override
-    public void close() {
-        DFScript.MC.setScreen(new ScriptEditScreen(script));
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean b = super.mouseClicked(mouseX, mouseY, button);
-        clearContextMenu();
-        return b;
-    }
-
-    private void clearContextMenu() {
-        for (CWidget w : contextMenu) {
-            panel.remove(w);
-        }
-        contextMenu.clear();
     }
 }

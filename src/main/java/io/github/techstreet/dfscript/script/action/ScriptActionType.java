@@ -133,8 +133,8 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.VARIABLES)
         .arg("Variable", ScriptActionArgumentType.VARIABLE)
         .arg("Value", ScriptActionArgumentType.ANY)
-        .action(ctx -> ctx.task().context().setVariable(
-            ctx.variable("Variable").name(),
+        .action(ctx -> ctx.setVariable(
+            "Variable",
             ctx.value("Value")
         ))),
 
@@ -149,8 +149,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Amount")) {
                 value += val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Variable").name(),
+            ctx.setVariable(
+                "Variable",
                 new ScriptNumberValue(value)
             );
         })),
@@ -166,8 +166,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Amount")) {
                 value -= val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Variable").name(),
+            ctx.setVariable(
+                "Variable",
                 new ScriptNumberValue(value)
             );
         })),
@@ -183,8 +183,8 @@ public enum ScriptActionType {
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
                 sb.append(arg.asText());
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptTextValue(sb.toString())
             );
         })),
@@ -200,8 +200,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Numbers")) {
                 value += val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -222,8 +222,8 @@ public enum ScriptActionType {
                     value -= val.asNumber();
                 }
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -239,8 +239,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Numbers")) {
                 value *= val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -261,8 +261,8 @@ public enum ScriptActionType {
                     value /= val.asNumber();
                 }
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -277,8 +277,8 @@ public enum ScriptActionType {
         .action(ctx -> {
             double dividend = ctx.value("Dividend").asNumber();
             double divisor = ctx.value("Divisor").asNumber();
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(dividend % divisor)
             );
         })),
@@ -317,7 +317,7 @@ public enum ScriptActionType {
                     values.add(v.getValue(ctx.task()));
                 }
             }
-            ctx.task().context().setVariable(ctx.variable("Variable").name(), new ScriptListValue(values));
+            ctx.setVariable("Variable", new ScriptListValue(values));
         })),
 
     APPEND_VALUE(builder -> builder.name("Append Value")
@@ -331,7 +331,7 @@ public enum ScriptActionType {
             for (ScriptArgument v : ctx.argMap().get("Values")) {
                 list.add(v.getValue(ctx.task()));
             }
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     APPEND_LIST_VALUES(builder -> builder.name("Append List Values")
@@ -347,7 +347,7 @@ public enum ScriptActionType {
 
                 receiver.addAll(donor);
 
-                ctx.task().context().setVariable(ctx.variable("Receiving List").name(), new ScriptListValue(receiver));
+                ctx.setVariable("Receiving List", new ScriptListValue(receiver));
             })),
 
     GET_LIST_VALUE(builder -> builder.name("Get List Value")
@@ -362,9 +362,9 @@ public enum ScriptActionType {
          // force index consistent with diamondfire indexes
             int index = (int) ctx.value("Index").asNumber() - 1;
             if (index < 0 || index >= list.size()) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             } else {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), list.get(index));
+                ctx.setVariable("Result", list.get(index));
             }
         })),
 
@@ -385,7 +385,7 @@ public enum ScriptActionType {
                         break;
                     }
                 }
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(index));
+                ctx.setVariable("Result", new ScriptNumberValue(index));
             })),
 
     SET_LIST_VALUE(builder -> builder.name("Set List Value")
@@ -403,7 +403,7 @@ public enum ScriptActionType {
                 return;
             }
             list.set(index, ctx.value("Value"));
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     REMOVE_LIST_AT_INDEX_VALUE(builder -> builder.name("Remove List Value")
@@ -420,7 +420,7 @@ public enum ScriptActionType {
                 return;
             }
             list.remove(index);
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     REMOVE_LIST_VALUE(builder -> builder.name("Remove List Value")
@@ -434,7 +434,7 @@ public enum ScriptActionType {
 
             list.removeIf(value -> value.valueEquals(ctx.value("Value")));
 
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     LIST_LENGTH(builder -> builder.name("List Length")
@@ -444,7 +444,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("List", ScriptActionArgumentType.LIST)
         .action(ctx -> {
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(ctx.value("List").asList().size()));
+            ctx.setVariable("Result", new ScriptNumberValue(ctx.value("List").asList().size()));
         })),
 
     WAIT(builder -> builder.name("Wait")
@@ -499,7 +499,7 @@ public enum ScriptActionType {
                     }
                 }
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Result", new ScriptDictionaryValue(dict));
         })),
 
     PARSE_JSON(builder -> builder.name("Parse from JSON")
@@ -517,7 +517,7 @@ public enum ScriptActionType {
             catch (JsonParseException e) {dict = new ScriptUnknownValue();}
 
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), dict);
+            ctx.setVariable("Result", dict);
         })),
 
     GET_DICT_VALUE(builder -> builder.name("Get Dictionary Value")
@@ -531,9 +531,9 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             if (dict.containsKey(key)) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), dict.get(key));
+                ctx.setVariable("Result", dict.get(key));
             } else {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             }
         })),
 
@@ -548,7 +548,7 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             dict.put(key, ctx.value("Value"));
-            ctx.task().context().setVariable(ctx.variable("Dictionary").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
 
     GET_DICT_SIZE(builder -> builder.name("Get Dictionary Size")
@@ -559,7 +559,7 @@ public enum ScriptActionType {
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(dict.size()));
+            ctx.setVariable("Result", new ScriptNumberValue(dict.size()));
         })),
 
     GET_DICT_KEYS(builder -> builder.name("Get Dictionary Keys")
@@ -570,7 +570,7 @@ public enum ScriptActionType {
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptTextValue(x)).toList()));
+            ctx.setVariable("Result", new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptTextValue(x)).toList()));
         })
     ),
 
@@ -584,7 +584,7 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             dict.remove(key);
-            ctx.task().context().setVariable(ctx.variable("Dictionary").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
 
     ROUND_NUM(builder -> builder.name("Round Number")
@@ -595,7 +595,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.round(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.round(number)));
         })),
 
     FLOOR_NUM(builder -> builder.name("Floor Number")
@@ -606,7 +606,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.floor(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.floor(number)));
         })),
 
     CEIL_NUM(builder -> builder.name("Ceil Number")
@@ -617,7 +617,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.ceil(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.ceil(number)));
         })),
 
     REGISTER_CMD(builder -> builder.name("Register Command")
@@ -687,7 +687,7 @@ public enum ScriptActionType {
                 split.add(new ScriptTextValue(s));
             }
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+            ctx.setVariable("Result", new ScriptListValue(split));
         })),
 
     REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
@@ -706,7 +706,7 @@ public enum ScriptActionType {
                     split.add(new ScriptTextValue(s));
                 }
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+                ctx.setVariable("Result", new ScriptListValue(split));
             })),
 
     STOP(builder -> builder.name("Stop Codeline")
@@ -872,7 +872,7 @@ public enum ScriptActionType {
                 .map(ScriptValue::asText)
                 .collect(Collectors.joining(separator));
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            ctx.setVariable("Result", new ScriptTextValue(result));
         })),
 
     TEXT_INDEX_OF(builder -> builder.name("Index Of Text")
@@ -884,7 +884,7 @@ public enum ScriptActionType {
         .arg("Subtext",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             int result = ctx.value("Text").asText().indexOf(ctx.value("Subtext").asText()) + 1;
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(result));
+            ctx.setVariable("Result", new ScriptNumberValue(result));
         })),
 
     TEXT_SUBTEXT(builder -> builder.name("Get Subtext")
@@ -900,7 +900,7 @@ public enum ScriptActionType {
             int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
             String result = text.substring(start, end);
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            ctx.setVariable("Result", new ScriptTextValue(result));
         })),
 
     TEXT_SUBTEXT_V1(builder -> builder.name("Get Subtext OLD")
@@ -917,7 +917,7 @@ public enum ScriptActionType {
                 int start = (int)ctx.value("First Index").asNumber()+1;
                 int end = (int)ctx.value("Last Index").asNumber();
                 String result = text.substring(start, end);
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
             })),
 
     TEXT_LENGTH(builder -> builder.name("Get Text Length")
@@ -928,7 +928,7 @@ public enum ScriptActionType {
         .arg("Text",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
+            ctx.setVariable("Result", new ScriptNumberValue(text.length()));
         })),
           
     READ_FILE(builder -> builder.name("Read File")
@@ -947,7 +947,7 @@ public enum ScriptActionType {
                         String content = FileUtil.readFile(f);
                         JsonElement json = JsonParser.parseString(content);
                         ScriptValue value = ScriptValueJson.fromJson(json);
-                        ctx.task().context().setVariable(ctx.variable("Result").name(), value);
+                        ctx.setVariable("Result", value);
                     } catch (IOException e) {
                         OverlayManager.getInstance().add("Internal error while reading file: " + filename);
                     }
@@ -990,9 +990,9 @@ public enum ScriptActionType {
         .action(ctx -> {
             String text = ctx.value("Text").asText();
             try {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Double.parseDouble(text)));
+                ctx.setVariable("Result", new ScriptNumberValue(Double.parseDouble(text)));
             } catch (NumberFormatException e) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             }
         })),
 
@@ -1057,7 +1057,7 @@ public enum ScriptActionType {
             String text = ctx.value("Text").asText();
             Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
             int width = DFScript.MC.textRenderer.getWidth(t);
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(width));
+            ctx.setVariable("Result", new ScriptNumberValue(width));
         })),
 
     OPEN_MENU(builder -> builder.name("Open Menu")
@@ -1211,8 +1211,8 @@ public enum ScriptActionType {
                     ScriptWidget w = menu.getWidget(identifier);
 
                     if (w instanceof ScriptMenuTextField field) {
-                        ctx.task().context().setVariable(
-                            ctx.variable("Result").name(),
+                        ctx.setVariable(
+                            "Result",
                             new ScriptTextValue(field.getText())
                         );
                     } else {
@@ -1263,8 +1263,8 @@ public enum ScriptActionType {
             int max = (int) ctx.value("Max").asNumber();
             Random random = new Random();
             int result = random.nextInt(max + 1 - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1280,8 +1280,8 @@ public enum ScriptActionType {
             double min = ctx.value("Min").asNumber();
             double max = ctx.value("Max").asNumber();
             double result = Math.random() * (max - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1298,8 +1298,8 @@ public enum ScriptActionType {
             double min = ctx.value("Min").asNumber();
             double max = ctx.value("Max").asNumber();
             double result = Math.random() * (max - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1324,7 +1324,7 @@ public enum ScriptActionType {
 
             list.sort(new ScriptValueComparator());
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(list));
+            ctx.setVariable("Result", new ScriptListValue(list));
     })),
 
     REPLACE_TEXT(builder -> builder.name("Replace Text")
@@ -1340,7 +1340,7 @@ public enum ScriptActionType {
 
                 result = result.replace(ctx.value("Text part to replace").asText(), ctx.value("Replacement").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
@@ -1356,7 +1356,7 @@ public enum ScriptActionType {
 
                 result = result.replaceAll(ctx.value("Regex").asText(), ctx.value("Replacement").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REMOVE_TEXT(builder -> builder.name("Remove Text")
@@ -1375,7 +1375,7 @@ public enum ScriptActionType {
                     result = result.replace(scriptValue.asText(), "");
                 }
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     STRIP_COLOR(builder -> builder.name("Strip Color from Text")
@@ -1396,7 +1396,7 @@ public enum ScriptActionType {
                 result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
                 result = result.replaceAll("&[0-9a-fA-FlonmkrLONMKR]", "");
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REPEAT_TEXT(builder -> builder.name("Repeat Text")
@@ -1412,7 +1412,7 @@ public enum ScriptActionType {
 
                 String result = input.repeat(Math.max(0, times));
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     FORMAT_TIME(builder -> builder.name("Format Timestamp")
@@ -1426,7 +1426,7 @@ public enum ScriptActionType {
                 Date date = new Date((long) ctx.value("Timestamp").asNumber());
                 SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(format.format(date)));
+                ctx.setVariable("Result", new ScriptTextValue(format.format(date)));
             }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {

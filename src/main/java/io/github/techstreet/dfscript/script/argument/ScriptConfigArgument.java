@@ -11,6 +11,11 @@ import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -60,5 +65,15 @@ public final class ScriptConfigArgument implements ScriptArgument {
             object.addProperty("value", src.getName());
             return object;
         }
+    }
+
+    @Override
+    public ItemStack getArgIcon() {
+        return new ItemStack(Items.INK_SAC).setCustomName(Text.literal("Config Value").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+    }
+
+    @Override
+    public String getArgText() {
+        return getOption().getFullName();
     }
 }

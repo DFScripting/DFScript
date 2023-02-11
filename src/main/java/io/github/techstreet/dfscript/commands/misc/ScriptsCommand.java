@@ -64,11 +64,11 @@ public class ScriptsCommand implements Command {
     private void listVars(String script, String filter) {
         for (Script s : ScriptManager.getInstance().getScripts()) {
             if (s.getName().replaceAll(" ", "_").equals(script)) {
-                List<Entry<String, ScriptValue>> vars = s.getContext().listVariables(filter);
+                List<Entry<String, ScriptValue>> vars = s.getContext().variables().list(filter);
 
                 int showing = Math.min(vars.size(), 50);
                 int filtered = vars.size();
-                int total = s.getContext().getVariableCount();
+                int total = s.getContext().variables().count();
 
                 ChatUtil.info("Script " + s.getName() + " has a total of " + total + " variables.");
 

@@ -25,9 +25,9 @@ public class ContextMenuButton {
         if(reloadOnClick) {
             return () -> {
                 onClick.run();
-                if(DFScript.MC.currentScreen instanceof ScriptEditScreen editScreen)
+                if(DFScript.MC.currentScreen instanceof CReloadableScreen screen)
                 {
-                    editScreen.reload();
+                    screen.reload();
                 }
             };
         }

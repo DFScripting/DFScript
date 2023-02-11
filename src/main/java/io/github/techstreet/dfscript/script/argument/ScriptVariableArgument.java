@@ -1,21 +1,45 @@
 package io.github.techstreet.dfscript.script.argument;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import io.github.techstreet.dfscript.event.system.Event;
+import com.google.gson.*;
+import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
-import java.lang.reflect.Type;
+import io.github.techstreet.dfscript.util.ComponentUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.text.NbtTextContent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
-public record ScriptVariableArgument(String name) implements ScriptArgument {
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public final class ScriptVariableArgument implements ScriptArgument {
+    private final String name;
+    private ScriptVariableScope scope;
+
+    public ScriptVariableArgument(String name, ScriptVariableScope scope) {
+        this.name = name;
+        this.scope = scope;
+    }
 
     @Override
     public ScriptValue getValue(ScriptTask task) {
-        return task.context().getVariable(name);
+        return scope.getMap(task).get(name);
+    }
+
+    public void setValue(ScriptValue value, ScriptTask task) {
+        scope.getMap(task).set(name, value);
+    }
+
+    public boolean exists(ScriptTask task) {
+        return scope.getMap(task).has(name);
     }
 
 
@@ -24,14 +48,84 @@ public record ScriptVariableArgument(String name) implements ScriptArgument {
         return ScriptActionArgumentType.VARIABLE.convertableTo(type);
     }
 
-    public static class Serializer implements JsonSerializer<ScriptVariableArgument> {
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public ItemStack getArgIcon() {
+        ItemStack icon = new ItemStack(Items.MAGMA_CREAM).setCustomName(Text.literal("Variable").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+
+        NbtList lore = new NbtList();
+
+        lore.add(NbtString.of(Text.Serializer.toJson(scope.getName())));
+
+        icon.getSubNbt("display").put("Lore", lore);
+
+        return icon;
+    }
+
+    @Override
+    public String getArgText() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ScriptVariableArgument) obj;
+        return Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "ScriptVariableArgument[" +
+                "name=" + name + ']';
+    }
+
+    public List<ContextMenuButton> getContextMenu() {
+        List<ContextMenuButton> contextMenuButtons = new ArrayList<>();
+
+        for (ScriptVariableScope scope : ScriptVariableScope.values()) {
+            contextMenuButtons.add(new ContextMenuButton(
+                scope.getName().getString(),
+                () -> this.scope = scope
+            ));
+        }
+
+        return contextMenuButtons;
+    }
+
+    public static class Serializer implements JsonSerializer<ScriptVariableArgument>, JsonDeserializer<ScriptVariableArgument> {
+        @Override
+        public ScriptVariableArgument deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+
+            String name = obj.get("value").getAsString();
+            String scope = "SCRIPT";
+
+            if(obj.has("scope")) scope = obj.get("scope").getAsString();
+
+
+
+            return new ScriptVariableArgument(name, ScriptVariableScope.valueOf(scope));
+        }
 
         @Override
         public JsonElement serialize(ScriptVariableArgument src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject object = new JsonObject();
-            object.addProperty("type", "VARIABLE");
-            object.addProperty("value", src.name());
-            return object;
+            JsonObject obj = new JsonObject();
+
+            obj.addProperty("type", "VARIABLE");
+            obj.addProperty("value", src.name);
+            obj.addProperty("scope", src.scope.name());
+
+            return obj;
         }
     }
 }

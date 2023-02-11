@@ -46,7 +46,7 @@ public enum ScriptRepetitionType {
                 if(counter <= ctx.value("Times").asNumber()) {
                     ctx.setScopeVariable("Counter", counter);
                     if (ctx.argMap().containsKey("Current")) {
-                        ctx.task().context().setVariable(ctx.variable("Current").name(), new ScriptNumberValue(counter));
+                        ctx.setVariable("Current", new ScriptNumberValue(counter));
                     }
                     return true;
                 }
@@ -69,7 +69,7 @@ public enum ScriptRepetitionType {
 
                 if(counter <= list.size()) {
                     ctx.setScopeVariable("Counter", counter);
-                    ctx.task().context().setVariable(ctx.variable("Variable").name(), list.get(counter-1));
+                    ctx.setVariable("Variable", list.get(counter-1));
                     return true;
                 }
                 return false;
@@ -94,8 +94,8 @@ public enum ScriptRepetitionType {
                 if(iterator.hasNext()) {
                     Map.Entry<String, ScriptValue> entry = iterator.next();
                     ctx.setScopeVariable("Iterator", iterator);
-                    ctx.task().context().setVariable(ctx.variable("Key").name(), new ScriptTextValue(entry.getKey()));
-                    ctx.task().context().setVariable(ctx.variable("Value").name(), entry.getValue());
+                    ctx.setVariable("Key", new ScriptTextValue(entry.getKey()));
+                    ctx.setVariable("Value", entry.getValue());
                     return true;
                 }
             return false;

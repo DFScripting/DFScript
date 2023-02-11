@@ -217,4 +217,14 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             return object;
         }
     }
+
+    @Override
+    public ItemStack getArgIcon() {
+        return new ItemStack(Items.NAME_TAG).setCustomName(Text.literal("Client Value").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+    }
+
+    @Override
+    public String getArgText() {
+        return name;
+    }
 }

@@ -6,11 +6,10 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
-import io.github.techstreet.dfscript.script.ScriptPart;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptVariableScope;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
@@ -80,7 +79,7 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         addVariable.setClickListener((btn) -> {
             if(overwrite != null) action.getArguments().remove(index);
-            action.getArguments().add(index, new ScriptVariableArgument(input.getText()));
+            action.getArguments().add(index, new ScriptVariableArgument(input.getText(), ScriptVariableScope.SCRIPT));
             DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
         });
 

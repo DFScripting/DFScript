@@ -1,6 +1,7 @@
 package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.screen.CReloadableScreen;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.widget.*;
@@ -29,7 +30,7 @@ import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-public class ScriptEditScreen extends CScreen {
+public class ScriptEditScreen extends CReloadableScreen {
     private final Identifier identifier_main = new Identifier(DFScript.MOD_ID + ":wrench.png");
 
     private final Script script;

@@ -1,14 +1,11 @@
 package io.github.techstreet.dfscript.script.execution;
 
-import io.github.techstreet.dfscript.event.system.Event;
-import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class ScriptActionContext {
@@ -44,6 +41,10 @@ public final class ScriptActionContext {
 
     public ScriptVariableArgument variable(String name) {
         return (ScriptVariableArgument) arg(name);
+    }
+
+    public void setVariable(String name, ScriptValue value) {
+        variable(name).setValue(value, task());
     }
 
     /*public void scheduleInner(Runnable runnable) {
