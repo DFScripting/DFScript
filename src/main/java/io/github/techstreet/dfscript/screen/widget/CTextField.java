@@ -16,6 +16,8 @@ public class CTextField implements CWidget {
     boolean selected;
     boolean editable;
 
+    boolean multiline = true;
+
     boolean xScrolling = false;
     public int textColor = 0xFFFFFFFF;
     String text;
@@ -34,6 +36,10 @@ public class CTextField implements CWidget {
         this.height = height;
         this.editable = editable;
         this.selected = false;
+    }
+
+    public void setMultiline(boolean multiline) {
+        this.multiline = multiline;
     }
 
     @Override
@@ -162,6 +168,10 @@ public class CTextField implements CWidget {
                     }
                     break;
                 case 257: //enter
+                    if(!multiline) {
+                        return;
+                    }
+
                     if (hasSelection) {
                         deleteSelection(selectionStart, selectionEnd);
                     }

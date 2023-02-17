@@ -19,11 +19,8 @@ import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
-import io.github.techstreet.dfscript.script.event.ScriptEmptyHeader;
-import io.github.techstreet.dfscript.script.event.ScriptEventType;
+import io.github.techstreet.dfscript.script.event.*;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
-import io.github.techstreet.dfscript.script.event.ScriptEvent;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
@@ -339,6 +336,51 @@ public class Script {
         return null;
     }
 
+    public List<ScriptFunction> getFunctions() {
+        List<ScriptFunction> functions = new ArrayList<>();
+
+        for (ScriptHeader header : getHeaders()) {
+            if(header instanceof ScriptFunction function) {
+                functions.add(function);
+            }
+        }
+
+        return functions;
+    }
+
+    public boolean functionExists(String functionName) {
+        for (ScriptFunction function : getFunctions()) {
+            if(function.getName().equals(functionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ScriptFunction getNamedFunction(String functionName) {
+        for (ScriptFunction function : getFunctions()) {
+            if(function.getName().equals(functionName)) {
+                return function;
+            }
+        }
+        return null;
+    }
+
+    public String getUnnamedFunction() {
+        for(int i = 1; ; i++) {
+
+            String name = "Function";
+
+            if(i != 1) {
+                name = name + " " + i;
+            }
+
+            if(!functionExists(name)) {
+                return name;
+            }
+        }
+    }
+
     private void updateScriptReferences() {
         for(ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.updateScriptReferences(this));
@@ -354,6 +396,12 @@ public class Script {
     public void removeOption(String option) {
         for(ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.removeOption(option));
+        }
+    }
+
+    public void replaceFunction(String oldFunction, String newFunction) {
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
         }
     }
 

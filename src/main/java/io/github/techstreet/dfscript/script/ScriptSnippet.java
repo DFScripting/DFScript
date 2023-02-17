@@ -245,6 +245,17 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
         }
     }
 
+    public void replaceFunction(String oldFunction, String newFunction) {
+        for(ScriptPart part : this) {
+            /*if(part instanceof ScriptParametrizedPart p) {
+                #TODO implement this
+            }*/
+            if(part instanceof ScriptScopeParent p) {
+                p.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
+            }
+        }
+    }
+
     public static class Serializer implements JsonSerializer<ScriptSnippet>, JsonDeserializer<ScriptSnippet> {
 
         @Override

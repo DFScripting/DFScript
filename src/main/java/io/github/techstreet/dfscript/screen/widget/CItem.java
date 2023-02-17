@@ -17,7 +17,7 @@ public class CItem implements CWidget {
 
     private final int x;
     private final int y;
-    private final ItemStack item;
+    private ItemStack item;
     private Consumer<Integer> onClick;
 
     public CItem(int x, int y, ItemStack item) {
@@ -75,4 +75,7 @@ public class CItem implements CWidget {
         this.onClick = onClick;
     }
 
+    public void setItemStack(ItemStack newItem) {
+        item = newItem;
+    }
 }

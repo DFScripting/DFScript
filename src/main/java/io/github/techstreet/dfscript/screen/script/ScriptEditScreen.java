@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -328,6 +329,11 @@ public class ScriptEditScreen extends CReloadableScreen {
                                 contextMenu.add(insertAfter);
                                 contextMenu.add(delete);
                             });
+                        }
+                        else {
+                            if(header instanceof ScriptFunction f) {
+                                DFScript.MC.setScreen(new ScriptEditFunctionScreen(f, script));
+                            }
                         }
                         return true;
                     }
