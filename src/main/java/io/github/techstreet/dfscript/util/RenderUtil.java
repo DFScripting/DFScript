@@ -12,7 +12,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -160,8 +159,9 @@ public class RenderUtil {
     public static void renderGuiItem(MatrixStack stack, ItemStack item) {
         stack.push();
         ItemRenderer renderer = DFScript.MC.getItemRenderer();
-        Vector4f pos = new Vector4f(stack.peek().getPositionMatrix().m30(), stack.peek().getPositionMatrix().m31(), 0, 1);
-        renderer.renderGuiItemIcon(stack, item, (int) pos.x(), (int) pos.y());
+        stack.translate(0.0F, 0.0F, 100.0F);
+        stack.scale(0.5F,0.5F,1F);
+        renderer.renderInGuiWithOverrides(stack, item, 0 ,0);
         stack.pop();
     }
 
