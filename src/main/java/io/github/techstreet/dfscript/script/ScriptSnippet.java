@@ -126,7 +126,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                     @Override
                     public boolean mouseClicked(double x, double y, int button) {
                         if (getBounds().contains(x, y)) {
-                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f, 1f));
+                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
 
                             if (button == 0) {
                                 if(part instanceof ScriptParametrizedPart parametrizedPart)

@@ -2,13 +2,7 @@ package io.github.techstreet.dfscript.mixin.game;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.event.BuildModeEvent;
-import io.github.techstreet.dfscript.event.DevModeEvent;
-import io.github.techstreet.dfscript.event.PlayModeEvent;
-import io.github.techstreet.dfscript.event.ReceiveChatEvent;
-import io.github.techstreet.dfscript.event.RecieveSoundEvent;
-import io.github.techstreet.dfscript.event.ServerJoinEvent;
-import io.github.techstreet.dfscript.event.ServerLeaveEvent;
+import io.github.techstreet.dfscript.event.*;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
@@ -16,10 +10,12 @@ import java.net.InetSocketAddress;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MClientPlayNetworkHandler {
@@ -88,6 +84,25 @@ public class MClientPlayNetworkHandler {
     private void onDisconnect(DisconnectS2CPacket packet, CallbackInfo ci) {
         ServerLeaveEvent event = new ServerLeaveEvent(packet);
         EventManager.getInstance().dispatch(event);
+    }
+
+    @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
+    private void chat(String content, CallbackInfo ci) {
+        SendChatEvent event = new SendChatEvent(content);
+        EventManager.getInstance().dispatch(event);
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "sendCommand(Ljava/lang/String;)Z", at = @At("HEAD"), cancellable = true)
+    private void command(String command, CallbackInfoReturnable<Boolean> ci) {
+        if(command.startsWith("scripts")) return;
+        SendChatEvent event = new SendChatEvent("/"+command);
+        EventManager.getInstance().dispatch(event);
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
     }
 
     /*@Inject(method = "onPlaySound", at = @At("HEAD"), cancellable = true)

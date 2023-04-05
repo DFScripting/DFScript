@@ -7,7 +7,7 @@ import java.util.List;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vector4f;
+import org.joml.Vector4f;
 
 public class CTextField implements CWidget {
 
@@ -53,17 +53,18 @@ public class CTextField implements CWidget {
         DrawableHelper.fill(stack, 0, 0, width, height, 0xFF888888);
         DrawableHelper.fill(stack, 1, 1, width - 1, height - 1, 0xFF000000);
 
-        Vector4f begin = new Vector4f(0, 0, 1, 1);
-        Vector4f end = new Vector4f(width, height, 1, 1);
-        begin.transform(stack.peek().getPositionMatrix());
-        end.transform(stack.peek().getPositionMatrix());
+        float xpos = stack.peek().getPositionMatrix().m30() + x;
+        float ypos = stack.peek().getPositionMatrix().m31();
+
+        Vector4f begin = new Vector4f(xpos - 2, ypos + 2, 1, 1);
+        Vector4f end = new Vector4f((xpos + (width * 2)) - 7, (ypos + (height * 2)), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-            (int) begin.getX()*guiScale,
-            (int) begin.getY()*guiScale,
-            (int) (end.getX() - begin.getX())*guiScale,
-            (int) (end.getY() - begin.getY())*guiScale
+                (int) begin.x()*guiScale,
+                (int) begin.y()*guiScale,
+                (int) (end.x() - begin.x())*guiScale,
+                (int) (end.y() - begin.y())*guiScale
         );
 
         stack.translate(2 + xScroll, 2 + scroll, 0);

@@ -16,9 +16,9 @@ public class BlendableTexturedButtonWidget extends TexturedButtonWidget {
         super(x, y, width, height, u, v, hoveredVOffset, texture, textureWidth, textureHeight, pressAction, Text.empty());
     }
 
-    public BlendableTexturedButtonWidget(int i, int j, int k, int l, int m, int n, int o, Identifier identifier, int p, int q, PressAction pressAction, Text text) {
-        super(i, j, k, l, m, n, o, identifier, p, q, pressAction, EMPTY, text);
-    }
+//    public BlendableTexturedButtonWidget(int i, int j, int k, int l, int m, int n, int o, Identifier identifier, int p, int q, PressAction pressAction, Text text) {
+//        super(i, j, k, l, m, n, o, identifier, p, q, pressAction, EMPTY, text);
+//    }
 
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {

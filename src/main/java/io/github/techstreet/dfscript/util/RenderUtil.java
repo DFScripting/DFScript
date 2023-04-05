@@ -2,10 +2,7 @@ package io.github.techstreet.dfscript.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.techstreet.dfscript.DFScript;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.toast.SystemToast;
@@ -14,9 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vector4f;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RenderUtil {
 
@@ -26,7 +26,7 @@ public class RenderUtil {
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, new Identifier(image));
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.disableCull();
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -160,9 +160,8 @@ public class RenderUtil {
     public static void renderGuiItem(MatrixStack stack, ItemStack item) {
         stack.push();
         ItemRenderer renderer = DFScript.MC.getItemRenderer();
-        Vector4f pos = new Vector4f(0, 0, 0, 1);
-        pos.transform(stack.peek().getPositionMatrix());
-        renderer.renderGuiItemIcon(item, (int) pos.getX(), (int) pos.getY());
+        Vector4f pos = new Vector4f(stack.peek().getPositionMatrix().m30(), stack.peek().getPositionMatrix().m31(), 0, 1);
+        renderer.renderGuiItemIcon(stack, item, (int) pos.x(), (int) pos.y());
         stack.pop();
     }
 
@@ -214,16 +213,17 @@ public class RenderUtil {
         float j = (float)(color & 0xFF) / 255.0f;
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
+//        RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         bufferBuilder.vertex(matrix, x1, y2, 0.0f).color(g, h, j, f).next();
         bufferBuilder.vertex(matrix, x2, y2, 0.0f).color(g, h, j, f).next();
         bufferBuilder.vertex(matrix, x2, y1, 0.0f).color(g, h, j, f).next();
         bufferBuilder.vertex(matrix, x1, y1, 0.0f).color(g, h, j, f).next();
-        BufferRenderer.drawWithShader(bufferBuilder.end());
-        RenderSystem.enableTexture();
+//        BufferRenderer.drawWithShader(bufferBuilder.end());
+        BufferRenderer.draw(bufferBuilder.end());
+//        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 }

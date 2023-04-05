@@ -2,16 +2,16 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import java.awt.Rectangle;
-import java.util.Optional;
-import java.util.function.Consumer;
-import net.minecraft.client.item.TooltipContext.Default;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3f;
 import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class CItem implements CWidget {
 
@@ -43,9 +43,9 @@ public class CItem implements CWidget {
             stack.translate(mouseX, mouseY, 0);
             stack.scale(0.5f, 0.5f, 1f);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
-            stack.peek().getPositionMatrix().addToLastColumn(new Vec3f(0, 0, 600));
+//            stack.peek().getPositionMatrix().addToLastColumn(new Vec3f(0, 0, 600));
             DFScript.MC.currentScreen.renderTooltip(stack, item.getTooltip(
-                DFScript.MC.player, Default.NORMAL
+                DFScript.MC.player, TooltipContext.BASIC
             ), Optional.empty(), 0, 0);
             stack.pop();
         }
@@ -62,7 +62,7 @@ public class CItem implements CWidget {
 
         if (rect.contains(x, y)) {
             if (onClick != null) {
-                DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f, 1f));
+                DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
                 onClick.accept(button);
                 return true;
             }

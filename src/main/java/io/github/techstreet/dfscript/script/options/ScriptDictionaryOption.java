@@ -110,7 +110,7 @@ public class ScriptDictionaryOption implements ScriptOption {
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
                         if (button != 0) {
-                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
+                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
                             if (DFScript.MC.currentScreen instanceof ScriptSettingsScreen s) {
                                 CButton insertBefore = new CButton((int) x, (int) y, 50, 8, "Insert Item Before", () -> {
                                     try {
