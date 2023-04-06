@@ -9,14 +9,12 @@ import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.screen.script.ScriptAddScreen;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
+import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.*;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
-import io.github.techstreet.dfscript.script.event.ScriptEmptyHeader;
-import io.github.techstreet.dfscript.script.event.ScriptEvent;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
-import io.github.techstreet.dfscript.script.event.ScriptStartUpEvent;
+import io.github.techstreet.dfscript.script.event.*;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.util.FileUtil;
@@ -51,11 +49,13 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
         .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
         .registerTypeAdapter(ScriptBuiltinAction.class, new ScriptBuiltinAction.Serializer())
+        .registerTypeAdapter(ScriptFunctionCall.class, new ScriptBuiltinAction.Serializer())
         .registerTypeAdapter(ScriptBuiltinCondition.class, new ScriptBuiltinCondition.Serializer())
         .registerTypeAdapter(ScriptCondition.class, new ScriptCondition.Serializer())
         .registerTypeAdapter(ScriptBuiltinRepetition.class, new ScriptBuiltinRepetition.Serializer())
         .registerTypeAdapter(ScriptBranch.class, new ScriptBranch.Serializer())
         .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
+        .registerTypeAdapter(ScriptFunction.class, new ScriptEvent.Serializer())
         .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
         .registerTypeAdapter(ScriptSnippet.class, new ScriptSnippet.Serializer())
         .registerTypeAdapter(ScriptHeader.class, new ScriptHeader.Serializer())

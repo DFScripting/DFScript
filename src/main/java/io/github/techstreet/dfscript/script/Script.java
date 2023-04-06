@@ -495,6 +495,10 @@ public class Script {
                 }
                 else {
                     header = new ScriptEmptyHeader();
+                    if(obj.get("action").getAsString().equals("CLOSE_BRACKET"))
+                    {
+                        pos++;
+                    }
                 }
 
                 ScriptSnippet snippet = new ScriptSnippet();

@@ -8,6 +8,7 @@ import com.google.gson.JsonParseException;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
+import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
@@ -51,6 +52,14 @@ public abstract class ScriptPart implements ScriptRunnable {
                         args.add(context.deserialize(arg, ScriptArgument.class));
                     }
                     return new ScriptBuiltinAction(ScriptActionType.valueOf(action), args);
+                }
+                case "functionCall" -> {
+                    String action = obj.get("functionCall").getAsString();
+                    List<ScriptArgument> args = new ArrayList<>();
+                    for (JsonElement arg : obj.get("arguments").getAsJsonArray()) {
+                        args.add(context.deserialize(arg, ScriptArgument.class));
+                    }
+                    return new ScriptFunctionCall(null, action, args);
                 }
                 case "branch" -> {
                     boolean hasElse = obj.get("hasElse").getAsBoolean();

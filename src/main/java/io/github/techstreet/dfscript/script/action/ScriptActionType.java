@@ -355,7 +355,7 @@ public enum ScriptActionType {
         .icon(Items.BOOK)
         .category(ScriptActionCategory.LISTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("List", ScriptActionArgumentType.VARIABLE)
+        .arg("List", ScriptActionArgumentType.LIST)
         .arg("Index", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             List<ScriptValue> list = ctx.value("List").asList();
@@ -1070,7 +1070,7 @@ public enum ScriptActionType {
             int width = (int) ctx.value("Width").asNumber();
             int height = (int) ctx.value("Height").asNumber();
 
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script()));
+            DFScript.MC.send(() -> io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script())));
         })),
 
     ADD_MENU_BUTTON(builder -> builder.name("Add Menu Button")
