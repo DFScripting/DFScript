@@ -20,7 +20,7 @@ public class CScreen extends Screen {
         super(Text.literal("DFScript Screen"));
         this.width = width;
         this.height = height;
-        DFScript.MC.keyboard.setRepeatEvents(true);
+//        DFScript.MC.keyboard.setRepeatEvents(true);
     }
 
     @Override

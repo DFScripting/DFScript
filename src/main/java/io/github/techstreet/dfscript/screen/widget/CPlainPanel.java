@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vector4f;
+import org.joml.Vector4f;
 
 public class CPlainPanel implements CWidget {
 
@@ -25,17 +25,18 @@ public class CPlainPanel implements CWidget {
         stack.push();
         stack.translate(x, y, 0);
 
-        Vector4f begin = new Vector4f(0, 0, 1, 1);
-        Vector4f end = new Vector4f(width, height, 1, 1);
-        begin.transform(stack.peek().getPositionMatrix());
-        end.transform(stack.peek().getPositionMatrix());
+        float xpos = stack.peek().getPositionMatrix().m30() + x;
+        float ypos = stack.peek().getPositionMatrix().m31() - y;
+
+        Vector4f begin = new Vector4f(xpos, ypos, 1, 1);
+        Vector4f end = new Vector4f(xpos + (width * 2), ypos + (height * 2), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-            (int) begin.getX()*guiScale,
-            (int) begin.getY()*guiScale,
-            (int) (end.getX() - begin.getX())*guiScale,
-            (int) (end.getY() - begin.getY())*guiScale
+                (int) begin.x()*guiScale,
+                (int) begin.y()*guiScale,
+                (int) (end.x() - begin.x())*guiScale,
+                (int) (end.y() - begin.y())*guiScale
         );
 
         for (CWidget child : children) {
