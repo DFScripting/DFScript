@@ -118,6 +118,31 @@ public enum ScriptActionType {
             ctx.variable("Variable").name(),
             ctx.value("Value")
         ))),
+    
+    GET_REQUEST(builder -> builder.name("Get Webrequest")
+        .description("Makes a get request to the internet.")
+        .icon(Items.GRASS_BLOCK)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Url", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.VARIABLES)
+        .action(ctx -> {
+            try{
+            StringBuilder result = new StringBuilder();
+            URL url = new URL(ctx.value("Url").asText());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+              for (String line; (line = reader.readLine()) != null; ) {
+                result.append(line);
+              }
+            }
+            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result.toString()));
+          }catch(MalformedURLException ex){
+
+          }catch(IOException ex){
+
+          }
+        })),
 
     INCREMENT(builder -> builder.name("Increment")
         .description("Increments a variable by a value.")
