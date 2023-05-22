@@ -42,7 +42,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -118,7 +119,7 @@ public enum ScriptActionType {
             ctx.variable("Variable").name(),
             ctx.value("Value")
         ))),
-    
+
     GET_REQUEST(builder -> builder.name("Get Webrequest")
         .description("Makes a get request to the internet.")
         .icon(Items.GRASS_BLOCK)
@@ -936,7 +937,7 @@ public enum ScriptActionType {
             String text = ctx.value("Text").asText();
             ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
         })),
-          
+
     READ_FILE(builder -> builder.name("Read File")
         .description("Reads a file from the scripts folder.")
         .icon(Items.WRITTEN_BOOK)
@@ -1256,7 +1257,7 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
             }
         })),
-    
+
         RANDOM_INT(builder -> builder.name("Random Int")
         .description("Generates a random whole number between two other numbers.")
         .icon(Items.HOPPER)
@@ -1291,7 +1292,7 @@ public enum ScriptActionType {
                 new ScriptNumberValue(result)
             );
         })),
-        
+
     RANDOM_NUMBER(builder -> builder.name("Random Number")
         .description("Generates a random number between two other numbers.")
         .icon(Items.HOPPER)
