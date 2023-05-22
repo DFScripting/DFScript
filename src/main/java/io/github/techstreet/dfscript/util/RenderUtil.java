@@ -161,7 +161,7 @@ public class RenderUtil {
         ItemRenderer renderer = DFScript.MC.getItemRenderer();
         stack.translate(0.0F, 0.0F, 100.0F);
         stack.scale(0.5F,0.5F,1F);
-        renderer.renderInGuiWithOverrides(stack, item, 0 ,0);
+        renderer.renderGuiItemIcon(stack, item, 0 ,0);
         stack.pop();
     }
 
