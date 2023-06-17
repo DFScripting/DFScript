@@ -9,11 +9,13 @@ public class ScriptTask {
     private final ScriptPosStack stack;
     private final Event event;
     private boolean running;
+    private final Script script;
     private final ScriptContext context;
 
     public ScriptTask(ScriptPosStack stack, Event event, Script script) {
         this.stack = stack;
         this.event = event;
+        this.script = script;
         this.context = script.getContext();
         running = true;
     }
@@ -31,6 +33,10 @@ public class ScriptTask {
     }
 
     public void run() {
+        if (script.disabled()) { // don't run the code if it's disabled obviously
+            return;
+        }
+
         running = true;
         while(true) {
             if(!running) break;
