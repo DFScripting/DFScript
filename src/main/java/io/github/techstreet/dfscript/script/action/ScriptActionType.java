@@ -809,7 +809,7 @@ public enum ScriptActionType {
                     }
 
                     if (similiar.size() > 0) {
-                        ChatUtil.error("Did you mean: \n" + String.join(", \n", similiar));
+                        OverlayManager.getInstance().add("Did you mean: \n" + String.join(", \n", similiar));
                     }
                 } catch (Exception err) {
                     err.printStackTrace();
@@ -1229,7 +1229,7 @@ public enum ScriptActionType {
                     OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to get text field value! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to get text field value! (Unknown menu type)");
             }
         })),
 
@@ -1615,7 +1615,7 @@ public enum ScriptActionType {
             }
         }
 
-        ChatUtil.error("Invalid arguments for " + name + ".");
+        OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
     }
 
     private void generatePossibilities(List<List<ScriptActionArgument>> possibilities, ArrayList<ScriptActionArgument> current, List<ScriptActionArgument> arguments, int pos) {
