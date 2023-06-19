@@ -137,7 +137,7 @@ public enum ScriptActionType {
                 result.append(line);
               }
             }
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result.toString()));
+            ctx.setVariable("Result", new ScriptTextValue(result.toString()));
           }catch(MalformedURLException ex){
                 OverlayManager.getInstance().add("Malformed URL error!");
           }catch(IOException ex){

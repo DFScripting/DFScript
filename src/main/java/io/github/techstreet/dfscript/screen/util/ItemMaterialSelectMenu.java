@@ -4,13 +4,12 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CReloadableScreen;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.*;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
-import org.checkerframework.checker.units.qual.C;
 
 import java.awt.*;
 import java.util.function.Consumer;
@@ -75,10 +74,10 @@ public class ItemMaterialSelectMenu extends CReloadableScreen {
             if(item == material) {
                 citem = new CItem(x, y, itemStack) {
                     @Override
-                    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-                        super.render(stack, mouseX, mouseY, tickDelta);
+                    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+                        super.render(context, mouseX, mouseY, tickDelta);
                         Rectangle b = getBounds();
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x3300ff00);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x3300ff00);
                     }
                 };
             }
