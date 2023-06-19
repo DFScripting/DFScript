@@ -42,7 +42,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -118,6 +119,31 @@ public enum ScriptActionType {
             "Variable",
             ctx.value("Value")
         ))),
+
+    GET_REQUEST(builder -> builder.name("Get Webrequest")
+        .description("Makes a get request to the internet.")
+        .icon(Items.GRASS_BLOCK)
+        .arg("Result", ScriptActionArgumentType.VARIABLE)
+        .arg("Url", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.VARIABLES)
+        .action(ctx -> {
+            try{
+            StringBuilder result = new StringBuilder();
+            URL url = new URL(ctx.value("Url").asText());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+              for (String line; (line = reader.readLine()) != null; ) {
+                result.append(line);
+              }
+            }
+            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result.toString()));
+          }catch(MalformedURLException ex){
+                OverlayManager.getInstance().add("Malformed URL error!");
+          }catch(IOException ex){
+
+          }
+        })),
 
     INCREMENT(builder -> builder.name("Increment")
         .description("Increments a variable by a value.")
@@ -783,7 +809,7 @@ public enum ScriptActionType {
                     }
 
                     if (similiar.size() > 0) {
-                        ChatUtil.error("Did you mean: \n" + String.join(", \n", similiar));
+                        OverlayManager.getInstance().add("Did you mean: \n" + String.join(", \n", similiar));
                     }
                 } catch (Exception err) {
                     err.printStackTrace();
@@ -911,7 +937,7 @@ public enum ScriptActionType {
             String text = ctx.value("Text").asText();
             ctx.setVariable("Result", new ScriptNumberValue(text.length()));
         })),
-          
+
     READ_FILE(builder -> builder.name("Read File")
         .description("Reads a file from the scripts folder.")
         .icon(Items.WRITTEN_BOOK)
@@ -1024,7 +1050,7 @@ public enum ScriptActionType {
 
             if (ctx.task().event() instanceof HudRenderEvent event) {
                 Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
-                io.github.techstreet.dfscript.DFScript.MC.textRenderer.drawWithShadow(event.stack(),t,x,y, 0xFFFFFF);
+                event.context().drawText(DFScript.MC.textRenderer, t, x, y, 0xFFFFFF, true);
             }
         })),
 
@@ -1203,7 +1229,7 @@ public enum ScriptActionType {
                     OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
                 }
             } else {
-                ChatUtil.error("Unable to get text field value! (Unknown menu type)");
+                OverlayManager.getInstance().add("Unable to get text field value! (Unknown menu type)");
             }
         })),
 
@@ -1231,7 +1257,7 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
             }
         })),
-    
+
         RANDOM_INT(builder -> builder.name("Random Int")
         .description("Generates a random whole number between two other numbers.")
         .icon(Items.HOPPER)
@@ -1266,7 +1292,7 @@ public enum ScriptActionType {
                 new ScriptNumberValue(result)
             );
         })),
-        
+
     RANDOM_NUMBER(builder -> builder.name("Random Number")
         .description("Generates a random number between two other numbers.")
         .icon(Items.HOPPER)
@@ -1589,7 +1615,7 @@ public enum ScriptActionType {
             }
         }
 
-        ChatUtil.error("Invalid arguments for " + name + ".");
+        OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
     }
 
     private void generatePossibilities(List<List<ScriptActionArgument>> possibilities, ArrayList<ScriptActionArgument> current, List<ScriptActionArgument> arguments, int pos) {

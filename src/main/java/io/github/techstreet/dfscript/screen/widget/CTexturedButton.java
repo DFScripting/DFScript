@@ -2,6 +2,8 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
+
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CTexturedButton extends CButton {
@@ -30,7 +32,8 @@ public class CTexturedButton extends CButton {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
         stack.scale(0.5f, 0.5f, 0.5f);
@@ -44,7 +47,7 @@ public class CTexturedButton extends CButton {
             uy = hoverUy;
         }
 
-        RenderUtil.renderImage(stack, 0, 0, width * 2, height * 2, ux, uy, uw, uh, texture);
+        RenderUtil.renderImage(context, 0, 0, width * 2, height * 2, ux, uy, uw, uh, texture);
         stack.pop();
     }
 }

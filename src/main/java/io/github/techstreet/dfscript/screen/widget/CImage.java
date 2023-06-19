@@ -2,6 +2,8 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
+
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CImage implements CWidget {
@@ -21,8 +23,8 @@ public class CImage implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-        RenderUtil.renderImage(stack, x, y, width, height, 0, 0, 1, 1, img);
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        RenderUtil.renderImage(context, x, y, width, height, 0, 0, 1, 1, img);
     }
 
     @Override

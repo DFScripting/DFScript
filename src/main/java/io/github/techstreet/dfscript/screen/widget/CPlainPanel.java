@@ -5,6 +5,8 @@ import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
 
@@ -21,15 +23,16 @@ public class CPlainPanel implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
-        float xpos = stack.peek().getPositionMatrix().m30() + x;
-        float ypos = stack.peek().getPositionMatrix().m31() - y;
+        float xPos = stack.peek().getPositionMatrix().m30() + x;
+        float yPos = stack.peek().getPositionMatrix().m31() - y;
 
-        Vector4f begin = new Vector4f(xpos, ypos, 1, 1);
-        Vector4f end = new Vector4f(xpos + (width * 2), ypos + (height * 2), 1, 1);
+        Vector4f begin = new Vector4f(xPos, yPos, 1, 1);
+        Vector4f end = new Vector4f(xPos + (width * 2), yPos + (height * 2), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
@@ -40,7 +43,7 @@ public class CPlainPanel implements CWidget {
         );
 
         for (CWidget child : children) {
-            child.render(stack, mouseX, mouseY, tickDelta);
+            child.render(context, mouseX, mouseY, tickDelta);
         }
 
         RenderUtil.popScissor();
@@ -93,11 +96,12 @@ public class CPlainPanel implements CWidget {
     public void clear() { children.clear(); }
 
     @Override
-    public void renderOverlay(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
         for (CWidget child : children) {
-            child.renderOverlay(stack, mouseX, mouseY, tickDelta);
+            child.renderOverlay(context, mouseX, mouseY, tickDelta);
         }
         stack.pop();
     }

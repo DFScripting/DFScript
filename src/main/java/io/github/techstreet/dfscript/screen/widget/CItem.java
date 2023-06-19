@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -27,15 +28,17 @@ public class CItem implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
-        RenderUtil.renderGuiItem(stack, item);
+        RenderUtil.renderGuiItem(context, item);
         stack.pop();
     }
 
     @Override
-    public void renderOverlay(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         Rectangle rect = new Rectangle(x, y,8, 8);
 
         if (rect.contains(mouseX, mouseY)) {
@@ -44,9 +47,10 @@ public class CItem implements CWidget {
             stack.scale(0.5f, 0.5f, 1f);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 //            stack.peek().getPositionMatrix().addToLastColumn(new Vec3f(0, 0, 600));
-            DFScript.MC.currentScreen.renderTooltip(stack, item.getTooltip(
-                DFScript.MC.player, TooltipContext.BASIC
-            ), Optional.empty(), 0, 0);
+            context.drawTooltip(DFScript.MC.textRenderer, item.getTooltip(DFScript.MC.player, TooltipContext.BASIC), 0, 0);
+//            DFScript.MC.currentScreen.renderTooltip(stack, item.getTooltip(
+//                DFScript.MC.player, TooltipContext.BASIC
+//            ), Optional.empty(), 0, 0);
             stack.pop();
         }
     }

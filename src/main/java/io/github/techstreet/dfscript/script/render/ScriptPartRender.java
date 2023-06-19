@@ -1,15 +1,9 @@
 package io.github.techstreet.dfscript.script.render;
 
-import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptSnippet;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.DrawContext;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -52,8 +46,8 @@ public class ScriptPartRender {
             int ypos = y;
             panel.add(new CWidget() {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-                    DrawableHelper.fill(stack, xpos, ypos, xpos + 1, ypos + height, 0xFF333333);
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+                    context.fill(xpos, ypos, xpos + 1, ypos + height, 0xFF333333);
                 }
 
                 @Override

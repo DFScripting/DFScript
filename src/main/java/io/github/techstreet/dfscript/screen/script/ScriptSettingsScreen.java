@@ -5,13 +5,9 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
-import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
-import io.github.techstreet.dfscript.script.options.ScriptOption;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
@@ -82,10 +78,10 @@ public class ScriptSettingsScreen extends CScreen {
             int finalIndex = index;
             if(owned) panel.add(new CButton(5, y, 115, height, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
                     if (b.contains(mouseX, mouseY)) {
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
                     }
                 }
 

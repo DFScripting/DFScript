@@ -5,7 +5,7 @@ import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
 import java.util.List;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
 
@@ -51,19 +51,21 @@ public class CTextField implements CWidget {
         this.editable = editable;
     }
 
+
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
-        DrawableHelper.fill(stack, 0, 0, width, height, 0xFF888888);
-        DrawableHelper.fill(stack, 1, 1, width - 1, height - 1, 0xFF000000);
+        context.fill(0, 0, width, height, 0xFF888888);
+        context.fill(1, 1, width - 1, height - 1, 0xFF000000);
 
-        float xpos = stack.peek().getPositionMatrix().m30() + x;
-        float ypos = stack.peek().getPositionMatrix().m31();
+        float xPos = stack.peek().getPositionMatrix().m30() + x;
+        float yPos = stack.peek().getPositionMatrix().m31();
 
-        Vector4f begin = new Vector4f(xpos - 2, ypos + 2, 1, 1);
-        Vector4f end = new Vector4f((xpos + (width * 2)) - 7, (ypos + (height * 2)), 1, 1);
+        Vector4f begin = new Vector4f(xPos - 2, yPos + 2, 1, 1);
+        Vector4f end = new Vector4f((xPos + (width * 2)) - 7, (yPos + (height * 2)), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
@@ -91,11 +93,11 @@ public class CTextField implements CWidget {
                 stack.push();
 
                 stack.translate(f.getWidth(line.substring(0, lineSelectionStart)), 0, 0);
-                DrawableHelper.fill(stack, 0, 0, f.getWidth(line.substring(lineSelectionStart, lineSelectionEnd)), f.fontHeight, 0xFF5555FF);
+                context.fill(0, 0, f.getWidth(line.substring(lineSelectionStart, lineSelectionEnd)), f.fontHeight, 0xFF5555FF);
 
                 stack.pop();
             }
-            f.draw(stack, line, 0, 0, textColor);
+            context.drawText(f, line, 0, 0, textColor, false);
 
             selectionStart -= line.length() + 1;
             selectionEnd -= line.length() + 1;
@@ -111,7 +113,7 @@ public class CTextField implements CWidget {
             int cursorX = f.getWidth(getCursorLine().substring(0, cursorLinePos));
             int cursorY = f.fontHeight * cursorLine;
 
-            f.draw(stack, "|", cursorX, cursorY, 0x99FFFFFF);
+            context.drawText(f, "|", cursorX, cursorY,0x99FFFFFF, false);
         }
 
         stack.pop();

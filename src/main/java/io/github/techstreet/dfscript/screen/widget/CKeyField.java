@@ -2,9 +2,8 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
@@ -37,7 +36,8 @@ public class CKeyField implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
@@ -48,8 +48,8 @@ public class CKeyField implements CWidget {
             outlineColor = 0xFFFFFF00;
         }
 
-        DrawableHelper.fill(stack, 0, 0, width, height, outlineColor);
-        DrawableHelper.fill(stack, 1, 1, width - 1, height - 1, 0xFF000000);
+        context.fill(0, 0, width, height, outlineColor);
+        context.fill(1, 1, width - 1, height - 1, 0xFF000000);
 
         Vector4f begin = new Vector4f(0, 0, 1, 1);
         Vector4f end = new Vector4f(width, height, 1, 1);
@@ -87,7 +87,7 @@ public class CKeyField implements CWidget {
         }
 
         if(line != null) {
-            f.draw(stack, line, 0, 0, color);
+            context.drawText(f, line, 0, 0, color, false);
         }
 
         stack.translate(0, f.fontHeight, 0);

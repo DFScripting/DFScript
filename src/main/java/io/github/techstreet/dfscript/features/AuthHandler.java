@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
@@ -119,7 +120,10 @@ public class AuthHandler implements Loadable {
         }
 
         try {
-            InputStream is = new URL("https://dfscript-server.techstreetdev.repl.co/staff/").openStream();
+            URLConnection con2 = new URL("https://dfscript-server.techstreetdev.repl.co/staff/").openConnection();
+            con2.setReadTimeout(5000);
+            con2.setConnectTimeout(5000);
+            InputStream is = con2.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             obj = JsonParser.parseString(readAll(rd)).getAsJsonObject();
 

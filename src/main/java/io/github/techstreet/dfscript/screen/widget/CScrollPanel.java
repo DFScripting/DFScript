@@ -5,6 +5,8 @@ import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
 
@@ -22,7 +24,8 @@ public class CScrollPanel implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
@@ -47,7 +50,7 @@ public class CScrollPanel implements CWidget {
         mouseY -= scroll;
 
         for (CWidget child : children) {
-            child.render(stack, mouseX, mouseY, tickDelta);
+            child.render(context, mouseX, mouseY, tickDelta);
         }
 
         RenderUtil.popScissor();
@@ -123,11 +126,8 @@ public class CScrollPanel implements CWidget {
     public void clear() { children.clear(); }
 
     @Override
-    public void renderOverlay(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-        if(!getBounds().contains(mouseX, mouseY)) {
-            return;
-        }
-
+    public void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         mouseY -= scroll;
 
         mouseX -= x;
@@ -137,7 +137,7 @@ public class CScrollPanel implements CWidget {
         stack.translate(x, y, 0);
         stack.translate(0, scroll, 0);
         for (CWidget child : children) {
-            child.renderOverlay(stack, mouseX, mouseY, tickDelta);
+            child.renderOverlay(context, mouseX, mouseY, tickDelta);
         }
         stack.pop();
     }

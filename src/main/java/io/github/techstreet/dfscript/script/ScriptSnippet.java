@@ -9,29 +9,22 @@ import io.github.techstreet.dfscript.screen.script.ScriptPartCategoryScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CText;
-import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
-import io.github.techstreet.dfscript.script.event.ScriptEvent;
-import io.github.techstreet.dfscript.script.event.ScriptEventType;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
-import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
-import javax.naming.Context;
 import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -57,7 +50,8 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
             }
         }) {
             @Override
-            public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+            public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+                MatrixStack stack = context.getMatrices();
                 Rectangle b = getBounds();
 
                 int color = 0xFF323232;
@@ -96,7 +90,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                 panel.add(new CButton(5, buttonPos.getY() - 1, 115, buttonPos.height(), "", () -> {
                 }) {
                     @Override
-                    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                         Rectangle b = getBounds();
                         int color = 0;
                         boolean drawFill = false;
@@ -118,7 +112,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
 
                         if(drawFill) {
                             for(var renderButtonPos : render.getButtonPositions()) {
-                                DrawableHelper.fill(stack, b.x, renderButtonPos.y()-1, b.x + b.width, renderButtonPos.y()-1 + renderButtonPos.height(), color);
+                                context.fill(b.x, renderButtonPos.y()-1, b.x + b.width, renderButtonPos.y()-1 + renderButtonPos.height(), color);
                             }
                         }
                     }

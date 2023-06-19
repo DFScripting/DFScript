@@ -4,6 +4,7 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
 import java.awt.Rectangle;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
@@ -38,7 +39,8 @@ public class CButton implements CWidget {
 
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
@@ -47,7 +49,7 @@ public class CButton implements CWidget {
 
         Rectangle rect = new Rectangle(x, y, width, height);
 
-        RenderUtil.renderButton(stack, 0, 0, width * 2, height * 2, rect.contains(mouseX, mouseY), disabled);
+        RenderUtil.renderButton(context, 0, 0, width * 2, height * 2, rect.contains(mouseX, mouseY), disabled);
         stack.pop();
 
         TextRenderer f = DFScript.MC.textRenderer;
@@ -56,7 +58,7 @@ public class CButton implements CWidget {
         stack.scale(0.5f * textScale, 0.5f * textScale, 0.5f * textScale);
         stack.translate(-f.getWidth(text) / 2f, -f.fontHeight / 2f, 0);
 
-        f.drawWithShadow(stack, text, 0, 0, 0xFFFFFF);
+        context.drawText(f, text, 0, 0, 0xFFFFFF, true);
 
         stack.pop();
     }

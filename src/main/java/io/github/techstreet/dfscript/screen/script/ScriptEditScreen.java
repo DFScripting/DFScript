@@ -6,31 +6,19 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptComment;
 import io.github.techstreet.dfscript.script.ScriptManager;
-import io.github.techstreet.dfscript.script.ScriptPart;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
-import io.github.techstreet.dfscript.script.action.ScriptActionType;
-import io.github.techstreet.dfscript.script.event.ScriptEvent;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
 
-import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 public class ScriptEditScreen extends CReloadableScreen {
     private final Identifier identifier_main = new Identifier(DFScript.MOD_ID + ":wrench.png");
 
@@ -295,13 +283,13 @@ public class ScriptEditScreen extends CReloadableScreen {
             int currentIndex = index;
             panel.add(new CButton(5, origY-1, 115, 10, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
 
                     if (b.contains(mouseX, mouseY)) {
                         int color = 0x33000000;
 
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, color);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, color);
                     }
                 }
 
@@ -359,8 +347,8 @@ public class ScriptEditScreen extends CReloadableScreen {
             int ypos = y;
             panel.add(new CWidget() {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-                    DrawableHelper.fill(stack, xpos, ypos, xpos + 1, ypos + 8, 0xFF333333);
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+                    context.fill(xpos, ypos, xpos + 1, ypos + 8, 0xFF333333);
                 }
 
                 @Override

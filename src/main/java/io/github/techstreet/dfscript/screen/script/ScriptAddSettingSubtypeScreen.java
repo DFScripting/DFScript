@@ -9,8 +9,7 @@ import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -95,10 +94,10 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
 
             if(optionPos == i) citem = new CItem(x, y, icon) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-                    super.render(stack, mouseX, mouseY, tickDelta);
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+                    super.render(context, mouseX, mouseY, tickDelta);
                     Rectangle b = getBounds();
-                    DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x3300ff00);
+                    context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x3300ff00);
                 }
             };
             else citem = new CItem(x, y, icon);

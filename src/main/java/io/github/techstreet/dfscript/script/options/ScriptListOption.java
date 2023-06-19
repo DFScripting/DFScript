@@ -2,10 +2,7 @@ package io.github.techstreet.dfscript.script.options;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.screen.script.ScriptAddSettingScreen;
-import io.github.techstreet.dfscript.screen.script.ScriptEditSettingScreen;
 import io.github.techstreet.dfscript.screen.script.ScriptSettingsScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
@@ -14,15 +11,11 @@ import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchExce
 import io.github.techstreet.dfscript.script.values.ScriptListValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,10 +88,10 @@ public class ScriptListOption implements ScriptOption {
             int finalI = i;
             panel.add(new CButton(5, y1, 115, y-y1, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
                     if (b.contains(mouseX, mouseY)) {
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
                     }
                 }
 
