@@ -9,7 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.checkerframework.checker.units.qual.C;
 
 import java.awt.*;
@@ -61,7 +61,7 @@ public class ItemMaterialSelectMenu extends CReloadableScreen {
 
         int index = 0;
 
-        for (Item item : Registry.ITEM) {
+        for (Item item : Registries.ITEM) {
             if(item == Items.AIR) {
                 continue;
             }

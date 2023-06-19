@@ -11,11 +11,11 @@ import io.github.techstreet.dfscript.script.Script;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.lang.reflect.Type;
 
@@ -65,7 +65,7 @@ public class ScriptFunction extends ScriptHeader {
             JsonObject obj = new JsonObject();
             obj.addProperty("type", "function");
             obj.addProperty("name", src.getName());
-            obj.addProperty("icon", Registry.ITEM.getId(src.getRawIcon()).toString());
+            obj.addProperty("icon", Registries.ITEM.getId(src.getRawIcon()).toString());
             obj.add("snippet", context.serialize(src.container().getSnippet(0)));
             return obj;
         }

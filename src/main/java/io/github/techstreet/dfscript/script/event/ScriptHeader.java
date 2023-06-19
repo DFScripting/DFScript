@@ -7,8 +7,8 @@ import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent 
                 case "function" -> {
                     String function = obj.get("function").getAsString();
                     String icon = obj.get("icon").getAsString();
-                    header = new ScriptFunction(function, Registry.ITEM.get(new Identifier(icon)));
+                    header = new ScriptFunction(function, Registries.ITEM.get(new Identifier(icon)));
                 }
                 default -> throw new JsonParseException("Unknown script header type: " + type);
             }
