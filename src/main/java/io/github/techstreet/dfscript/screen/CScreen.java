@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.util.RenderUtil;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -24,10 +25,12 @@ public class CScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
-        renderBackground(stack);
-        stack.push();
+    public void render(@NotNull DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        renderBackground(context);
+        context.getMatrices().push();
         MinecraftClient mc = DFScript.MC;
+
+        MatrixStack stack = context.getMatrices();
 
         stack.translate(mc.currentScreen.width/2f, mc.currentScreen.height/2f, 0);
 
@@ -37,7 +40,7 @@ public class CScreen extends Screen {
 
         stack.translate(-width/2f, -height/2f, 0);
 
-        RenderUtil.renderGui(stack,0,0,width,height);
+        RenderUtil.renderGui(context,0,0,width,height);
 
         mouseX += -mc.currentScreen.width/2;
         mouseY += -mc.currentScreen.height/2;
@@ -49,13 +52,13 @@ public class CScreen extends Screen {
         mouseY += height/2;
 
         for (CWidget cWidget : widgets) {
-            cWidget.render(stack, mouseX, mouseY, tickDelta);
+            cWidget.render(context, mouseX, mouseY, tickDelta);
         }
         for (CWidget cWidget : widgets) {
-            cWidget.renderOverlay(stack, mouseX, mouseY, tickDelta);
+            cWidget.renderOverlay(context, mouseX, mouseY, tickDelta);
         }
         stack.pop();
-        super.render(stack, mouseX, mouseY, tickDelta);
+        super.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Override

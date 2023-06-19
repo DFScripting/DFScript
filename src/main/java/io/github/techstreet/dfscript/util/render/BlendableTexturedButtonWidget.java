@@ -1,6 +1,7 @@
 package io.github.techstreet.dfscript.util.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -21,10 +22,10 @@ public class BlendableTexturedButtonWidget extends TexturedButtonWidget {
 //    }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         RenderSystem.clearColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        super.renderButton(matrices, mouseX, mouseY, delta);
+        super.renderButton(context, mouseX, mouseY, delta);
     }
 }

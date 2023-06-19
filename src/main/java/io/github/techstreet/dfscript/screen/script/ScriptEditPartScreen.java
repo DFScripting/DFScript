@@ -5,21 +5,19 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
-import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.argument.*;
-
-import java.awt.Rectangle;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+
+import java.awt.*;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScriptEditPartScreen extends CScreen {
 
@@ -76,10 +74,10 @@ public class ScriptEditPartScreen extends CScreen {
 
             panel.add(new CButton(5, y-1, 85, 10, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
                     if (b.contains(mouseX, mouseY)) {
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
                     }
                 }
 

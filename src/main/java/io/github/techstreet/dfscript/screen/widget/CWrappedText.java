@@ -4,6 +4,7 @@ import io.github.techstreet.dfscript.DFScript;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -29,7 +30,8 @@ public class CWrappedText extends CText {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
@@ -43,11 +45,9 @@ public class CWrappedText extends CText {
 
         int y_offset = 0;
         for (OrderedText line : wrapped) {
-            if (shadow) f.drawWithShadow(stack, line, 0, y_offset, color);
-            else f.draw(stack, line, 0, y_offset, color);
+            context.drawText(f, line, 0, y_offset, color, shadow);
             y_offset += 8;
         }
-
 
         stack.pop();
     }

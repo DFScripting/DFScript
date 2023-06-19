@@ -5,6 +5,7 @@ import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,10 +25,10 @@ public class MInGameHUD {
     }
 
     @Inject(at = @At("HEAD"), method = "render")
-    private void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
-        OverlayManager.getInstance().render(matrices);
+    private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
+        OverlayManager.getInstance().render(context);
         EventManager em = EventManager.getInstance();
-        em.dispatch(new HudRenderEvent(matrices));
+        em.dispatch(new HudRenderEvent(context));
         em.resetEvents();
     }
 }

@@ -9,8 +9,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
 import io.github.techstreet.dfscript.script.util.UploadResponse;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -56,9 +55,9 @@ public class ScriptListScreen extends CScreen {
 
             panel.add(new CButton(4, y-1, 153, 10, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
-                    DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                    context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
                 }
 
                 @Override

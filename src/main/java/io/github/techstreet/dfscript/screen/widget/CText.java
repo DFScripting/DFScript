@@ -3,6 +3,7 @@ package io.github.techstreet.dfscript.screen.widget;
 import io.github.techstreet.dfscript.DFScript;
 import java.awt.Rectangle;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
@@ -31,7 +32,8 @@ public class CText implements CWidget {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
 
@@ -46,11 +48,7 @@ public class CText implements CWidget {
             stack.translate(-f.getWidth(text) / 2f, -f.fontHeight / 2f, 0);
         }
 
-        if (shadow) {
-            f.drawWithShadow(stack, text, 0, 0, color);
-        } else {
-            f.draw(stack, text, 0, 0, color);
-        }
+        context.drawText(f, text, 0, 0, color, shadow);
         stack.pop();
     }
 

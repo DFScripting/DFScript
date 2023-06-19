@@ -1,11 +1,13 @@
 package io.github.techstreet.dfscript.screen.widget;
 
 import java.awt.Rectangle;
+
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public interface CWidget {
 
-    void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta);
+    void render(DrawContext context, int mouseX, int mouseY, float tickDelta);
 
     default boolean mouseClicked(double x, double y, int button) {
         return false;
@@ -23,7 +25,7 @@ public interface CWidget {
     default void mouseScrolled(double mouseX, double mouseY, double amount) {
     }
 
-    default void renderOverlay(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+    default void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
 
     }
 

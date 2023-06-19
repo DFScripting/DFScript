@@ -1050,7 +1050,7 @@ public enum ScriptActionType {
 
             if (ctx.task().event() instanceof HudRenderEvent event) {
                 Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
-                io.github.techstreet.dfscript.DFScript.MC.textRenderer.drawWithShadow(event.stack(),t,x,y, 0xFFFFFF);
+                event.context().drawText(DFScript.MC.textRenderer, t, x, y, 0xFFFFFF, true);
             }
         })),
 

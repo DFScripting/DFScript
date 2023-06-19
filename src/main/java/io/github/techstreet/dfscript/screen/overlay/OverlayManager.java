@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.screen.overlay;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
@@ -42,7 +43,7 @@ public class OverlayManager implements Loadable {
         overlayText.add(new Overlay(text));
     }
 
-    public void render(MatrixStack stack) {
+    public void render(DrawContext context) {
         while (overlayText.size() > 10) {
             overlayText.remove(0);
         }
@@ -55,7 +56,7 @@ public class OverlayManager implements Loadable {
             if(fadeout < now) {
                 opacity = (int) ((fadeout - now + 1000) * 255 / 1000);
             }
-            DFScript.MC.textRenderer.drawWithShadow(stack, text.text, 10, y, 0xFF5555 + ((opacity) << 24));
+            context.drawText(DFScript.MC.textRenderer, text.text, 10, y, 0xFF5555 + ((opacity) << 24), true);
             y += 9;
         }
     }
