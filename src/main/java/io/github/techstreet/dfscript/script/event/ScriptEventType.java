@@ -14,7 +14,7 @@ import net.minecraft.util.Formatting;
 
 public enum ScriptEventType {
 
-    SEND_CHAT(SendChatEvent.class,"OnSendChat", "Executed when a player sends a chat message.", Items.BOOK),
+    SEND_CHAT(SendChatEvent.class,"OnSendChat", "Executed when a player sends a chat message or command.", Items.BOOK),
 
     KEY_PRESS(KeyPressEvent.class, "OnKeyPress", "Executed when a player presses a key.", Items.STONE_BUTTON),
 

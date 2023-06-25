@@ -95,8 +95,8 @@ public class MClientPlayNetworkHandler {
         }
     }
 
-    @Inject(method = "sendCommand(Ljava/lang/String;)Z", at = @At("HEAD"), cancellable = true)
-    private void command(String command, CallbackInfoReturnable<Boolean> ci) {
+    @Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
+    private void command(String command, CallbackInfo ci) {
         if(command.startsWith("scripts")) return;
         SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
