@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
+import io.github.techstreet.dfscript.script.execution.ScriptPosStackElement;
+import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRenderSnippetElement;
 
@@ -24,7 +26,12 @@ public class ScriptContainer {
 
     public void runSnippet(ScriptTask task, int snippetIndex, ScriptScopeParent parent)
     {
-        snippets.get(snippetIndex).run(task, parent);
+        snippets.get(snippetIndex).run(task, parent, null);
+    }
+
+    public void runSnippet(ScriptTask task, int snippetIndex, ScriptScopeParent parent, ScriptActionContext context)
+    {
+        snippets.get(snippetIndex).run(task, parent, context);
     }
 
     public ScriptPartRenderSnippetElement createSnippet(int snippetIndex) {

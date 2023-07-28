@@ -30,6 +30,8 @@ public interface ScriptArgument {
         return new ArrayList<>();
     }
 
+    default Text getArgIconText() { return null; }
+
     class Serializer implements JsonDeserializer<ScriptArgument> {
 
         @Override

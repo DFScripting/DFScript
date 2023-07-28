@@ -61,7 +61,7 @@ public class CTextField implements CWidget {
         context.fill(0, 0, width, height, 0xFF888888);
         context.fill(1, 1, width - 1, height - 1, 0xFF000000);
 
-        float xPos = stack.peek().getPositionMatrix().m30() + x;
+        float xPos = stack.peek().getPositionMatrix().m30();
         float yPos = stack.peek().getPositionMatrix().m31();
 
         Vector4f begin = new Vector4f(xPos - 2, yPos + 2, 1, 1);

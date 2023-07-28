@@ -1448,7 +1448,7 @@ public enum ScriptActionType {
     private ScriptGroup group = ScriptGroup.ACTION;
 
     private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
-    private final List<ScriptActionArgument> arguments = new ArrayList<>();
+    private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
     ScriptActionType(Consumer<ScriptActionType> builder) {
         description.add("No description provided.");
         builder.accept(this);
@@ -1580,55 +1580,14 @@ public enum ScriptActionType {
     }
 
     public void run(ScriptActionContext ctx) {
-        List<List<ScriptActionArgument>> possibilities = new ArrayList<>();
-
-        generatePossibilities(possibilities, new ArrayList<>(), arguments, 0);
-
-        search:
-        for (List<ScriptActionArgument> possibility : possibilities) {
-            int pos = 0;
-            ctx.argMap().clear();
-            for (ScriptActionArgument arg : possibility) {
-                List<ScriptArgument> args = new ArrayList<>();
-                if (pos >= ctx.arguments().size()) {
-                    continue search;
-                }
-                if (ctx.arguments().get(pos).convertableTo(arg.type())) {
-                    args.add(ctx.arguments().get(pos));
-                    pos++;
-                }
-                if (arg.plural()) {
-                    while (pos < ctx.arguments().size()) {
-                        if (ctx.arguments().get(pos).convertableTo(arg.type())) {
-                            args.add(ctx.arguments().get(pos));
-                            pos++;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                ctx.setArg(arg.name(), args);
-            }
-            if (pos == ctx.arguments().size()) {
-                action.accept(ctx);
-                return;
-            }
+        try
+        {
+            arguments.getArgMap(ctx);
+            action.accept(ctx);
         }
-
-        OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
-    }
-
-    private void generatePossibilities(List<List<ScriptActionArgument>> possibilities, ArrayList<ScriptActionArgument> current, List<ScriptActionArgument> arguments, int pos) {
-        if (pos >= arguments.size()) {
-            possibilities.add(new ArrayList<>(current));
-            return;
+        catch(IllegalArgumentException e)
+        {
+            OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
         }
-
-        ScriptActionArgument arg = arguments.get(pos);
-        if (arg.optional()) {
-            generatePossibilities(possibilities, new ArrayList<>(current), arguments, pos + 1);
-        }
-        current.add(arg);
-        generatePossibilities(possibilities, current, arguments, pos + 1);
     }
 }

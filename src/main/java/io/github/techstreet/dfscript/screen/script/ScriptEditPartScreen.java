@@ -93,9 +93,10 @@ public class ScriptEditPartScreen extends CReloadableScreen {
         int index = 0;
         for (ScriptArgument arg : action.getArguments()) {
             ItemStack icon = arg.getArgIcon();
+            Text countText = arg.getArgIconText();
             String text = arg.getArgText();
 
-            panel.add(new CItem(5, y, icon));
+            panel.add(new CItem(5, y, icon, countText));
             panel.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;

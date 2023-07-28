@@ -102,6 +102,11 @@ public final class ScriptVariableArgument implements ScriptArgument {
         return contextMenuButtons;
     }
 
+    @Override
+    public Text getArgIconText() {
+        return scope.getShortName();
+    }
+
     public static class Serializer implements JsonSerializer<ScriptVariableArgument>, JsonDeserializer<ScriptVariableArgument> {
         @Override
         public ScriptVariableArgument deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

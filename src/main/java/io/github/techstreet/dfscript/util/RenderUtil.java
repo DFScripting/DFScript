@@ -195,6 +195,10 @@ public class RenderUtil {
     }
 
     // these functions exist because fabric api dumb and used an integer for positions in the DrawableHelper class...
+    public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
+        fill(context.getMatrices(), x1, y1, x2, y2, color);
+    }
+
     public static void fill(MatrixStack stack, float x1, float y1, float x2, float y2, int color) {
         fill(stack.peek().getPositionMatrix(), x1, y1, x2, y2, color);
     }

@@ -14,6 +14,8 @@ import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
+import io.github.techstreet.dfscript.script.execution.ScriptPosStackElement;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
@@ -29,6 +31,7 @@ import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ScriptSnippet extends ArrayList<ScriptPart> {
     boolean hidden = false;
@@ -36,9 +39,9 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
 
     }
 
-    public void run(ScriptTask task, ScriptScopeParent parent)
+    public void run(ScriptTask task, ScriptScopeParent parent, ScriptActionContext context)
     {
-        task.stack().push(this, parent);
+        task.stack().push(this, parent, context);
     }
 
     public int create(CScrollPanel panel, int y, int indent, Script script) {

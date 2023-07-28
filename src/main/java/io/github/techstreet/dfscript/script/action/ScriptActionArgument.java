@@ -1,13 +1,19 @@
 package io.github.techstreet.dfscript.script.action;
 
+import com.google.gson.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.lang.reflect.Type;
+
 public class ScriptActionArgument {
 
-    private final String name;
+    private String name;
     private final ScriptActionArgumentType type;
     private boolean optional = false;
     private boolean plural = false;
@@ -55,23 +61,28 @@ public class ScriptActionArgument {
             .append(Text.literal(name).fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
     }
 
+    public void setName(String text) {
+        name = text;
+    }
+
     public enum ScriptActionArgumentType {
-        VARIABLE,
-        NUMBER,
-        TEXT,
-        LIST,
-        DICTIONARY,
-        ANY;
+        VARIABLE("Variable", Items.MAGMA_CREAM),
+        NUMBER("Number", Items.SLIME_BALL),
+        TEXT("Text", Items.BOOK),
+        LIST("List", Items.CHEST),
+        DICTIONARY("Dictionary", Items.CHEST_MINECART),
+        ANY("Any", Items.ENDER_EYE);
+
+        private final String name;
+        private final Item icon;
+
+        ScriptActionArgumentType(String name, Item icon) {
+            this.name = name;
+            this.icon = icon;
+        }
 
         public MutableText text() {
-            MutableText val = Text.literal(switch (this) {
-                case VARIABLE -> "Variable";
-                case NUMBER -> "Number";
-                case TEXT -> "Text";
-                case LIST -> "List";
-                case DICTIONARY -> "Dictionary";
-                case ANY -> "Any";
-            });
+            MutableText val = Text.literal(name);
             return val.fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE));
         }
         public boolean convertableTo(ScriptActionArgumentType to) {
@@ -79,6 +90,41 @@ public class ScriptActionArgument {
                 || to == TEXT
                 || this == VARIABLE
                 || this == to;
+        }
+
+        public ItemStack icon() {
+            ItemStack itemStack = new ItemStack(icon);
+
+            itemStack.setCustomName(text());
+
+            return itemStack;
+        }
+    }
+
+    public static class Serializer implements JsonSerializer<ScriptActionArgument>, JsonDeserializer<ScriptActionArgument> {
+
+        @Override
+        public JsonElement serialize(ScriptActionArgument src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject obj = new JsonObject();
+
+            obj.addProperty("name", src.name());
+            obj.addProperty("type", src.type().name());
+            obj.addProperty("optional", src.optional());
+            obj.addProperty("plural", src.plural());
+
+            return obj;
+        }
+
+        @Override
+        public ScriptActionArgument deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+
+            String name = obj.get("name").getAsString();
+            ScriptActionArgumentType argType = ScriptActionArgumentType.valueOf(obj.get("type").getAsString());
+            boolean optional = obj.get("optional").getAsBoolean();
+            boolean plural = obj.get("plural").getAsBoolean();
+
+            return new ScriptActionArgument(name, argType).optional(optional).plural(plural);
         }
     }
 }

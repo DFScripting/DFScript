@@ -6,9 +6,16 @@ import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.util.ItemMaterialSelectMenu;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,13 +110,13 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
         panel.add(icon);
         panel.add(nameField);
 
-        /*int y = 15;
+        int y = 15;
         int index = 0;
-        for (ScriptArgument arg : action.getArguments()) {
-            ItemStack icon = arg.getArgIcon();
-            String text = arg.getArgText();
+        for (ScriptActionArgument arg : function.argList()) {
+            ItemStack argIcon = arg.type().icon();
+            String text = arg.name();
 
-            panel.add(new CItem(5, y, icon));
+            panel.add(new CItem(5, y, argIcon));
             panel.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
@@ -117,47 +124,41 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
 
             panel.add(new CButton(5, y-1, 85, 10, "",() -> {}) {
                 @Override
-                public void render(MatrixStack stack, int mouseX, int mouseY, float tickDelta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
                     if (b.contains(mouseX, mouseY)) {
-                        DrawableHelper.fill(stack, b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
+                        context.fill(b.x, b.y, b.x + b.width, b.y + b.height, 0x33000000);
                     }
                 }
 
                 @Override
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
-                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK, 1f,1f));
-
-                        if (button == 0) {
-                            ScriptArgument argument = action.getArguments().get(currentIndex);
-                            String value = "~";
-                            if(argument instanceof ScriptClientValueArgument clientValue) value = clientValue.getName();
-                            if(argument instanceof ScriptConfigArgument configArgument) value = configArgument.getName();
-                            if(argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
-                            if(argument instanceof ScriptTextArgument text) value = text.value();
-                            if(argument instanceof ScriptVariableArgument var) value = var.name();
-                            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, value));
-                        }
+                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(),
+                        1f,1f));
 
                         if (button != 0) {
                             List<ContextMenuButton> contextMenuButtons = new ArrayList<>();
                             contextMenuButtons.add(new ContextMenuButton("Insert Before", () -> {
-                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex));
+                                DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, currentIndex));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
-                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1));
+                                DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, currentIndex+1));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Delete", () -> {
-                                action.getArguments().remove(currentIndex);
+                                function.argList().remove(currentIndex);
                             }));
-                            contextMenuButtons.addAll(action.getArguments().get(currentIndex).getContextMenu());
                             DFScript.MC.send(() -> {
                                 if(DFScript.MC.currentScreen instanceof ScriptEditFunctionScreen screen) {
                                     screen.contextMenu((int) x, (int) y, contextMenuButtons);
                                 }
                             });
                         }
+                        else
+                        {
+                            DFScript.MC.setScreen(new ScriptEditFunctionArgumentScreen(script, function, arg));
+                        }
+
                         return true;
                     }
                     return false;
@@ -170,8 +171,8 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
         }
 
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
-            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
+            DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, function.argList().size()));
         });
-        panel.add(add);*/
+        panel.add(add);
     }
 }

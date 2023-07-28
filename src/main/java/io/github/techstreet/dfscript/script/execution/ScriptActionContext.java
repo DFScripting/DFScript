@@ -1,8 +1,12 @@
 package io.github.techstreet.dfscript.script.execution;
 
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -13,10 +17,13 @@ public final class ScriptActionContext {
     private final List<ScriptArgument> arguments;
     private final HashMap<String, List<ScriptArgument>> argMap;
 
+    private final HashMap<String, ScriptActionArgument> actionArgMap;
+
     public ScriptActionContext(ScriptTask task, List<ScriptArgument> arguments) {
         this.task = task;
         this.arguments = arguments;
         this.argMap = new HashMap<>();
+        this.actionArgMap = new HashMap<>();
     }
 
     public void setArg(String name, List<ScriptArgument> args) {
@@ -95,6 +102,9 @@ public final class ScriptActionContext {
 
     public HashMap<String, List<ScriptArgument>> argMap() {
         return argMap;
+    }
+    public HashMap<String, ScriptActionArgument> actionArgMap() {
+        return actionArgMap;
     }
 
     @Override

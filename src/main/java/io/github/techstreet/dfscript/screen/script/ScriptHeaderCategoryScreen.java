@@ -4,6 +4,7 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
@@ -27,7 +28,7 @@ public class ScriptHeaderCategoryScreen extends CScreen {
 
     static {
         extra = List.of(
-            new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) -> script.getHeaders().add(insertIndex, new ScriptFunction(script.getUnnamedFunction(), Items.LAPIS_LAZULI)))
+            new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) -> script.getHeaders().add(insertIndex, new ScriptFunction(script.getUnnamedFunction(), Items.LAPIS_LAZULI, new ScriptActionArgumentList())))
         );
         size = (int) (Math.ceil(Math.sqrt(ScriptHeaderCategory.values().length+extra.size())) * 10)+4;
     }

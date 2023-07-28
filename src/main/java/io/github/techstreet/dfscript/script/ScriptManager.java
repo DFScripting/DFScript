@@ -8,6 +8,8 @@ import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.screen.script.ScriptAddScreen;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.*;
@@ -60,6 +62,8 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptSnippet.class, new ScriptSnippet.Serializer())
         .registerTypeAdapter(ScriptHeader.class, new ScriptHeader.Serializer())
         .registerTypeAdapter(ScriptEmptyHeader.class, new ScriptEmptyHeader.Serializer())
+        .registerTypeAdapter(ScriptActionArgument.class, new ScriptActionArgument.Serializer())
+        .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
         .create();
 
     public ScriptManager() {

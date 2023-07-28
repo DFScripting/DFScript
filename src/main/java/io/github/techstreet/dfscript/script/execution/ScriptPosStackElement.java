@@ -2,10 +2,16 @@ package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.script.ScriptScopeParent;
 import io.github.techstreet.dfscript.script.ScriptSnippet;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
+import io.github.techstreet.dfscript.script.values.ScriptListValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -16,12 +22,30 @@ public class ScriptPosStackElement {
 
     private Map<String, Object> scopeVariables = new HashMap<>();
 
-    public ScriptPosStackElement(ScriptSnippet snippet, ScriptScopeParent parent) {
+    private ScriptVariableMap functionVarMap;
+
+    private ScriptActionContext callContext;
+
+    public ScriptPosStackElement(ScriptSnippet snippet, ScriptScopeParent parent, ScriptActionContext ctx) {
         this.snippet = snippet;
         this.parent = parent;
+        callContext = ctx;
         setPos(0);
         if(parent instanceof ScriptRepetition) {
             setPos(this.snippet.size());
+        }
+        if(parent instanceof ScriptFunction f) {
+            ctx.argMap().forEach(
+                (argName, argValue) -> {
+                    ScriptActionArgument arg = ctx.actionArgMap().get(argName);
+                    if(arg.plural()) {
+                        functionVarMap.set(argName, new ScriptListValue(argValue.stream().map((a) -> a.getValue(ctx.task())).toList()));
+                    }
+                    else {
+                        functionVarMap.set(argName, argValue.get(0).getValue(ctx.task()));
+                    }
+                }
+            );
         }
     }
     public ScriptPosStackElement setPos(int pos) {
@@ -75,6 +99,15 @@ public class ScriptPosStackElement {
 
     public boolean hasVariable(String name) {
         return scopeVariables.containsKey(name);
+    }
+
+    public ScriptActionContext getCallContext()
+    {
+        return callContext;
+    }
+
+    public ScriptVariableMap getVarMap() {
+        return functionVarMap;
     }
 
     public void skip() {
