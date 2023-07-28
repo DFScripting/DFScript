@@ -25,7 +25,7 @@ public class ScriptMenuButton extends CButton implements ScriptWidget {
     public boolean mouseClicked(double x, double y, int button) {
         if (getBounds().contains(x,y)) {
             DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
-            //script.invoke(new ScriptMenuClickButtonEvent(identifier));
+            script.invoke(new ScriptMenuClickButtonEvent(identifier));
             return true;
         }
         return false;
