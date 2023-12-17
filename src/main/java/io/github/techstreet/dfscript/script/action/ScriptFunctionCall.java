@@ -9,6 +9,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
@@ -81,8 +82,8 @@ public class ScriptFunctionCall extends ScriptAction {
     }
 
     @Override
-    public void updateScriptReferences(Script script) {
-        super.updateScriptReferences(script);
+    public void updateScriptReferences(Script script, ScriptHeader header) {
+        super.updateScriptReferences(script, header);
         this.script = script;
     }
 

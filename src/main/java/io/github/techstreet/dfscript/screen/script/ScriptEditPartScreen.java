@@ -8,6 +8,7 @@ import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
 import io.github.techstreet.dfscript.script.argument.*;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -23,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 public class ScriptEditPartScreen extends CReloadableScreen {
     private final Script script;
+
+    private final ScriptHeader header;
     private final ScriptParametrizedPart action;
     private final CScrollPanel panel;
     private final List<CWidget> contextMenu = new ArrayList<>();
 
-    public ScriptEditPartScreen(ScriptParametrizedPart action, Script script) {
+    public ScriptEditPartScreen(ScriptParametrizedPart action, Script script, ScriptHeader header) {
         super(90, 100);
         panel = new CScrollPanel(0, 0, 90, 100);
 
@@ -35,6 +38,7 @@ public class ScriptEditPartScreen extends CReloadableScreen {
 
         this.script = script;
         this.action = action;
+        this.header = header;
 
         reload();
     }
@@ -124,16 +128,17 @@ public class ScriptEditPartScreen extends CReloadableScreen {
                             if(argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
                             if(argument instanceof ScriptTextArgument text) value = text.value();
                             if(argument instanceof ScriptVariableArgument var) value = var.name();
-                            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, value));
+                            if(argument instanceof ScriptFunctionArgument var) value = var.getName();
+                            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, header, value));
                         }
 
                         if (button != 0) {
                             List<ContextMenuButton> contextMenuButtons = new ArrayList<>();
                             contextMenuButtons.add(new ContextMenuButton("Insert Before", () -> {
-                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex));
+                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, header));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
-                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1));
+                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1, header));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Delete", () -> {
                                 action.getArguments().remove(currentIndex);
@@ -157,7 +162,7 @@ public class ScriptEditPartScreen extends CReloadableScreen {
         }
 
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
-            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size()));
+            DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, action.getArguments().size(), header));
         });
         panel.add(add);
     }

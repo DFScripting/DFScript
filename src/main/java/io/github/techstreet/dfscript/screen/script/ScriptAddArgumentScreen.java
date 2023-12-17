@@ -6,10 +6,9 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
-import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptVariableScope;
+import io.github.techstreet.dfscript.script.argument.*;
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
@@ -18,15 +17,18 @@ import net.minecraft.text.Text;
 public class ScriptAddArgumentScreen extends CScreen {
 
     private final Script script;
+
+    private final ScriptHeader header;
     private final ScriptParametrizedPart action;
 
-    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index) {
-        this(script,action,index,null);
+    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, ScriptHeader header) {
+        this(script,action,index, header,null);
     }
-    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, String overwrite) {
+    public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, ScriptHeader header, String overwrite) {
         super(100, 50);
         this.script = script;
         this.action = action;
+        this.header = header;
 
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
         if(overwrite != null) input.setText(overwrite);
@@ -51,19 +53,24 @@ public class ScriptAddArgumentScreen extends CScreen {
         configValueIcon.setCustomName(Text.literal("Config Value")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
+        ItemStack functionArgumentIcon = new ItemStack(Items.BLUE_DYE);
+        functionArgumentIcon.setCustomName(Text.literal("Function Argument")
+                .fillStyle(Style.EMPTY.withItalic(false)));
+
 
         CItem addNumber = new CItem(2, 40, numberIcon);
         CItem addText = new CItem(12, 40, textIcon);
         CItem addVariable = new CItem(22, 40, variableIcon);
         CItem addClientValue = new CItem(32, 40, clientValueIcon);
         CItem addConfigValue = new CItem(42, 40, configValueIcon);
+        CItem addFunctionArgument = new CItem(52, 40, functionArgumentIcon);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         addText.setClickListener((btn) -> {
             if(overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
-            DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
+            close();
         });
 
         addNumber.setClickListener((btn) -> {
@@ -71,7 +78,7 @@ public class ScriptAddArgumentScreen extends CScreen {
                 double number = Double.parseDouble(input.getText());
                 if(overwrite != null) action.getArguments().remove(index);
                 action.getArguments().add(index, new ScriptNumberArgument(number));
-                DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
+                close();
             } catch (Exception err) {
                 input.textColor = 0xFF3333;
             }
@@ -80,15 +87,19 @@ public class ScriptAddArgumentScreen extends CScreen {
         addVariable.setClickListener((btn) -> {
             if(overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptVariableArgument(input.getText(), ScriptVariableScope.SCRIPT));
-            DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
+            close();
         });
 
         addClientValue.setClickListener((btn) -> {
-            DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index, overwrite));
+            DFScript.MC.setScreen(new ScriptAddClientValueScreen(action, script, index, header, overwrite));
         });
 
         addConfigValue.setClickListener((btn) -> {
-            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index, overwrite));
+            DFScript.MC.setScreen(new ScriptAddConfigValueScreen(action, script, index, header, overwrite));
+        });
+
+        addFunctionArgument.setClickListener((btn) -> {
+            DFScript.MC.setScreen(new ScriptAddFunctionArgValueScreen(action, script, index, header, overwrite));
         });
 
         widgets.add(input);
@@ -97,10 +108,13 @@ public class ScriptAddArgumentScreen extends CScreen {
         widgets.add(addVariable);
         widgets.add(addClientValue);
         widgets.add(addConfigValue);
+        if(header instanceof ScriptFunction) {
+            widgets.add(addFunctionArgument);
+        }
     }
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptEditPartScreen(action, script));
+        DFScript.MC.setScreen(new ScriptEditPartScreen(action, script, header));
     }
 }

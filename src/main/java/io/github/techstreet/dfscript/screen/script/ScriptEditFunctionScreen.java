@@ -8,6 +8,7 @@ import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -93,8 +94,8 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
             }
             else {
                 nameField.textColor = 0xFFFFFF;
-                function.setName(nameField.getText());
                 script.replaceFunction(function.getName(), nameField.getText());
+                function.setName(nameField.getText());
             }
         });
 
@@ -107,16 +108,22 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
             }));
         });
 
+        CTextField descField = new CTextField(function.getDescription(), 5, 11, 80, 20, true);
+        descField.setChangedListener(() -> {
+            function.setDescription(descField.getText());
+        });
+
         panel.add(icon);
         panel.add(nameField);
+        panel.add(descField);
 
-        int y = 15;
+        int y = 31+4;
         int index = 0;
         for (ScriptActionArgument arg : function.argList()) {
-            ItemStack argIcon = arg.type().icon();
+            ItemStack argIcon = arg.getUnnamedIcon();
             String text = arg.name();
 
-            panel.add(new CItem(5, y, argIcon));
+            panel.add(new CItem(5, y, argIcon, Text.literal((arg.optional() ? "*" : "") + (arg.plural() ? "s" : ""))));
             panel.add(new CText(15, y + 2, Text.literal(text)));
 
             int currentIndex = index;
@@ -142,12 +149,34 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
                             contextMenuButtons.add(new ContextMenuButton("Insert Before", () -> {
                                 DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, currentIndex));
                             }, false));
-                            contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
-                                DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, currentIndex+1));
-                            }, false));
+                            if (!(currentIndex == function.argList().size() - 1 && arg.plural())) {
+                                contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
+                                    DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, currentIndex + 1));
+                                }, false));
+                            }
                             contextMenuButtons.add(new ContextMenuButton("Delete", () -> {
+                                function.removeArgument(arg.name());
+
                                 function.argList().remove(currentIndex);
                             }));
+                            if(arg.type().allowOptional()) {
+                                contextMenuButtons.add(new ContextMenuButton(arg.optional() ? "Required" : "Optional", () -> {
+                                    arg.optional(!arg.optional());
+                                }));
+                                if(currentIndex == function.argList().size()-1) {
+                                    contextMenuButtons.add(new ContextMenuButton(arg.plural() ? "Singular" : "Plural", () -> {
+                                        arg.plural(!arg.plural());
+                                    }));
+                                }
+                                if(arg.optional() && !arg.plural() && arg.type().getDefaultValueType() != null) {
+                                    contextMenuButtons.add(new ContextMenuButton("Default Value", () -> {
+                                        DFScript.MC.setScreen(new ScriptSetValueScreen(script, () -> {
+                                            DFScript.MC.setScreen(new ScriptEditFunctionScreen(function, script));
+                                        }, arg::defaultValue, arg.type().getDefaultValueType(),
+                                                arg.defaultValue() instanceof ScriptUnknownValue ? null : arg.defaultValue().asText()));
+                                    }, false));
+                                }
+                            }
                             DFScript.MC.send(() -> {
                                 if(DFScript.MC.currentScreen instanceof ScriptEditFunctionScreen screen) {
                                     screen.contextMenu((int) x, (int) y, contextMenuButtons);
@@ -173,6 +202,7 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
         CButton add = new CButton(25, y, 40, 8, "Add", () -> {
             DFScript.MC.setScreen(new ScriptAddFunctionArgumentScreen(script, function, function.argList().size()));
         });
-        panel.add(add);
+        if(function.argList().size() == 0 || !function.argList().get(function.argList().size() - 1).plural())
+            panel.add(add);
     }
 }

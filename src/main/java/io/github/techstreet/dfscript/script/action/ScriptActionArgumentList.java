@@ -1,10 +1,9 @@
 package io.github.techstreet.dfscript.script.action;
 
 import com.google.gson.*;
+import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import net.minecraft.registry.Registries;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -26,11 +25,20 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
         }
 
         ScriptActionArgument arg = get(pos);
-        if (arg.optional()) {
+
+        ScriptActionArgumentList newCurrent = new ScriptActionArgumentList(current);
+
+        if (arg.rightOptional()) {
             generatePossibilities(possibilities, new ScriptActionArgumentList(current), pos + 1);
         }
+
         current.add(arg);
+
         generatePossibilities(possibilities, current, pos + 1);
+
+        if (arg.optional()) {
+            generatePossibilities(possibilities, newCurrent, pos + 1);
+        }
     }
 
     public List<ScriptActionArgumentList> generatePossibilities() {
@@ -44,11 +52,14 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
     public void getArgMap(ScriptActionContext ctx) {
         List<ScriptActionArgumentList> possibilities = generatePossibilities();
 
+        for (ScriptActionArgument arg : this) {
+            ctx.putActionArg(arg);
+        }
+
         search:
         for (List<ScriptActionArgument> possibility : possibilities) {
             int pos = 0;
             ctx.argMap().clear();
-            ctx.actionArgMap().clear();
             for (ScriptActionArgument arg : possibility) {
                 List<ScriptArgument> args = new ArrayList<>();
                 if (pos >= ctx.arguments().size()) {
@@ -68,15 +79,13 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
                         }
                     }
                 }
-                ctx.setArg(arg.name(), args);
-                ctx.actionArgMap().put(arg.name(), arg);
+                ctx.setArg(arg, args);
             }
             if (pos == ctx.arguments().size()) {
                 return;
             }
         }
         ctx.argMap().clear();
-        ctx.actionArgMap().clear();
         throw new IllegalArgumentException();
     }
 
@@ -95,13 +104,22 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
         }
     }
 
-    public boolean argumentExists(String functionName) {
+    public boolean argumentExists(String functionArg) {
         for (ScriptActionArgument arg : this) {
-            if(arg.name().equals(functionName)) {
+            if(arg.name().equals(functionArg)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public ScriptActionArgument getByName(String functionArg) {
+        for (ScriptActionArgument arg : this) {
+            if(arg.name().equals(functionArg)) {
+                return arg;
+            }
+        }
+        return null;
     }
 
     public static class Serializer implements JsonSerializer<ScriptActionArgumentList>, JsonDeserializer<ScriptActionArgumentList> {

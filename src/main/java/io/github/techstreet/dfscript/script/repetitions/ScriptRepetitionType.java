@@ -154,7 +154,9 @@ public enum ScriptRepetitionType {
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
-            lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
+            for (Text txt : arg.text()) {
+                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
+            }
         }
 
         item.getSubNbt("display")

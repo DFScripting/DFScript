@@ -34,6 +34,15 @@ public class ScriptMigrator {
             script.setVersion(5);
         }
 
+        if (script.getVersion() == 5) {
+            script.replaceAction(ScriptActionType.DISPLAY_TITLE, ScriptActionType.DISPLAY_TITLE_OLD);
+            script.replaceAction(ScriptActionType.PLAY_SOUND, ScriptActionType.PLAY_SOUND_OLD);
+            script.replaceAction(ScriptActionType.READ_FILE, ScriptActionType.READ_FILE_OLD);
+            script.replaceAction(ScriptActionType.WRITE_FILE, ScriptActionType.WRITE_FILE_OLD);
+
+            script.setVersion(6);
+        }
+
         if (previousVer != script.getVersion()) {
             ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer + " to version " + script.getVersion() + "!");
             ScriptManager.getInstance().saveScript(script);

@@ -31,17 +31,12 @@ public final class ScriptVariableArgument implements ScriptArgument {
 
     @Override
     public ScriptValue getValue(ScriptTask task) {
-        return scope.getMap(task).get(name);
-    }
-
-    public void setValue(ScriptValue value, ScriptTask task) {
-        scope.getMap(task).set(name, value);
+        return scope.getMap(task).getReference(name);
     }
 
     public boolean exists(ScriptTask task) {
         return scope.getMap(task).has(name);
     }
-
 
     @Override
     public boolean convertableTo(ScriptActionArgumentType type) {

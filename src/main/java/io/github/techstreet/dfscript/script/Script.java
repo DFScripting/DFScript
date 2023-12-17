@@ -42,7 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 5;
+    public static int scriptVersion = 6;
 
     private String name;
     private String owner;
@@ -383,7 +383,7 @@ public class Script {
 
     private void updateScriptReferences() {
         for(ScriptHeader header : headers) {
-            header.forEach((snippet) -> snippet.updateScriptReferences(this));
+            header.forEach((snippet) -> snippet.updateScriptReferences(this, header));
         }
     }
 
@@ -402,6 +402,12 @@ public class Script {
     public void replaceFunction(String oldFunction, String newFunction) {
         for(ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
+        }
+    }
+
+    public void removeFunction(String function) {
+        for(ScriptHeader header : headers) {
+            header.forEach((snippet) -> snippet.removeFunction(function));
         }
     }
 

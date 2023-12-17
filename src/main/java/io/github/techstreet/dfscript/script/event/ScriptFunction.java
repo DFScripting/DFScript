@@ -31,14 +31,17 @@ public class ScriptFunction extends ScriptHeader {
         functionIcon = new ItemStack(Items.LAPIS_BLOCK).setCustomName(Text.literal("Function").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
     }
     private String name;
+
+    private String description;
     private Item icon;
 
     private ScriptActionArgumentList argList;
 
-    public ScriptFunction(String name, Item icon, ScriptActionArgumentList argList) {
+    public ScriptFunction(String name, Item icon, ScriptActionArgumentList argList, String description) {
         this.name = name;
         this.icon = icon;
         this.argList = argList;
+        this.description = description;
     }
 
     public String getName() {
@@ -52,17 +55,22 @@ public class ScriptFunction extends ScriptHeader {
 
         NbtList lore = new NbtList();
 
-        /*for (String descriptionLine: description) {
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
-                    .fillStyle(Style.EMPTY
-                            .withColor(Formatting.GRAY)
-                            .withItalic(false)))));
-        }*/
+        if(description != "") {
+            for (String descriptionLine: description.split("\n")) {
+                lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
+                        .fillStyle(Style.EMPTY
+                                .withColor(Formatting.GRAY)
+                                .withItalic(false)))));
+            }
 
-        //lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
+            if(argList.size() > 0)
+                lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
+        }
 
         for (ScriptActionArgument arg : argList) {
-            lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
+            for (Text txt : arg.text()) {
+                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
+            }
         }
 
         icon.getSubNbt("display")
@@ -83,6 +91,26 @@ public class ScriptFunction extends ScriptHeader {
         icon = newIcon;
     }
 
+    public void replaceArgument(String oldArg, String newArg) {
+        forEach((snippet) -> {
+            snippet.replaceFunctionArgument(oldArg, newArg);
+        });
+    }
+
+    public void removeArgument(String arg) {
+        forEach((snippet) -> {
+            snippet.removeFunctionArgument(arg);
+        });
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public static class Serializer implements JsonSerializer<ScriptFunction> {
 
         @Override
@@ -90,6 +118,7 @@ public class ScriptFunction extends ScriptHeader {
             JsonObject obj = new JsonObject();
             obj.addProperty("type", "function");
             obj.addProperty("name", src.getName());
+            obj.addProperty("description", src.getDescription());
             obj.addProperty("icon", Registries.ITEM.getId(src.getRawIcon()).toString());
             obj.add("args", context.serialize(src.argList()));
             obj.add("snippet", context.serialize(src.container().getSnippet(0)));

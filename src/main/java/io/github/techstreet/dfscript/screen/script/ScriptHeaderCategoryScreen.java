@@ -28,7 +28,10 @@ public class ScriptHeaderCategoryScreen extends CScreen {
 
     static {
         extra = List.of(
-            new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) -> script.getHeaders().add(insertIndex, new ScriptFunction(script.getUnnamedFunction(), Items.LAPIS_LAZULI, new ScriptActionArgumentList())))
+            new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) ->
+                    script.getHeaders().add(insertIndex, new ScriptFunction(
+                            script.getUnnamedFunction(), Items.LAPIS_LAZULI, new ScriptActionArgumentList(), ""
+                    )))
         );
         size = (int) (Math.ceil(Math.sqrt(ScriptHeaderCategory.values().length+extra.size())) * 10)+4;
     }

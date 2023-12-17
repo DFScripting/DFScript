@@ -11,6 +11,7 @@ import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.ScriptVariable;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.util.List;
 import java.util.Map.Entry;
@@ -64,7 +65,7 @@ public class ScriptsCommand implements Command {
     private void listVars(String script, String filter) {
         for (Script s : ScriptManager.getInstance().getScripts()) {
             if (s.getName().replaceAll(" ", "_").equals(script)) {
-                List<Entry<String, ScriptValue>> vars = s.getContext().variables().list(filter);
+                List<Entry<String, ScriptVariable>> vars = s.getContext().variables().list(filter);
 
                 int showing = Math.min(vars.size(), 50);
                 int filtered = vars.size();
@@ -79,7 +80,7 @@ public class ScriptsCommand implements Command {
                 }
 
                 for (int i = 0; i < showing; i++) {
-                    Entry<String, ScriptValue> e = vars.get(i);
+                    Entry<String, ScriptVariable> e = vars.get(i);
                     ChatUtil.info(e.getKey() + ": " + e.getValue().asText());
                 }
                 return;

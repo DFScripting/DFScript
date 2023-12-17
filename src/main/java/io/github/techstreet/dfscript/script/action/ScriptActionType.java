@@ -12,6 +12,7 @@ import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.ScriptGroup;
+import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
@@ -69,7 +70,7 @@ public enum ScriptActionType {
         })),
 
     ACTIONBAR(builder -> builder.name("ActionBar")
-        .description("Displays a message in the action bar.")
+        .description("Displays a message in theq action bar.")
         .icon(Items.SPRUCE_SIGN)
         .category(ScriptActionCategory.VISUALS)
         .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
@@ -380,7 +381,7 @@ public enum ScriptActionType {
             .icon(Items.FLINT)
             .category(ScriptActionCategory.LISTS)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("List", ScriptActionArgumentType.VARIABLE)
+            .arg("List", ScriptActionArgumentType.LIST)
             .arg("Value", ScriptActionArgumentType.ANY)
             .action(ctx -> {
                 List<ScriptValue> list = ctx.value("List").asList();
@@ -757,8 +758,8 @@ public enum ScriptActionType {
         .icon(Items.NAUTILUS_SHELL)
         .category(ScriptActionCategory.VISUALS)
         .arg("Sound", ScriptActionArgumentType.TEXT)
-        .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
+        .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
+        .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
         .action(ctx -> {
             String sound = ctx.value("Sound").asText();
             double volume = 1;
@@ -817,6 +818,72 @@ public enum ScriptActionType {
             }
         })),
 
+    PLAY_SOUND_OLD(builder -> builder.name("Play Sound OLD")
+            .description("Plays a sound.")
+            .deprecate(PLAY_SOUND)
+            .icon(Items.NAUTILUS_SHELL)
+            .category(ScriptActionCategory.VISUALS)
+            .arg("Sound", ScriptActionArgumentType.TEXT)
+            .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
+            .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
+            .action(ctx -> {
+                String sound = ctx.value("Sound").asText();
+                double volume = 1;
+                double pitch = 1;
+
+                if (ctx.argMap().containsKey("Volume")) {
+                    volume = ctx.value("Volume").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Pitch")) {
+                    pitch = ctx.value("Pitch").asNumber();
+                }
+
+                Identifier sndid = null;
+                SoundManager sndManager = io.github.techstreet.dfscript.DFScript.MC.getSoundManager();
+
+                try {
+                    sndid = new Identifier(sound);
+                }
+                catch(Exception err) {
+                    err.printStackTrace();
+                    OverlayManager.getInstance().add("Incorrect identifier: " + sound);
+                    return;
+                }
+
+                if (sndManager.getKeys().contains(sndid)) {
+                    SoundEvent snd = SoundEvent.of(sndid);
+                    sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
+                } else {
+                    OverlayManager.getInstance().add("Unknown sound: " + sound);
+
+                    try {
+                        String jname = StringUtil.fromSoundIDToRegistryID(sound);
+
+                        List<String> similiar = new ArrayList<>();
+
+                        int counter = 0;
+                        for (Identifier id : sndManager.getKeys()) {
+                            String sid = id.toString();
+                            String name = StringUtil.fromSoundIDToRegistryID(sid);
+                            if (name.contains(jname)) {
+                                similiar.add(sid);
+                                counter++;
+                                if (counter > 5) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (similiar.size() > 0) {
+                            OverlayManager.getInstance().add("Did you mean: \n" + String.join(", \n", similiar));
+                        }
+                    } catch (Exception err) {
+                        err.printStackTrace();
+                    }
+                }
+            })),
+
     STOP_ALL_SOUNDS(builder -> builder.name("Stop All Sounds")
             .description("Stops all sounds.")
             .icon(Items.COAL)
@@ -828,10 +895,10 @@ public enum ScriptActionType {
         .icon(Items.WARPED_SIGN)
         .category(ScriptActionCategory.VISUALS)
         .arg("Title", ScriptActionArgumentType.TEXT)
-        .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.optional(true))
-        .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
+        .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.optional(true).defaultValue(""))
+        .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
+        .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(60))
+        .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
         .action(ctx -> {
             String title = ctx.value("Title").asText();
             String subtitle = "";
@@ -860,13 +927,51 @@ public enum ScriptActionType {
             io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
         })),
 
+    DISPLAY_TITLE_OLD(builder -> builder.name("Display Title OLD")
+            .description("Displays a title.")
+            .deprecate(DISPLAY_TITLE)
+            .icon(Items.WARPED_SIGN)
+            .category(ScriptActionCategory.VISUALS)
+            .arg("Title", ScriptActionArgumentType.TEXT)
+            .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.rightOptional(true).defaultValue(""))
+            .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(20))
+            .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(60))
+            .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(20))
+            .action(ctx -> {
+                String title = ctx.value("Title").asText();
+                String subtitle = "";
+                int fadeIn = 20;
+                int stay = 60;
+                int fadeOut = 20;
+
+                if (ctx.argMap().containsKey("Subtitle")) {
+                    subtitle = ctx.value("Subtitle").asText();
+                }
+
+                if (ctx.argMap().containsKey("Fade In")) {
+                    fadeIn = (int) ctx.value("Fade In").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Stay")) {
+                    stay = (int) ctx.value("Stay").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Fade Out")) {
+                    fadeOut = (int) ctx.value("Fade Out").asNumber();
+                }
+
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(title)));
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setSubtitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(subtitle)));
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
+            })),
+
     JOIN_LIST_TO_TEXT(builder -> builder.name("Join List to Text")
         .description("Joins a list into a single text.")
         .icon(Items.SLIME_BALL)
         .category(ScriptActionCategory.LISTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("List", ScriptActionArgumentType.LIST)
-        .arg("Separator", ScriptActionArgumentType.TEXT, b -> b.optional(true))
+        .arg("Separator", ScriptActionArgumentType.TEXT, b -> b.optional(true).defaultValue(", "))
         .action(ctx -> {
             String separator = ", ";
 
@@ -953,7 +1058,7 @@ public enum ScriptActionType {
                     try {
                         String content = FileUtil.readFile(f);
                         JsonElement json = JsonParser.parseString(content);
-                        ScriptValue value = ScriptValueJson.fromJson(json);
+                        ScriptValue value = ScriptManager.getInstance().getGSON().fromJson(json, ScriptValue.class);
                         ctx.setVariable("Result", value);
                     } catch (IOException e) {
                         OverlayManager.getInstance().add("Internal error while reading file: " + filename);
@@ -963,6 +1068,33 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
+
+    READ_FILE_OLD(builder -> builder.name("Read File OLD")
+            .description("This action doesn't support all types of values.\nThis action can only correctly read files written by the old Write File action.")
+            .icon(Items.WRITTEN_BOOK)
+            .category(ScriptActionCategory.MISC)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Filename", ScriptActionArgumentType.TEXT)
+            .deprecate(READ_FILE)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asText();
+
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
+                    if (Files.exists(f)) {
+                        try {
+                            String content = FileUtil.readFile(f);
+                            JsonElement json = JsonParser.parseString(content);
+                            ScriptValue value = ScriptValueJson.fromJson(json);
+                            ctx.setVariable("Result", value);
+                        } catch (IOException e) {
+                            OverlayManager.getInstance().add("Internal error while reading file: " + filename);
+                        }
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Illegal filename: " + filename);
+                }
+            })),
 
     WRITE_FILE(builder -> builder.name("Write File")
         .description("Writes a file to the scripts folder.")
@@ -978,7 +1110,7 @@ public enum ScriptActionType {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 try {
                     f.toFile().getParentFile().mkdirs();
-                    FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
+                    FileUtil.writeFile(f, ScriptManager.getInstance().getGSON().toJson(value));
                 } catch (IOException e) {
 //                    e.printStackTrace();
                     OverlayManager.getInstance().add("Internal error while writing file: " + filename);
@@ -987,6 +1119,31 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
+
+    WRITE_FILE_OLD(builder -> builder.name("Write File OLD")
+            .description("This action doesn't support all types of values.\nFiles written by this file can only be correctly read by the old Read File action.")
+            .icon(Items.WRITABLE_BOOK)
+            .category(ScriptActionCategory.MISC)
+            .arg("Filename", ScriptActionArgumentType.TEXT)
+            .arg("Content", ScriptActionArgumentType.ANY)
+            .deprecate(WRITE_FILE)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asText();
+                ScriptValue value = ctx.value("Content");
+
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
+                    try {
+                        f.toFile().getParentFile().mkdirs();
+                        FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
+                    } catch (IOException e) {
+//                    e.printStackTrace();
+                        OverlayManager.getInstance().add("Internal error while writing file: " + filename);
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Illegal filename: " + filename);
+                }
+            })),
 
     PARSE_NUMBER(builder -> builder.name("Parse Number")
         .description("Parses a number from a text.")
@@ -1485,7 +1642,9 @@ public enum ScriptActionType {
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
-            lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
+            for (Text txt : arg.text()) {
+                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
+            }
         }
 
         item.getSubNbt("display")

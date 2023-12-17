@@ -3,6 +3,7 @@ package io.github.techstreet.dfscript.script.render;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.*;
@@ -26,11 +27,11 @@ public class ScriptPartRender {
         return buttonPos;
     }
 
-    public int create(CScrollPanel panel, int y, int indent, Script script) {
+    public int create(CScrollPanel panel, int y, int indent, Script script, ScriptHeader header) {
         buttonPos.clear();
         for (ScriptPartRenderElement element : elements) {
             int origY = y;
-            y = element.render(panel, y, indent, script);
+            y = element.render(panel, y, indent, script, header);
             if(element.canGenerateButton()) {
                 createIndent(panel, indent, origY, y - origY - 2);
                 buttonPos.add(new ScriptButtonPos(origY, y - origY));

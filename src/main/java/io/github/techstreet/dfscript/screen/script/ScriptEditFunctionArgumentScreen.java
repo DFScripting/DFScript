@@ -33,6 +33,7 @@ public class ScriptEditFunctionArgumentScreen extends CScreen {
                     input.textColor = 0xFF3333;
                 } else {
                     //script.replaceOption(option.getName(), input.getText());
+                    function.replaceArgument(argument.name(), input.getText());
                     argument.setName(input.getText());
                     close();
                 }

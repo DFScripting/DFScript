@@ -7,6 +7,7 @@ import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
 import io.github.techstreet.dfscript.script.values.ScriptListValue;
+import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 
@@ -22,7 +23,9 @@ public class ScriptPosStackElement {
 
     private Map<String, Object> scopeVariables = new HashMap<>();
 
-    private ScriptVariableMap functionVarMap;
+    private Map<String, ScriptValue> functionArgs = new HashMap<>();
+
+    private ScriptVariableMap functionVarMap = new ScriptVariableMap();
 
     private ScriptActionContext callContext;
 
@@ -34,19 +37,7 @@ public class ScriptPosStackElement {
         if(parent instanceof ScriptRepetition) {
             setPos(this.snippet.size());
         }
-        if(parent instanceof ScriptFunction f) {
-            ctx.argMap().forEach(
-                (argName, argValue) -> {
-                    ScriptActionArgument arg = ctx.actionArgMap().get(argName);
-                    if(arg.plural()) {
-                        functionVarMap.set(argName, new ScriptListValue(argValue.stream().map((a) -> a.getValue(ctx.task())).toList()));
-                    }
-                    else {
-                        functionVarMap.set(argName, argValue.get(0).getValue(ctx.task()));
-                    }
-                }
-            );
-        }
+        initFunctionArguments();
     }
     public ScriptPosStackElement setPos(int pos) {
         this.pos = pos;
@@ -104,6 +95,29 @@ public class ScriptPosStackElement {
     public ScriptActionContext getCallContext()
     {
         return callContext;
+    }
+
+    public void initFunctionArguments() {
+        if(parent instanceof ScriptFunction f) {
+            for (ScriptActionArgument arg : f.argList()) {
+                if(arg.type() == ScriptActionArgument.ScriptActionArgumentType.VARIABLE) {
+                    functionArgs.put(arg.name(), getCallContext().variable(arg.name()));
+                    continue;
+                }
+
+                if(arg.plural()) {
+                    List<ScriptValue> argValue = getCallContext().pluralValue(arg.name());
+                    functionArgs.put(arg.name(), new ScriptListValue(argValue));
+                }
+                else {
+                    functionArgs.put(arg.name(), getCallContext().value(arg.name()));
+                }
+            }
+        }
+    }
+
+    public ScriptValue getFunctionArgument(String functionArg) {
+        return functionArgs.containsKey(functionArg) ? functionArgs.get(functionArg) : new ScriptUnknownValue();
     }
 
     public ScriptVariableMap getVarMap() {

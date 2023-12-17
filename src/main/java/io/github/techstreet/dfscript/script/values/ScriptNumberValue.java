@@ -1,5 +1,8 @@
 package io.github.techstreet.dfscript.script.values;
 
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
@@ -23,8 +26,8 @@ public class ScriptNumberValue extends ScriptValue {
 
     @Override
     public boolean valueEquals(ScriptValue other) {
-        if (!(other instanceof ScriptNumberValue)
-            && !(other instanceof ScriptUnknownValue)) {
+        if (!(other.get() instanceof ScriptNumberValue)
+            && !(other.get() instanceof ScriptUnknownValue)) {
             return false;
         }
         return value == other.asNumber();
@@ -54,5 +57,24 @@ public class ScriptNumberValue extends ScriptValue {
             return -1;
         }
         return asText().compareTo(other.asText());
+    }
+
+    public static class Serializer implements JsonSerializer<ScriptNumberValue>, JsonDeserializer<ScriptNumberValue> {
+        @Override
+        public ScriptNumberValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            if(jsonElement.isJsonPrimitive()) {
+                JsonPrimitive prim = jsonElement.getAsJsonPrimitive();
+                if(prim.isNumber()) {
+                    return new ScriptNumberValue(prim.getAsDouble());
+                }
+            }
+
+            throw new JsonParseException("Unable to convert the json into a script number value!");
+        }
+
+        @Override
+        public JsonElement serialize(ScriptNumberValue scriptValue, Type type, JsonSerializationContext context) {
+            return new JsonPrimitive(scriptValue.asNumber());
+        }
     }
 }

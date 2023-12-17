@@ -30,7 +30,7 @@ public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent 
 
     public int create(CScrollPanel panel, int y, int index, Script script) {
         y += 10;
-        return container.createSnippet(0, panel, y, 1, script);
+        return container.createSnippet(0, panel, y, 1, script, this);
     }
 
     @Override
@@ -59,10 +59,11 @@ public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent 
                     header = new ScriptEvent(ScriptEventType.valueOf(event));
                 }
                 case "function" -> {
-                    String function = obj.get("function").getAsString();
+                    String function = obj.get("name").getAsString();
                     String icon = obj.get("icon").getAsString();
-                    ScriptActionArgumentList list = context.deserialize(obj.getAsJsonObject("args"), ScriptActionArgument.class);
-                    header = new ScriptFunction(function, Registries.ITEM.get(new Identifier(icon)), list);
+                    String description = obj.get("description").getAsString();
+                    ScriptActionArgumentList list = context.deserialize(obj.getAsJsonObject("args"), ScriptActionArgumentList.class);
+                    header = new ScriptFunction(function, Registries.ITEM.get(new Identifier(icon)), list, description);
                 }
                 default -> throw new JsonParseException("Unknown script header type: " + type);
             }

@@ -308,6 +308,9 @@ public class ScriptEditScreen extends CReloadableScreen {
                             });
                             CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
                                 script.getHeaders().remove(currentIndex);
+                                if(header instanceof ScriptFunction f) {
+                                    script.removeFunction(f.getName());
+                                }
                                 reload();
                             });
                             DFScript.MC.send(() -> {
