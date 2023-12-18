@@ -2,12 +2,14 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -18,7 +20,9 @@ public class CItem implements CWidget {
 
     private final int x;
     private final int y;
-    private final ItemStack item;
+    private ItemStack item;
+
+    private Text countText;
     private Consumer<Integer> onClick;
 
     public CItem(int x, int y, ItemStack item) {
@@ -27,12 +31,25 @@ public class CItem implements CWidget {
         this.item = item;
     }
 
+    public CItem(int x, int y, ItemStack item, Text countText) {
+        this.x = x;
+        this.y = y;
+        this.item = item;
+        this.countText = countText;
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
         MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
         RenderUtil.renderGuiItem(context, item);
+        if(countText != null)
+        {
+            stack.translate(4, 4, 0);
+            stack.scale(0.5f, 0.5f, 0.5f);
+            context.drawText(DFScript.MC.textRenderer, countText, 0, 0, 0xFFFFFFFF, true);
+        }
         stack.pop();
     }
 
@@ -79,4 +96,7 @@ public class CItem implements CWidget {
         this.onClick = onClick;
     }
 
+    public void setItemStack(ItemStack newItem) {
+        item = newItem;
+    }
 }

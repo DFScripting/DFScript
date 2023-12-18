@@ -5,30 +5,36 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 
 import java.util.Objects;
 
-public class ScriptEditSettingScreen extends CScreen {
+public class ScriptEditFunctionArgumentScreen extends CScreen {
     private final Script script;
-    private final ScriptNamedOption option;
 
-    public ScriptEditSettingScreen(Script script, ScriptNamedOption o) {
+    private final ScriptFunction function;
+    private final ScriptActionArgument argument;
+
+    public ScriptEditFunctionArgumentScreen(Script script, ScriptFunction f, ScriptActionArgument a) {
         super(100, 50);
         this.script = script;
-        option = o;
+        argument = a;
+        function = f;
 
-        CTextField input = new CTextField(option.getName(), 2, 2, 96, 35, true);
+        CTextField input = new CTextField(argument.name(), 2, 2, 96, 35, true);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         CButton confirm = new CButton(2, 37, 46, 10, "Rename", () -> {
-            if(!Objects.equals(option.getName(), input.getText())) {
-                if(script.optionExists(input.getText())) {
+            if(!Objects.equals(argument.name(), input.getText())) {
+                if(function.argList().argumentExists(input.getText())) {
                     input.textColor = 0xFF3333;
                 } else {
-                    script.replaceOption(option.getName(), input.getText());
-                    option.setName(input.getText());
+                    //script.replaceOption(option.getName(), input.getText());
+                    function.replaceArgument(argument.name(), input.getText());
+                    argument.setName(input.getText());
                     close();
                 }
             } else {
@@ -45,6 +51,6 @@ public class ScriptEditSettingScreen extends CScreen {
 
     @Override
     public void close() {
-        DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
+        DFScript.MC.setScreen(new ScriptEditFunctionScreen(function, script));
     }
 }

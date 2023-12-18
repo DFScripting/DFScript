@@ -1,11 +1,14 @@
 package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.screen.CReloadableScreen;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
+
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -14,12 +17,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-public class ScriptEditScreen extends CScreen {
+public class ScriptEditScreen extends CReloadableScreen {
     private final Identifier identifier_main = new Identifier(DFScript.MOD_ID + ":wrench.png");
 
     private final Script script;
@@ -307,6 +308,9 @@ public class ScriptEditScreen extends CScreen {
                             });
                             CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
                                 script.getHeaders().remove(currentIndex);
+                                if(header instanceof ScriptFunction f) {
+                                    script.removeFunction(f.getName());
+                                }
                                 reload();
                             });
                             DFScript.MC.send(() -> {
@@ -317,6 +321,11 @@ public class ScriptEditScreen extends CScreen {
                                 contextMenu.add(insertAfter);
                                 contextMenu.add(delete);
                             });
+                        }
+                        else {
+                            if(header instanceof ScriptFunction f) {
+                                DFScript.MC.setScreen(new ScriptEditFunctionScreen(f, script));
+                            }
                         }
                         return true;
                     }

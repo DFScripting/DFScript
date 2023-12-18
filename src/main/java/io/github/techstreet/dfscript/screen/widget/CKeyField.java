@@ -51,10 +51,11 @@ public class CKeyField implements CWidget {
         context.fill(0, 0, width, height, outlineColor);
         context.fill(1, 1, width - 1, height - 1, 0xFF000000);
 
-        Vector4f begin = new Vector4f(0, 0, 1, 1);
-        Vector4f end = new Vector4f(width, height, 1, 1);
-        begin.add(new Vector4f(2,2,0,501));
-        end.add(new Vector4f(2,2,0,501));
+        float xPos = stack.peek().getPositionMatrix().m30();
+        float yPos = stack.peek().getPositionMatrix().m31();
+
+        Vector4f begin = new Vector4f(xPos - 2, yPos + 2, 1, 1);
+        Vector4f end = new Vector4f((xPos + (width * 2)) - 7, (yPos + (height * 2)), 1, 1);
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(

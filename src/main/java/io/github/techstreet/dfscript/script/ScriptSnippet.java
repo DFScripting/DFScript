@@ -11,9 +11,13 @@ import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
+import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
+import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
+import io.github.techstreet.dfscript.script.execution.ScriptPosStackElement;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
@@ -29,6 +33,7 @@ import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ScriptSnippet extends ArrayList<ScriptPart> {
     boolean hidden = false;
@@ -36,12 +41,12 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
 
     }
 
-    public void run(ScriptTask task, ScriptScopeParent parent)
+    public void run(ScriptTask task, ScriptScopeParent parent, ScriptActionContext context)
     {
-        task.stack().push(this, parent);
+        task.stack().push(this, parent, context);
     }
 
-    public int create(CScrollPanel panel, int y, int indent, Script script) {
+    public int create(CScrollPanel panel, int y, int indent, Script script, ScriptHeader header) {
         ScriptSnippet thisSnippet = this;
         panel.add(new CButton(3, y, 2, 8, "", () -> {
             thisSnippet.hidden = !thisSnippet.hidden;
@@ -84,7 +89,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
         for(ScriptPart part : this) {
             ScriptPartRender render = new ScriptPartRender();
             part.create(render, script);
-            y = render.create(panel, y, indent, script);
+            y = render.create(panel, y, indent, script, header);
             int currentIndex = index;
             for (var buttonPos : render.getButtonPositions()) {
                 panel.add(new CButton(5, buttonPos.getY() - 1, 115, buttonPos.height(), "", () -> {
@@ -124,7 +129,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
 
                             if (button == 0) {
                                 if(part instanceof ScriptParametrizedPart parametrizedPart)
-                                    DFScript.MC.setScreen(new ScriptEditPartScreen(parametrizedPart, script));
+                                    DFScript.MC.setScreen(new ScriptEditPartScreen(parametrizedPart, script, header));
                                 if(part instanceof ScriptComment)
                                     return false;
                             } else {
@@ -206,13 +211,13 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
         }
     }
 
-    public void updateScriptReferences(Script script) {
+    public void updateScriptReferences(Script script, ScriptHeader header) {
         for(ScriptPart part : this) {
             if(part instanceof ScriptParametrizedPart p) {
-                p.updateScriptReferences(script);
+                p.updateScriptReferences(script, header);
             }
             if(part instanceof ScriptScopeParent p) {
-                p.forEach((snippet) -> snippet.updateScriptReferences(script));
+                p.forEach((snippet) -> snippet.updateScriptReferences(script, header));
             }
         }
     }
@@ -235,6 +240,59 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
             }
             if(part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.removeOption(option));
+            }
+        }
+    }
+
+    public void replaceFunction(String oldFunction, String newFunction) {
+        for(ScriptPart part : this) {
+            if(part instanceof ScriptFunctionCall fc) {
+                if(fc.getFunctionName() == oldFunction) {
+                    fc.setFunction(newFunction);
+                }
+            }
+            if(part instanceof ScriptScopeParent p) {
+                p.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
+            }
+        }
+    }
+
+    public void removeFunction(String function) {
+        int index = 0;
+
+        while(index < this.size()) {
+            ScriptPart part = this.get(index);
+            if(part instanceof ScriptFunctionCall fc) {
+                if(fc.getFunctionName() == function) {
+                    this.remove(index);
+                    continue;
+                }
+            }
+            if(part instanceof ScriptScopeParent p) {
+                p.forEach((snippet) -> snippet.removeFunction(function));
+            }
+            index++;
+        }
+    }
+
+    public void replaceFunctionArgument(String oldArg, String newArg) {
+        for(ScriptPart part : this) {
+            if(part instanceof ScriptParametrizedPart p) {
+                p.replaceFunctionArgument(oldArg, newArg);
+            }
+            if(part instanceof ScriptScopeParent p) {
+                p.forEach((snippet) -> snippet.replaceFunctionArgument(oldArg, newArg));
+            }
+        }
+    }
+
+    public void removeFunctionArgument(String arg) {
+        for(ScriptPart part : this) {
+            if(part instanceof ScriptParametrizedPart p) {
+                p.removeFunctionArgument(arg);
+            }
+            if(part instanceof ScriptScopeParent p) {
+                p.forEach((snippet) -> snippet.removeFunctionArgument(arg));
             }
         }
     }

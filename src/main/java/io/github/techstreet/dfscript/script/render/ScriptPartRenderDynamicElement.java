@@ -4,6 +4,7 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -18,7 +19,7 @@ public class ScriptPartRenderDynamicElement implements ScriptPartRenderElement {
     }
 
     @Override
-    public int render(CScrollPanel panel, int y, int indent, Script script) {
+    public int render(CScrollPanel panel, int y, int indent, Script script, ScriptHeader header) {
         return onRender.apply(new ScriptPartRenderArgs(panel, y, indent, script));
     }
 

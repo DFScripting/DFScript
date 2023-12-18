@@ -60,4 +60,9 @@ public class ScriptTask {
     public boolean isRunning() {
         return running;
     }
+
+    private final ScriptVariableMap variables = new ScriptVariableMap();
+    public ScriptVariableMap variables() {
+        return variables;
+    }
 }

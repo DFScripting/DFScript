@@ -3,10 +3,11 @@ package io.github.techstreet.dfscript.script.event;
 import com.google.gson.*;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.*;
-import io.github.techstreet.dfscript.script.action.ScriptActionType;
-import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
+import io.github.techstreet.dfscript.script.action.*;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent 
 
     public int create(CScrollPanel panel, int y, int index, Script script) {
         y += 10;
-        return container.createSnippet(0, panel, y, 1, script);
+        return container.createSnippet(0, panel, y, 1, script, this);
     }
 
     @Override
@@ -56,6 +57,13 @@ public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent 
                 case "event" -> {
                     String event = obj.get("event").getAsString();
                     header = new ScriptEvent(ScriptEventType.valueOf(event));
+                }
+                case "function" -> {
+                    String function = obj.get("name").getAsString();
+                    String icon = obj.get("icon").getAsString();
+                    String description = obj.get("description").getAsString();
+                    ScriptActionArgumentList list = context.deserialize(obj.getAsJsonObject("args"), ScriptActionArgumentList.class);
+                    header = new ScriptFunction(function, Registries.ITEM.get(new Identifier(icon)), list, description);
                 }
                 default -> throw new JsonParseException("Unknown script header type: " + type);
             }

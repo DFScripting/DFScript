@@ -2,6 +2,8 @@ package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.script.ScriptScopeParent;
 import io.github.techstreet.dfscript.script.ScriptSnippet;
+import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.event.ScriptHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,8 @@ public class ScriptPosStack {
     public ScriptPosStack() {
 
     }
-    public void push(ScriptSnippet snippet, ScriptScopeParent parent) {
-        data.add(new ScriptPosStackElement(snippet, parent));
+    public void push(ScriptSnippet snippet, ScriptScopeParent parent, ScriptActionContext context) {
+        data.add(new ScriptPosStackElement(snippet, parent, context));
     }
 
     public void pop() {
@@ -34,6 +36,19 @@ public class ScriptPosStack {
     }
     public int size() {
         return data.size();
+    }
+
+    public ScriptPosStackElement getFunctionElement()
+    {
+        for(int i = 0; i < data.size(); i++)
+        {
+            ScriptPosStackElement element = peek(i);
+            if(element.getParent() instanceof ScriptHeader)
+            {
+                return element;
+            }
+        }
+        return null;
     }
 
     public boolean isEmpty() {

@@ -55,28 +55,12 @@ public class ScriptContext {
         return breakLoop > 0;
     }
 
-    private final HashMap<String,ScriptValue> variables = new HashMap<>();
-
-    public ScriptValue getVariable(String name) {
-        if (!variables.containsKey(name)) {
-            return new ScriptUnknownValue();
-        }
-        return variables.get(name);
-    }
-
-    public void setVariable(String name, ScriptValue value) {
-        variables.put(name, value);
-    }
-
-    public List<Entry<String, ScriptValue>> listVariables(String filter) {
-        return variables.entrySet().stream().filter(entry -> entry.getKey().contains(filter)).collect(Collectors.toList());
-    }
-
-    public int getVariableCount() {
-        return variables.size();
-    }
-
     public Script script() {
         return script;
+    }
+
+    private final ScriptVariableMap variables = new ScriptVariableMap();
+    public ScriptVariableMap variables() {
+        return variables;
     }
 }

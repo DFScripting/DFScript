@@ -5,18 +5,32 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import io.github.techstreet.dfscript.event.system.Event;
+import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface ScriptArgument {
 
     ScriptValue getValue(ScriptTask task);
 
     boolean convertableTo(ScriptActionArgumentType type);
+
+    ItemStack getArgIcon();
+
+    String getArgText();
+
+    default List<ContextMenuButton> getContextMenu() {
+        return new ArrayList<>();
+    }
+
+    default Text getArgIconText() { return null; }
 
     class Serializer implements JsonDeserializer<ScriptArgument> {
 
@@ -27,9 +41,10 @@ public interface ScriptArgument {
             return switch (type) {
                 case "TEXT" -> new ScriptTextArgument(object.get("value").getAsString());
                 case "NUMBER" -> new ScriptNumberArgument(object.get("value").getAsDouble());
-                case "VARIABLE" -> new ScriptVariableArgument(object.get("value").getAsString());
+                case "VARIABLE" -> context.deserialize(object, ScriptVariableArgument.class);
                 case "CLIENT_VALUE" -> ScriptClientValueArgument.valueOf(object.get("value").getAsString());
                 case "CONFIG_VALUE" -> new ScriptConfigArgument(object.get("value").getAsString(), null);
+                case "FUNCTION_ARGUMENT" -> new ScriptFunctionArgument(object.get("value").getAsString(), null);
                 default -> throw new JsonParseException("Unknown argument type: " + type);
             };
         }

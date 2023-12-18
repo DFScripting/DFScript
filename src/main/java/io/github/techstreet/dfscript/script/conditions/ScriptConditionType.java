@@ -318,6 +318,13 @@ public enum ScriptConditionType {
             return false;
         })),
 
+    IF_UNKNOWN(builder -> builder.name("Unknown")
+            .description("Checks if a value is of the unknown type.")
+            .icon(Items.IRON_NUGGET)
+            .category(ScriptActionCategory.VARIABLES)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .action(ctx -> (ctx.value("Value") instanceof ScriptUnknownValue))),
+
     TRUE(builder -> builder.name("True")
             .description("Always executes.\nLiterally the only reason for this is so the\nlegacy deserializer code doesn't have to discard ELSEs\nthat aren't tied to a CONDITION...")
             .icon(Items.LIME_WOOL)
@@ -372,7 +379,9 @@ public enum ScriptConditionType {
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
-            lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
+            for (Text txt : arg.text()) {
+                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
+            }
         }
 
         item.getSubNbt("display")

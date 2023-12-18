@@ -12,6 +12,7 @@ import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.ScriptGroup;
+import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
@@ -69,7 +70,7 @@ public enum ScriptActionType {
         })),
 
     ACTIONBAR(builder -> builder.name("ActionBar")
-        .description("Displays a message in the action bar.")
+        .description("Displays a message in theq action bar.")
         .icon(Items.SPRUCE_SIGN)
         .category(ScriptActionCategory.VISUALS)
         .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
@@ -115,8 +116,8 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.VARIABLES)
         .arg("Variable", ScriptActionArgumentType.VARIABLE)
         .arg("Value", ScriptActionArgumentType.ANY)
-        .action(ctx -> ctx.task().context().setVariable(
-            ctx.variable("Variable").name(),
+        .action(ctx -> ctx.setVariable(
+            "Variable",
             ctx.value("Value")
         ))),
 
@@ -137,7 +138,7 @@ public enum ScriptActionType {
                 result.append(line);
               }
             }
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result.toString()));
+            ctx.setVariable("Result", new ScriptTextValue(result.toString()));
           }catch(MalformedURLException ex){
                 OverlayManager.getInstance().add("Malformed URL error!");
           }catch(IOException ex){
@@ -156,8 +157,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Amount")) {
                 value += val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Variable").name(),
+            ctx.setVariable(
+                "Variable",
                 new ScriptNumberValue(value)
             );
         })),
@@ -173,8 +174,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Amount")) {
                 value -= val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Variable").name(),
+            ctx.setVariable(
+                "Variable",
                 new ScriptNumberValue(value)
             );
         })),
@@ -190,8 +191,8 @@ public enum ScriptActionType {
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
                 sb.append(arg.asText());
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptTextValue(sb.toString())
             );
         })),
@@ -207,8 +208,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Numbers")) {
                 value += val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -229,8 +230,8 @@ public enum ScriptActionType {
                     value -= val.asNumber();
                 }
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -246,8 +247,8 @@ public enum ScriptActionType {
             for (ScriptValue val : ctx.pluralValue("Numbers")) {
                 value *= val.asNumber();
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -268,8 +269,8 @@ public enum ScriptActionType {
                     value /= val.asNumber();
                 }
             }
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(value)
             );
         })),
@@ -284,8 +285,8 @@ public enum ScriptActionType {
         .action(ctx -> {
             double dividend = ctx.value("Dividend").asNumber();
             double divisor = ctx.value("Divisor").asNumber();
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(dividend % divisor)
             );
         })),
@@ -324,7 +325,7 @@ public enum ScriptActionType {
                     values.add(v.getValue(ctx.task()));
                 }
             }
-            ctx.task().context().setVariable(ctx.variable("Variable").name(), new ScriptListValue(values));
+            ctx.setVariable("Variable", new ScriptListValue(values));
         })),
 
     APPEND_VALUE(builder -> builder.name("Append Value")
@@ -338,7 +339,7 @@ public enum ScriptActionType {
             for (ScriptArgument v : ctx.argMap().get("Values")) {
                 list.add(v.getValue(ctx.task()));
             }
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     APPEND_LIST_VALUES(builder -> builder.name("Append List Values")
@@ -354,7 +355,7 @@ public enum ScriptActionType {
 
                 receiver.addAll(donor);
 
-                ctx.task().context().setVariable(ctx.variable("Receiving List").name(), new ScriptListValue(receiver));
+                ctx.setVariable("Receiving List", new ScriptListValue(receiver));
             })),
 
     GET_LIST_VALUE(builder -> builder.name("Get List Value")
@@ -362,16 +363,16 @@ public enum ScriptActionType {
         .icon(Items.BOOK)
         .category(ScriptActionCategory.LISTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("List", ScriptActionArgumentType.VARIABLE)
+        .arg("List", ScriptActionArgumentType.LIST)
         .arg("Index", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             List<ScriptValue> list = ctx.value("List").asList();
          // force index consistent with diamondfire indexes
             int index = (int) ctx.value("Index").asNumber() - 1;
             if (index < 0 || index >= list.size()) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             } else {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), list.get(index));
+                ctx.setVariable("Result", list.get(index));
             }
         })),
 
@@ -380,7 +381,7 @@ public enum ScriptActionType {
             .icon(Items.FLINT)
             .category(ScriptActionCategory.LISTS)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("List", ScriptActionArgumentType.VARIABLE)
+            .arg("List", ScriptActionArgumentType.LIST)
             .arg("Value", ScriptActionArgumentType.ANY)
             .action(ctx -> {
                 List<ScriptValue> list = ctx.value("List").asList();
@@ -392,7 +393,7 @@ public enum ScriptActionType {
                         break;
                     }
                 }
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(index));
+                ctx.setVariable("Result", new ScriptNumberValue(index));
             })),
 
     SET_LIST_VALUE(builder -> builder.name("Set List Value")
@@ -410,7 +411,7 @@ public enum ScriptActionType {
                 return;
             }
             list.set(index, ctx.value("Value"));
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     REMOVE_LIST_AT_INDEX_VALUE(builder -> builder.name("Remove List Value")
@@ -427,7 +428,7 @@ public enum ScriptActionType {
                 return;
             }
             list.remove(index);
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     REMOVE_LIST_VALUE(builder -> builder.name("Remove List Value")
@@ -441,7 +442,7 @@ public enum ScriptActionType {
 
             list.removeIf(value -> value.valueEquals(ctx.value("Value")));
 
-            ctx.task().context().setVariable(ctx.variable("List").name(), new ScriptListValue(list));
+            ctx.setVariable("List", new ScriptListValue(list));
         })),
 
     LIST_LENGTH(builder -> builder.name("List Length")
@@ -451,7 +452,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("List", ScriptActionArgumentType.LIST)
         .action(ctx -> {
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(ctx.value("List").asList().size()));
+            ctx.setVariable("Result", new ScriptNumberValue(ctx.value("List").asList().size()));
         })),
 
     WAIT(builder -> builder.name("Wait")
@@ -506,7 +507,7 @@ public enum ScriptActionType {
                     }
                 }
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Result", new ScriptDictionaryValue(dict));
         })),
 
     PARSE_JSON(builder -> builder.name("Parse from JSON")
@@ -524,7 +525,7 @@ public enum ScriptActionType {
             catch (JsonParseException e) {dict = new ScriptUnknownValue();}
 
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), dict);
+            ctx.setVariable("Result", dict);
         })),
 
     GET_DICT_VALUE(builder -> builder.name("Get Dictionary Value")
@@ -538,9 +539,9 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             if (dict.containsKey(key)) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), dict.get(key));
+                ctx.setVariable("Result", dict.get(key));
             } else {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             }
         })),
 
@@ -555,7 +556,7 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             dict.put(key, ctx.value("Value"));
-            ctx.task().context().setVariable(ctx.variable("Dictionary").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
 
     GET_DICT_SIZE(builder -> builder.name("Get Dictionary Size")
@@ -566,7 +567,7 @@ public enum ScriptActionType {
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(dict.size()));
+            ctx.setVariable("Result", new ScriptNumberValue(dict.size()));
         })),
 
     GET_DICT_KEYS(builder -> builder.name("Get Dictionary Keys")
@@ -577,7 +578,7 @@ public enum ScriptActionType {
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptTextValue(x)).toList()));
+            ctx.setVariable("Result", new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptTextValue(x)).toList()));
         })
     ),
 
@@ -591,7 +592,7 @@ public enum ScriptActionType {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asText();
             dict.remove(key);
-            ctx.task().context().setVariable(ctx.variable("Dictionary").name(), new ScriptDictionaryValue(dict));
+            ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
 
     ROUND_NUM(builder -> builder.name("Round Number")
@@ -602,7 +603,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.round(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.round(number)));
         })),
 
     FLOOR_NUM(builder -> builder.name("Floor Number")
@@ -613,7 +614,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.floor(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.floor(number)));
         })),
 
     CEIL_NUM(builder -> builder.name("Ceil Number")
@@ -624,7 +625,7 @@ public enum ScriptActionType {
         .arg("Number", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
             double number = ctx.value("Number").asNumber();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Math.ceil(number)));
+            ctx.setVariable("Result", new ScriptNumberValue(Math.ceil(number)));
         })),
 
     REGISTER_CMD(builder -> builder.name("Register Command")
@@ -694,7 +695,7 @@ public enum ScriptActionType {
                 split.add(new ScriptTextValue(s));
             }
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+            ctx.setVariable("Result", new ScriptListValue(split));
         })),
 
     REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
@@ -713,7 +714,7 @@ public enum ScriptActionType {
                     split.add(new ScriptTextValue(s));
                 }
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(split));
+                ctx.setVariable("Result", new ScriptListValue(split));
             })),
 
     STOP(builder -> builder.name("Stop Codeline")
@@ -757,8 +758,8 @@ public enum ScriptActionType {
         .icon(Items.NAUTILUS_SHELL)
         .category(ScriptActionCategory.VISUALS)
         .arg("Sound", ScriptActionArgumentType.TEXT)
-        .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
+        .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
+        .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
         .action(ctx -> {
             String sound = ctx.value("Sound").asText();
             double volume = 1;
@@ -817,6 +818,72 @@ public enum ScriptActionType {
             }
         })),
 
+    PLAY_SOUND_OLD(builder -> builder.name("Play Sound OLD")
+            .description("Plays a sound.")
+            .deprecate(PLAY_SOUND)
+            .icon(Items.NAUTILUS_SHELL)
+            .category(ScriptActionCategory.VISUALS)
+            .arg("Sound", ScriptActionArgumentType.TEXT)
+            .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
+            .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
+            .action(ctx -> {
+                String sound = ctx.value("Sound").asText();
+                double volume = 1;
+                double pitch = 1;
+
+                if (ctx.argMap().containsKey("Volume")) {
+                    volume = ctx.value("Volume").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Pitch")) {
+                    pitch = ctx.value("Pitch").asNumber();
+                }
+
+                Identifier sndid = null;
+                SoundManager sndManager = io.github.techstreet.dfscript.DFScript.MC.getSoundManager();
+
+                try {
+                    sndid = new Identifier(sound);
+                }
+                catch(Exception err) {
+                    err.printStackTrace();
+                    OverlayManager.getInstance().add("Incorrect identifier: " + sound);
+                    return;
+                }
+
+                if (sndManager.getKeys().contains(sndid)) {
+                    SoundEvent snd = SoundEvent.of(sndid);
+                    sndManager.play(PositionedSoundInstance.master(snd, (float) pitch, (float) volume));
+                } else {
+                    OverlayManager.getInstance().add("Unknown sound: " + sound);
+
+                    try {
+                        String jname = StringUtil.fromSoundIDToRegistryID(sound);
+
+                        List<String> similiar = new ArrayList<>();
+
+                        int counter = 0;
+                        for (Identifier id : sndManager.getKeys()) {
+                            String sid = id.toString();
+                            String name = StringUtil.fromSoundIDToRegistryID(sid);
+                            if (name.contains(jname)) {
+                                similiar.add(sid);
+                                counter++;
+                                if (counter > 5) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (similiar.size() > 0) {
+                            OverlayManager.getInstance().add("Did you mean: \n" + String.join(", \n", similiar));
+                        }
+                    } catch (Exception err) {
+                        err.printStackTrace();
+                    }
+                }
+            })),
+
     STOP_ALL_SOUNDS(builder -> builder.name("Stop All Sounds")
             .description("Stops all sounds.")
             .icon(Items.COAL)
@@ -828,10 +895,10 @@ public enum ScriptActionType {
         .icon(Items.WARPED_SIGN)
         .category(ScriptActionCategory.VISUALS)
         .arg("Title", ScriptActionArgumentType.TEXT)
-        .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.optional(true))
-        .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
-        .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true))
+        .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.optional(true).defaultValue(""))
+        .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
+        .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(60))
+        .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
         .action(ctx -> {
             String title = ctx.value("Title").asText();
             String subtitle = "";
@@ -860,13 +927,51 @@ public enum ScriptActionType {
             io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
         })),
 
+    DISPLAY_TITLE_OLD(builder -> builder.name("Display Title OLD")
+            .description("Displays a title.")
+            .deprecate(DISPLAY_TITLE)
+            .icon(Items.WARPED_SIGN)
+            .category(ScriptActionCategory.VISUALS)
+            .arg("Title", ScriptActionArgumentType.TEXT)
+            .arg("Subtitle", ScriptActionArgumentType.TEXT, b -> b.rightOptional(true).defaultValue(""))
+            .arg("Fade In", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(20))
+            .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(60))
+            .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(20))
+            .action(ctx -> {
+                String title = ctx.value("Title").asText();
+                String subtitle = "";
+                int fadeIn = 20;
+                int stay = 60;
+                int fadeOut = 20;
+
+                if (ctx.argMap().containsKey("Subtitle")) {
+                    subtitle = ctx.value("Subtitle").asText();
+                }
+
+                if (ctx.argMap().containsKey("Fade In")) {
+                    fadeIn = (int) ctx.value("Fade In").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Stay")) {
+                    stay = (int) ctx.value("Stay").asNumber();
+                }
+
+                if (ctx.argMap().containsKey("Fade Out")) {
+                    fadeOut = (int) ctx.value("Fade Out").asNumber();
+                }
+
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(title)));
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setSubtitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(subtitle)));
+                io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
+            })),
+
     JOIN_LIST_TO_TEXT(builder -> builder.name("Join List to Text")
         .description("Joins a list into a single text.")
         .icon(Items.SLIME_BALL)
         .category(ScriptActionCategory.LISTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("List", ScriptActionArgumentType.LIST)
-        .arg("Separator", ScriptActionArgumentType.TEXT, b -> b.optional(true))
+        .arg("Separator", ScriptActionArgumentType.TEXT, b -> b.optional(true).defaultValue(", "))
         .action(ctx -> {
             String separator = ", ";
 
@@ -879,7 +984,7 @@ public enum ScriptActionType {
                 .map(ScriptValue::asText)
                 .collect(Collectors.joining(separator));
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            ctx.setVariable("Result", new ScriptTextValue(result));
         })),
 
     TEXT_INDEX_OF(builder -> builder.name("Index Of Text")
@@ -891,7 +996,7 @@ public enum ScriptActionType {
         .arg("Subtext",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             int result = ctx.value("Text").asText().indexOf(ctx.value("Subtext").asText()) + 1;
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(result));
+            ctx.setVariable("Result", new ScriptNumberValue(result));
         })),
 
     TEXT_SUBTEXT(builder -> builder.name("Get Subtext")
@@ -907,7 +1012,7 @@ public enum ScriptActionType {
             int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
             String result = text.substring(start, end);
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+            ctx.setVariable("Result", new ScriptTextValue(result));
         })),
 
     TEXT_SUBTEXT_V1(builder -> builder.name("Get Subtext OLD")
@@ -924,7 +1029,7 @@ public enum ScriptActionType {
                 int start = (int)ctx.value("First Index").asNumber()+1;
                 int end = (int)ctx.value("Last Index").asNumber();
                 String result = text.substring(start, end);
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
             })),
 
     TEXT_LENGTH(builder -> builder.name("Get Text Length")
@@ -935,7 +1040,7 @@ public enum ScriptActionType {
         .arg("Text",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String text = ctx.value("Text").asText();
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(text.length()));
+            ctx.setVariable("Result", new ScriptNumberValue(text.length()));
         })),
 
     READ_FILE(builder -> builder.name("Read File")
@@ -953,8 +1058,8 @@ public enum ScriptActionType {
                     try {
                         String content = FileUtil.readFile(f);
                         JsonElement json = JsonParser.parseString(content);
-                        ScriptValue value = ScriptValueJson.fromJson(json);
-                        ctx.task().context().setVariable(ctx.variable("Result").name(), value);
+                        ScriptValue value = ScriptManager.getInstance().getGSON().fromJson(json, ScriptValue.class);
+                        ctx.setVariable("Result", value);
                     } catch (IOException e) {
                         OverlayManager.getInstance().add("Internal error while reading file: " + filename);
                     }
@@ -963,6 +1068,33 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
+
+    READ_FILE_OLD(builder -> builder.name("Read File OLD")
+            .description("This action doesn't support all types of values.\nThis action can only correctly read files written by the old Write File action.")
+            .icon(Items.WRITTEN_BOOK)
+            .category(ScriptActionCategory.MISC)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Filename", ScriptActionArgumentType.TEXT)
+            .deprecate(READ_FILE)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asText();
+
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
+                    if (Files.exists(f)) {
+                        try {
+                            String content = FileUtil.readFile(f);
+                            JsonElement json = JsonParser.parseString(content);
+                            ScriptValue value = ScriptValueJson.fromJson(json);
+                            ctx.setVariable("Result", value);
+                        } catch (IOException e) {
+                            OverlayManager.getInstance().add("Internal error while reading file: " + filename);
+                        }
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Illegal filename: " + filename);
+                }
+            })),
 
     WRITE_FILE(builder -> builder.name("Write File")
         .description("Writes a file to the scripts folder.")
@@ -978,7 +1110,7 @@ public enum ScriptActionType {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 try {
                     f.toFile().getParentFile().mkdirs();
-                    FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
+                    FileUtil.writeFile(f, ScriptManager.getInstance().getGSON().toJson(value));
                 } catch (IOException e) {
 //                    e.printStackTrace();
                     OverlayManager.getInstance().add("Internal error while writing file: " + filename);
@@ -987,6 +1119,31 @@ public enum ScriptActionType {
                 OverlayManager.getInstance().add("Illegal filename: " + filename);
             }
         })),
+
+    WRITE_FILE_OLD(builder -> builder.name("Write File OLD")
+            .description("This action doesn't support all types of values.\nFiles written by this file can only be correctly read by the old Read File action.")
+            .icon(Items.WRITABLE_BOOK)
+            .category(ScriptActionCategory.MISC)
+            .arg("Filename", ScriptActionArgumentType.TEXT)
+            .arg("Content", ScriptActionArgumentType.ANY)
+            .deprecate(WRITE_FILE)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asText();
+                ScriptValue value = ctx.value("Content");
+
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
+                    try {
+                        f.toFile().getParentFile().mkdirs();
+                        FileUtil.writeFile(f, ScriptValueJson.toJson(value).toString());
+                    } catch (IOException e) {
+//                    e.printStackTrace();
+                        OverlayManager.getInstance().add("Internal error while writing file: " + filename);
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Illegal filename: " + filename);
+                }
+            })),
 
     PARSE_NUMBER(builder -> builder.name("Parse Number")
         .description("Parses a number from a text.")
@@ -997,9 +1154,9 @@ public enum ScriptActionType {
         .action(ctx -> {
             String text = ctx.value("Text").asText();
             try {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(Double.parseDouble(text)));
+                ctx.setVariable("Result", new ScriptNumberValue(Double.parseDouble(text)));
             } catch (NumberFormatException e) {
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptUnknownValue());
+                ctx.setVariable("Result", new ScriptUnknownValue());
             }
         })),
 
@@ -1064,7 +1221,7 @@ public enum ScriptActionType {
             String text = ctx.value("Text").asText();
             Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
             int width = DFScript.MC.textRenderer.getWidth(t);
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptNumberValue(width));
+            ctx.setVariable("Result", new ScriptNumberValue(width));
         })),
 
     OPEN_MENU(builder -> builder.name("Open Menu")
@@ -1077,7 +1234,7 @@ public enum ScriptActionType {
             int width = (int) ctx.value("Width").asNumber();
             int height = (int) ctx.value("Height").asNumber();
 
-            io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script()));
+            DFScript.MC.send(() -> io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script())));
         })),
 
     ADD_MENU_BUTTON(builder -> builder.name("Add Menu Button")
@@ -1218,8 +1375,8 @@ public enum ScriptActionType {
                     ScriptWidget w = menu.getWidget(identifier);
 
                     if (w instanceof ScriptMenuTextField field) {
-                        ctx.task().context().setVariable(
-                            ctx.variable("Result").name(),
+                        ctx.setVariable(
+                            "Result",
                             new ScriptTextValue(field.getText())
                         );
                     } else {
@@ -1270,8 +1427,8 @@ public enum ScriptActionType {
             int max = (int) ctx.value("Max").asNumber();
             Random random = new Random();
             int result = random.nextInt(max + 1 - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1287,8 +1444,8 @@ public enum ScriptActionType {
             double min = ctx.value("Min").asNumber();
             double max = ctx.value("Max").asNumber();
             double result = Math.random() * (max - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1305,8 +1462,8 @@ public enum ScriptActionType {
             double min = ctx.value("Min").asNumber();
             double max = ctx.value("Max").asNumber();
             double result = Math.random() * (max - min) + min;
-            ctx.task().context().setVariable(
-                ctx.variable("Result").name(),
+            ctx.setVariable(
+                "Result",
                 new ScriptNumberValue(result)
             );
         })),
@@ -1331,7 +1488,7 @@ public enum ScriptActionType {
 
             list.sort(new ScriptValueComparator());
 
-            ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptListValue(list));
+            ctx.setVariable("Result", new ScriptListValue(list));
     })),
 
     REPLACE_TEXT(builder -> builder.name("Replace Text")
@@ -1347,7 +1504,7 @@ public enum ScriptActionType {
 
                 result = result.replace(ctx.value("Text part to replace").asText(), ctx.value("Replacement").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
@@ -1363,7 +1520,7 @@ public enum ScriptActionType {
 
                 result = result.replaceAll(ctx.value("Regex").asText(), ctx.value("Replacement").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REMOVE_TEXT(builder -> builder.name("Remove Text")
@@ -1382,7 +1539,7 @@ public enum ScriptActionType {
                     result = result.replace(scriptValue.asText(), "");
                 }
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     STRIP_COLOR(builder -> builder.name("Strip Color from Text")
@@ -1403,7 +1560,7 @@ public enum ScriptActionType {
                 result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
                 result = result.replaceAll("&[0-9a-fA-FlonmkrLONMKR]", "");
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     REPEAT_TEXT(builder -> builder.name("Repeat Text")
@@ -1419,7 +1576,7 @@ public enum ScriptActionType {
 
                 String result = input.repeat(Math.max(0, times));
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
     FORMAT_TIME(builder -> builder.name("Format Timestamp")
@@ -1433,7 +1590,7 @@ public enum ScriptActionType {
                 Date date = new Date((long) ctx.value("Timestamp").asNumber());
                 SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
 
-                ctx.task().context().setVariable(ctx.variable("Result").name(), new ScriptTextValue(format.format(date)));
+                ctx.setVariable("Result", new ScriptTextValue(format.format(date)));
             }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
@@ -1448,7 +1605,7 @@ public enum ScriptActionType {
     private ScriptGroup group = ScriptGroup.ACTION;
 
     private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
-    private final List<ScriptActionArgument> arguments = new ArrayList<>();
+    private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
     ScriptActionType(Consumer<ScriptActionType> builder) {
         description.add("No description provided.");
         builder.accept(this);
@@ -1485,7 +1642,9 @@ public enum ScriptActionType {
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
 
         for (ScriptActionArgument arg : arguments) {
-            lore.add(NbtString.of(Text.Serializer.toJson(arg.text())));
+            for (Text txt : arg.text()) {
+                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
+            }
         }
 
         item.getSubNbt("display")
@@ -1580,55 +1739,14 @@ public enum ScriptActionType {
     }
 
     public void run(ScriptActionContext ctx) {
-        List<List<ScriptActionArgument>> possibilities = new ArrayList<>();
-
-        generatePossibilities(possibilities, new ArrayList<>(), arguments, 0);
-
-        search:
-        for (List<ScriptActionArgument> possibility : possibilities) {
-            int pos = 0;
-            ctx.argMap().clear();
-            for (ScriptActionArgument arg : possibility) {
-                List<ScriptArgument> args = new ArrayList<>();
-                if (pos >= ctx.arguments().size()) {
-                    continue search;
-                }
-                if (ctx.arguments().get(pos).convertableTo(arg.type())) {
-                    args.add(ctx.arguments().get(pos));
-                    pos++;
-                }
-                if (arg.plural()) {
-                    while (pos < ctx.arguments().size()) {
-                        if (ctx.arguments().get(pos).convertableTo(arg.type())) {
-                            args.add(ctx.arguments().get(pos));
-                            pos++;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                ctx.setArg(arg.name(), args);
-            }
-            if (pos == ctx.arguments().size()) {
-                action.accept(ctx);
-                return;
-            }
+        try
+        {
+            arguments.getArgMap(ctx);
+            action.accept(ctx);
         }
-
-        OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
-    }
-
-    private void generatePossibilities(List<List<ScriptActionArgument>> possibilities, ArrayList<ScriptActionArgument> current, List<ScriptActionArgument> arguments, int pos) {
-        if (pos >= arguments.size()) {
-            possibilities.add(new ArrayList<>(current));
-            return;
+        catch(IllegalArgumentException e)
+        {
+            OverlayManager.getInstance().add("Invalid arguments for " + name + ".");
         }
-
-        ScriptActionArgument arg = arguments.get(pos);
-        if (arg.optional()) {
-            generatePossibilities(possibilities, new ArrayList<>(current), arguments, pos + 1);
-        }
-        current.add(arg);
-        generatePossibilities(possibilities, current, arguments, pos + 1);
     }
 }

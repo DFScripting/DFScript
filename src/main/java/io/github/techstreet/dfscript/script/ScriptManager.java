@@ -8,19 +8,19 @@ import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.screen.script.ScriptAddScreen;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
+import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.*;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
-import io.github.techstreet.dfscript.script.event.ScriptEmptyHeader;
-import io.github.techstreet.dfscript.script.event.ScriptEvent;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
-import io.github.techstreet.dfscript.script.event.ScriptStartUpEvent;
+import io.github.techstreet.dfscript.script.event.*;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
-import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
+import io.github.techstreet.dfscript.script.util.ScriptValueJson;
+import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
@@ -51,17 +51,27 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
         .registerTypeAdapter(ScriptClientValueArgument.class, new ScriptClientValueArgument.Serializer())
         .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
+        .registerTypeAdapter(ScriptFunctionArgument.class, new ScriptFunctionArgument.Serializer())
         .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
         .registerTypeAdapter(ScriptBuiltinAction.class, new ScriptBuiltinAction.Serializer())
+        .registerTypeAdapter(ScriptFunctionCall.class, new ScriptFunctionCall.Serializer())
         .registerTypeAdapter(ScriptBuiltinCondition.class, new ScriptBuiltinCondition.Serializer())
         .registerTypeAdapter(ScriptCondition.class, new ScriptCondition.Serializer())
         .registerTypeAdapter(ScriptBuiltinRepetition.class, new ScriptBuiltinRepetition.Serializer())
         .registerTypeAdapter(ScriptBranch.class, new ScriptBranch.Serializer())
         .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
+        .registerTypeAdapter(ScriptFunction.class, new ScriptFunction.Serializer())
         .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
         .registerTypeAdapter(ScriptSnippet.class, new ScriptSnippet.Serializer())
         .registerTypeAdapter(ScriptHeader.class, new ScriptHeader.Serializer())
         .registerTypeAdapter(ScriptEmptyHeader.class, new ScriptEmptyHeader.Serializer())
+        .registerTypeAdapter(ScriptActionArgument.class, new ScriptActionArgument.Serializer())
+        .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
+        .registerTypeAdapter(ScriptValue.class, new ScriptValue.Serializer())
+        .registerTypeAdapter(ScriptNumberValue.class, new ScriptNumberValue.Serializer())
+        .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
+        .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
+        .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
         .create();
 
     public ScriptManager() {
@@ -74,6 +84,10 @@ public class ScriptManager implements Loadable {
         }
 
         return instance;
+    }
+
+    public Gson getGSON() {
+        return GSON;
     }
 
     @Override

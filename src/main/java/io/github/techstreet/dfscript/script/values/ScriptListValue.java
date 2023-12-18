@@ -1,5 +1,8 @@
 package io.github.techstreet.dfscript.script.values;
 
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +26,8 @@ public class ScriptListValue extends ScriptValue {
 
     @Override
     public boolean valueEquals(ScriptValue other) {
-        if (!(other instanceof ScriptListValue)
-            && !(other instanceof ScriptUnknownValue)) {
+        if (!(other.get() instanceof ScriptListValue)
+            && !(other.get() instanceof ScriptUnknownValue)) {
             return false;
         }
         List<ScriptValue> otherList = other.asList();
@@ -47,5 +50,32 @@ public class ScriptListValue extends ScriptValue {
     @Override
     public ScriptValue getCompareValue() {
         return asList().get(0).getCompareValue();
+    }
+
+    public static class Serializer implements JsonSerializer<ScriptListValue>, JsonDeserializer<ScriptListValue> {
+        @Override
+        public ScriptListValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            if(jsonElement.isJsonArray()) {
+                JsonArray arr = jsonElement.getAsJsonArray();
+                List<ScriptValue> list = new ArrayList<>();
+
+                for (JsonElement element : arr) {
+                    list.add(context.deserialize(element, ScriptValue.class));
+                }
+
+                return new ScriptListValue(list);
+            }
+
+            throw new JsonParseException("Unable to convert the json into a script list value!");
+        }
+
+        @Override
+        public JsonElement serialize(ScriptListValue scriptValue, Type type, JsonSerializationContext context) {
+            JsonArray arr = new JsonArray();
+            for (ScriptValue val : scriptValue.asList()) {
+                arr.add(context.serialize(val));
+            }
+            return arr;
+        }
     }
 }

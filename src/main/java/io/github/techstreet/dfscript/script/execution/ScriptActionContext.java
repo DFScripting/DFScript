@@ -1,29 +1,37 @@
 package io.github.techstreet.dfscript.script.execution;
 
-import io.github.techstreet.dfscript.event.system.Event;
-import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.ScriptVariable;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class ScriptActionContext {
     private final ScriptTask task;
     private final List<ScriptArgument> arguments;
     private final HashMap<String, List<ScriptArgument>> argMap;
+    private final HashMap<String, ScriptActionArgument> actionArgMap;
 
     public ScriptActionContext(ScriptTask task, List<ScriptArgument> arguments) {
         this.task = task;
         this.arguments = arguments;
         this.argMap = new HashMap<>();
+        this.actionArgMap = new HashMap<>();
     }
 
-    public void setArg(String name, List<ScriptArgument> args) {
-        argMap.put(name, args);
+    public void setArg(ScriptActionArgument actionArg, List<ScriptArgument> args) {
+        argMap.put(actionArg.name(), args);
+    }
+
+    public void putActionArg(ScriptActionArgument actionArg) {
+        actionArgMap.put(actionArg.name(), actionArg);
     }
 
     public List<ScriptArgument> pluralArg(String messages) {
@@ -35,15 +43,28 @@ public final class ScriptActionContext {
     }
 
     public ScriptValue value(String name) {
-        return arg(name).getValue(task);
+        if(!argMap.containsKey(name)) {
+            return actionArgMap.get(name).defaultValue();
+        }
+
+        return arg(name).getValue(task).get();
     }
 
     public List<ScriptValue> pluralValue(String name) {
-        return pluralArg(name).stream().map(arg -> arg.getValue(task)).collect(Collectors.toList());
+        return pluralArg(name).stream().map(arg -> arg.getValue(task).get()).collect(Collectors.toList());
     }
 
-    public ScriptVariableArgument variable(String name) {
-        return (ScriptVariableArgument) arg(name);
+    public ScriptVariable variable(String name) {
+        if(arg(name).getValue(task) instanceof ScriptVariable var)
+        {
+            return var;
+        }
+
+        throw new UnsupportedOperationException("Tried to get a variable from a constant.");
+    }
+
+    public void setVariable(String name, ScriptValue value) {
+        variable(name).set(value);
     }
 
     /*public void scheduleInner(Runnable runnable) {
@@ -96,6 +117,10 @@ public final class ScriptActionContext {
         return argMap;
     }
 
+    public HashMap<String, ScriptActionArgument> actionArgMap() {
+        return actionArgMap;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -118,5 +143,4 @@ public final class ScriptActionContext {
                 "arguments=" + arguments + ", " +
                 "argMap=" + argMap + ']';
     }
-
 }
