@@ -41,6 +41,7 @@ public interface ScriptArgument {
             return switch (type) {
                 case "TEXT" -> new ScriptTextArgument(object.get("value").getAsString());
                 case "NUMBER" -> new ScriptNumberArgument(object.get("value").getAsDouble());
+                case "BOOL" -> new ScriptBoolArgument(object.get("value").getAsBoolean());
                 case "VARIABLE" -> context.deserialize(object, ScriptVariableArgument.class);
                 case "CLIENT_VALUE" -> ScriptClientValueArgument.valueOf(object.get("value").getAsString());
                 case "CONFIG_VALUE" -> new ScriptConfigArgument(object.get("value").getAsString(), null);

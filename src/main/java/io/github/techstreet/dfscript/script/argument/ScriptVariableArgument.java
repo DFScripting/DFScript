@@ -5,6 +5,7 @@ import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.ScriptVariable;
 import io.github.techstreet.dfscript.util.ComponentUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,6 +32,10 @@ public final class ScriptVariableArgument implements ScriptArgument {
 
     @Override
     public ScriptValue getValue(ScriptTask task) {
+        return getVariable(task);
+    }
+
+    public ScriptVariable getVariable(ScriptTask task) {
         return scope.getMap(task).getReference(name);
     }
 
@@ -84,6 +89,7 @@ public final class ScriptVariableArgument implements ScriptArgument {
                 "name=" + name + ']';
     }
 
+    @Override
     public List<ContextMenuButton> getContextMenu() {
         List<ContextMenuButton> contextMenuButtons = new ArrayList<>();
 

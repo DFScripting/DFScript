@@ -53,6 +53,11 @@ public class ScriptDictionaryValue extends ScriptValue {
     }
 
     @Override
+    public boolean asBoolean() {
+        return !value.isEmpty();
+    }
+
+    @Override
     public ScriptValue getCompareValue() {
         HashMap<String, ScriptValue> dict = asDictionary();
 

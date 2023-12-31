@@ -16,16 +16,19 @@ public enum ScriptOptionEnum {
     INT("Integer", "A single option, must be an int.", Items.SLIME_BALL, ScriptIntOption.class),
     FLOAT("Floating-Point", "A single option, must be an int or a float.", Items.SLIME_BLOCK, ScriptFloatOption.class),
     KEY("Key", "A single option, acts as a key bind.", Items.STONE_BUTTON, ScriptKeyOption.class),
-    BOOL("Boolean", "A true/false option. Returns either \"true\" or \"false\".", Items.LEVER, ScriptBoolOption.class),
+    BOOL("Boolean", "A true/false option.", Items.LEVER, ScriptBoolOption.class),
+    OLD_BOOL("Boolean (Legacy)", "A true/false option. Returns either \"true\" or \"false\".", Items.LEVER, ScriptLegacyBoolOption.class, 0, BOOL),
     DUAL("Dual", "Two values, two types", Items.HOPPER, ScriptDualOption.class, 2),
     LIST("List", "A list of values, can contain a single type", Items.CHEST, ScriptListOption.class, 1),
     DICTIONARY("Dictionary", "A dictionary of values, two types", Items.CHEST_MINECART, ScriptDictionaryOption.class, 2);
 
-    String name;
-    String description;
-    Item icon;
-    Class<? extends ScriptOption> optionType;
-    int extraTypes;
+    final String name;
+    final String description;
+    final Item icon;
+    final Class<? extends ScriptOption> optionType;
+    final int extraTypes;
+
+    final ScriptOptionEnum deprecate;
 
     ScriptOptionEnum(String name, String description, Item icon, Class<? extends ScriptOption> optionType) {
         this.name = name;
@@ -33,6 +36,7 @@ public enum ScriptOptionEnum {
         this.icon = icon;
         this.optionType = optionType;
         this.extraTypes = 0;
+        this.deprecate = null;
     }
 
     ScriptOptionEnum(String name, String description, Item icon, Class<? extends ScriptOption> optionType, int extraTypes) {
@@ -41,6 +45,16 @@ public enum ScriptOptionEnum {
         this.icon = icon;
         this.optionType = optionType;
         this.extraTypes = extraTypes;
+        this.deprecate = null;
+    }
+
+    ScriptOptionEnum(String name, String description, Item icon, Class<? extends ScriptOption> optionType, int extraTypes, ScriptOptionEnum deprecate) {
+        this.name = name;
+        this.description = description;
+        this.icon = icon;
+        this.optionType = optionType;
+        this.extraTypes = extraTypes;
+        this.deprecate = deprecate;
     }
 
     public ItemStack getIcon()
@@ -92,5 +106,9 @@ public enum ScriptOptionEnum {
         }
 
         throw new InvalidParameterException("Unknown option class: " + name.getName());
+    }
+
+    public boolean isDeprecated() {
+        return deprecate != null;
     }
 }

@@ -48,6 +48,11 @@ public class ScriptListValue extends ScriptValue {
     }
 
     @Override
+    public boolean asBoolean() {
+        return !value.isEmpty();
+    }
+
+    @Override
     public ScriptValue getCompareValue() {
         return asList().get(0).getCompareValue();
     }

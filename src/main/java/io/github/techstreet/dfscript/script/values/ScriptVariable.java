@@ -28,20 +28,29 @@ public class ScriptVariable extends ScriptValue {
         this.value = value;
     }
 
+    @Override
     public String asText() {
         return get().asText();
     }
 
+    @Override
     public double asNumber() {
         return get().asNumber();
     }
 
+    @Override
     public List<ScriptValue> asList() {
         return get().asList();
     }
 
+    @Override
     public HashMap<String,ScriptValue> asDictionary() {
         return get().asDictionary();
+    }
+
+    @Override
+    public boolean asBoolean() {
+        return get().asBoolean();
     }
 
     @Override

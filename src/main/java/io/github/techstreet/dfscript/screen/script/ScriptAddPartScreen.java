@@ -55,8 +55,7 @@ public class ScriptAddPartScreen extends CScreen {
             for(ScriptActionCategoryExtra extra : category.getExtras(script)) {
                 CItem item = new CItem(x, y, extra.getIcon());
                 item.setClickListener((btn) -> {
-                    snippet.add(insertIndex, extra.getPart());
-                    DFScript.MC.setScreen(new ScriptEditScreen(script));
+                    extra.click(script, snippet, insertIndex);
                 });
                 widgets.add(item);
                 x += 10;

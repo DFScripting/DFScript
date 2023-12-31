@@ -12,10 +12,7 @@ import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableScope;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
@@ -58,8 +55,18 @@ public class ScriptSetValueScreen extends CScreen {
         numberIcon.setCustomName(Text.literal("Number")
             .fillStyle(Style.EMPTY.withItalic(false)));
 
+        ItemStack trueIcon = new ItemStack(Items.LIME_DYE);
+        trueIcon.setCustomName(Text.literal("True")
+                .fillStyle(Style.EMPTY.withItalic(false)));
+
+        ItemStack falseIcon = new ItemStack(Items.RED_DYE);
+        falseIcon.setCustomName(Text.literal("False")
+                .fillStyle(Style.EMPTY.withItalic(false)));
+
         CItem addNumber;
         CItem addText;
+        CItem addTrue;
+        CItem addFalse;
         CItem addUnknown;
 
         int x = 2;
@@ -91,6 +98,26 @@ public class ScriptSetValueScreen extends CScreen {
             });
 
             widgets.add(addText);
+        }
+
+        if(type == ScriptValue.class || type == ScriptBoolValue.class) {
+            addTrue = new CItem(x, 40, trueIcon);
+            x += 10;
+            addFalse = new CItem(x, 40, falseIcon);
+            x += 10;
+
+            addTrue.setClickListener((btn) -> {
+                onSave.accept(new ScriptBoolValue(true));
+                close();
+            });
+
+            addFalse.setClickListener((btn) -> {
+                onSave.accept(new ScriptBoolValue(false));
+                close();
+            });
+
+            widgets.add(addTrue);
+            widgets.add(addFalse);
         }
 
         addUnknown = new CItem(100-12, 40, unknownIcon);

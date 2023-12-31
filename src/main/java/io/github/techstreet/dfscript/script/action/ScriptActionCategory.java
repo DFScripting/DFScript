@@ -1,8 +1,12 @@
 package io.github.techstreet.dfscript.script.action;
 
+import io.github.techstreet.dfscript.DFScript;
+import io.github.techstreet.dfscript.screen.script.ScriptConditionCategoryScreen;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptComment;
+import io.github.techstreet.dfscript.script.conditions.ScriptBooleanSet;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.repetitions.ScriptWhile;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -19,9 +23,13 @@ public enum ScriptActionCategory {
     VISUALS("Visuals", Items.ENDER_EYE),
     ACTIONS("Actions", Items.PLAYER_HEAD),
     MISC("Misc", Items.COMPASS, List.of(
-            new ScriptActionCategoryExtra(new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false))), () -> new ScriptComment(""))
+            new ScriptActionCategoryExtraPartCreator(new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false))), () -> new ScriptComment(""))
     )),
     VARIABLES("Variables", Items.IRON_INGOT),
+    CONDITIONS("Conditions", Items.LEVER, List.of(
+            new ScriptActionCategoryExtra(ScriptBooleanSet.booleanSetIcon, (sc, sn, ii) -> DFScript.MC.setScreen(new ScriptConditionCategoryScreen(sc, sn, ii, (con) -> new ScriptBooleanSet(new ArrayList<>(), con)))),
+            new ScriptActionCategoryExtra(ScriptWhile.whileIcon, (sc, sn, ii) -> DFScript.MC.setScreen(new ScriptConditionCategoryScreen(sc, sn, ii, (con) -> new ScriptWhile(new ArrayList<>(), con))))
+    )),
     NUMBERS("Numbers", Items.SLIME_BALL),
     LISTS("Lists", Items.BOOKSHELF),
     TEXTS("Texts", Items.BOOK),
@@ -35,15 +43,14 @@ public enum ScriptActionCategory {
         List<ScriptActionCategoryExtra> extras = new ArrayList<>();
 
         for (ScriptFunction function : script.getFunctions()) {
-            extras.add(new ScriptActionCategoryExtra(
+            extras.add(new ScriptActionCategoryExtraPartCreator(
                     function.getIcon(),
                     () -> new ScriptFunctionCall(script, function.getName(), new ArrayList<>())
             ));
         }
 
         return extras;
-    })
-    ;
+    });
 
     private final ItemStack icon;
 

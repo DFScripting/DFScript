@@ -28,6 +28,10 @@ public abstract class ScriptValue {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to directory");
     }
 
+    public boolean asBoolean() {
+        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to directory");
+    }
+
     public ScriptValue get() {
         return this;
     }
@@ -64,6 +68,9 @@ public abstract class ScriptValue {
                 }
                 if(prim.isString()) {
                     return context.deserialize(prim, ScriptTextValue.class);
+                }
+                if(prim.isBoolean()) {
+                    return context.deserialize(prim, ScriptBoolValue.class);
                 }
             }
             else {

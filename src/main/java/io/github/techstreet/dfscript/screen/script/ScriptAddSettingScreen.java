@@ -28,6 +28,8 @@ public class ScriptAddSettingScreen extends CScreen {
         int y = 3;
 
         for(ScriptOptionEnum option : ScriptOptionEnum.values()) {
+            if(option.isDeprecated()) continue;
+
             CItem citem = new CItem(x, y, option.getIcon());
 
             if(option.getExtraTypes() == 0) {

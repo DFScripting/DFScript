@@ -10,11 +10,13 @@ import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.conditions.ScriptBooleanSet;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
+import io.github.techstreet.dfscript.script.repetitions.ScriptWhile;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
@@ -77,6 +79,17 @@ public abstract class ScriptPart implements ScriptRunnable {
 
                     return part;
                 }
+                case "booleanSet" -> {
+                    List<ScriptArgument> args = new ArrayList<>();
+                    for (JsonElement arg : obj.get("arguments").getAsJsonArray()) {
+                        args.add(context.deserialize(arg, ScriptArgument.class));
+                    }
+                    ScriptCondition condition = context.deserialize(obj.get("condition"), ScriptCondition.class);
+
+                    ScriptBooleanSet part = new ScriptBooleanSet(args, condition);
+
+                    return part;
+                }
                 case "repetition" -> {
                     String action = obj.get("repetition").getAsString();
                     List<ScriptArgument> args = new ArrayList<>();
@@ -84,6 +97,18 @@ public abstract class ScriptPart implements ScriptRunnable {
                         args.add(context.deserialize(arg, ScriptArgument.class));
                     }
                     ScriptBuiltinRepetition part = new ScriptBuiltinRepetition(args, ScriptRepetitionType.valueOf(action));
+
+                    part.container().setSnippet(0, context.deserialize(obj.getAsJsonObject("snippet"), ScriptSnippet.class));
+
+                    return part;
+                }
+                case "while" -> {
+                    ScriptCondition condition = context.deserialize(obj.get("condition"), ScriptCondition.class);
+                    List<ScriptArgument> args = new ArrayList<>();
+                    for (JsonElement arg : obj.get("arguments").getAsJsonArray()) {
+                        args.add(context.deserialize(arg, ScriptArgument.class));
+                    }
+                    ScriptWhile part = new ScriptWhile(args, condition);
 
                     part.container().setSnippet(0, context.deserialize(obj.getAsJsonObject("snippet"), ScriptSnippet.class));
 

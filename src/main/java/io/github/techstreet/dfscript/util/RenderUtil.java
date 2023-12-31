@@ -43,33 +43,36 @@ public class RenderUtil {
     }
 
     public static void renderButton(DrawContext context, int x, int y, int width, int height, boolean hovered, boolean disabled) {
-        final String image = "textures/gui/widgets.png";
-        final int textureWidth = 256;
-        final int textureHeight = 256;
+        String image = "textures/gui/sprites/widget/button.png";
+        if (disabled) {
+            image = "textures/gui/sprites/widget/button_disabled.png";
+        }
+        else if (hovered) {
+            image = "textures/gui/sprites/widget/button_highlighted.png";
+        }
+        final int textureWidth = 200;
+        final int textureHeight = 20;
         final int padding = 3;
         int x1 = 0;
-        int y1 = 66;
-        if (disabled) {
-            y1 = 46;
-        } else if (hovered) {
-            y1 = 86;
-        }
+        int y1 = 0;
         int x2 = 200;
         int y2 = y1 + 20;
         renderContinuousTexture(context, x, y, width, height, image, x1, y1, x2, y2, textureWidth, textureHeight, padding,1);
     }
 
-    public static void renderCustomButton(DrawContext context, int x, int y, int width, int height, boolean hovered, boolean disabled, String image) {
-        final int textureWidth = 256;
-        final int textureHeight = 256;
+    public static void renderCustomButton(DrawContext context, int x, int y, int width, int height, boolean hovered, boolean disabled, String image, String disabledImage, String highlightedImage) {
+        final int textureWidth = 200;
+        final int textureHeight = 20;
         final int padding = 3;
-        int x1 = 0;
-        int y1 = 66;
+        String imageUsed = image;
         if (disabled) {
-            y1 = 46;
-        } else if (hovered) {
-            y1 = 86;
+            imageUsed = disabledImage;
         }
+        else if (hovered) {
+            imageUsed = highlightedImage;
+        }
+        int x1 = 0;
+        int y1 = 0;
         int x2 = 200;
         int y2 = y1 + 20;
         renderContinuousTexture(context, x, y, width, height, image, x1, y1, x2, y2, textureWidth, textureHeight, padding,1);

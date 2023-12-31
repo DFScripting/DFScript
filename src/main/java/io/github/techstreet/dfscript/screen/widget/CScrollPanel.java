@@ -89,7 +89,7 @@ public class CScrollPanel implements CWidget {
     }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double amount) {
+    public void mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
         if(!getBounds().contains(mouseX, mouseY)) {
             return;
         }
@@ -97,9 +97,9 @@ public class CScrollPanel implements CWidget {
         mouseX -= x;
         mouseY -= y;
         for (CWidget child : children) {
-            child.mouseScrolled(mouseX, mouseY, amount);
+            child.mouseScrolled(mouseX, mouseY, vertical, horizontal);
         }
-        scroll += amount * 5;
+        scroll += vertical * 5;
 
         if (scroll < -getMaxScroll()) {
             scroll = -getMaxScroll();

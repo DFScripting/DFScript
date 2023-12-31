@@ -6,8 +6,10 @@ import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public abstract class ScriptCondition {
     boolean inverted = false;
@@ -31,6 +33,8 @@ public abstract class ScriptCondition {
 
     public abstract ItemStack getIcon(String prefix, String invertedPrefix);
     public abstract String getName(String prefix, String invertedPrefix);
+
+    public abstract List<Text> getLore();
 
     public static class Serializer implements JsonDeserializer<ScriptCondition> {
 

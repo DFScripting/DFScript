@@ -3,7 +3,6 @@ package io.github.techstreet.dfscript.screen.widget;
 import java.awt.Rectangle;
 
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public interface CWidget {
 
@@ -22,7 +21,7 @@ public interface CWidget {
     default void keyReleased(int keyCode, int scanCode, int modifiers) {
     }
 
-    default void mouseScrolled(double mouseX, double mouseY, double amount) {
+    default void mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
     }
 
     default void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {

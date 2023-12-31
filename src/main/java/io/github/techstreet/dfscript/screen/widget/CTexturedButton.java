@@ -9,26 +9,17 @@ import net.minecraft.client.util.math.MatrixStack;
 public class CTexturedButton extends CButton {
 
     private String texture;
-    private final float ux;
-    private final float uy;
-    private final float uw;
-    private final float uh;
-    private final float hoverUx;
-    private final float hoverUy;
+    private String highlightedTexture;
 
-    public CTexturedButton(int x, int y, int width, int height, String texture, Runnable onClick, float ux, float uy, float uw, float uh, float hoverUx, float hoverUy) {
+    public CTexturedButton(int x, int y, int width, int height, String texture, String highlightedTexture, Runnable onClick) {
         super(x, y, width, height, 0, "", onClick);
         this.texture = texture;
-        this.ux = ux;
-        this.uy = uy;
-        this.uw = uw;
-        this.uh = uh;
-        this.hoverUx = hoverUx;
-        this.hoverUy = hoverUy;
+        this.highlightedTexture = highlightedTexture;
     }
 
-    public void setTexture(String newTexture) {
+    public void setTexture(String newTexture, String newHighlightedTexture) {
         texture = newTexture;
+        highlightedTexture = newHighlightedTexture;
     }
 
     @Override
@@ -40,14 +31,12 @@ public class CTexturedButton extends CButton {
 
         Rectangle rect = new Rectangle(x, y, width, height);
 
-        float ux = this.ux;
-        float uy = this.uy;
+        String usedTexture = texture;
         if (rect.contains(mouseX, mouseY)) {
-            ux = hoverUx;
-            uy = hoverUy;
+            usedTexture = highlightedTexture;
         }
 
-        RenderUtil.renderImage(context, 0, 0, width * 2, height * 2, ux, uy, uw, uh, texture);
+        RenderUtil.renderImage(context, 0, 0, width * 2, height * 2, 0, 0, 1, 1, usedTexture);
         stack.pop();
     }
 }

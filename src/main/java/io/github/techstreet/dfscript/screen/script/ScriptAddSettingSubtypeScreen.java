@@ -116,7 +116,7 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
         }
 
         if(noNull) {
-            CTexturedButton button = new CTexturedButton(width - 10, 3, 8, 8, DFScript.MOD_ID + ":on_button.png", () -> {
+            CTexturedButton button = new CTexturedButton(width - 10, 3, 8, 8, DFScript.MOD_ID + ":on_button.png", DFScript.MOD_ID + ":on_button_highlight.png", () -> {
                 try {
                     script.addOption(pos, new ScriptNamedOption(ScriptOption.instantiate(option, subtypes), script.getUnnamedOption()));
                 } catch (Exception e) {
@@ -124,7 +124,7 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
                 }
 
                 DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
-            }, 0,0,1,0.5f,0,0.5f);
+            });
 
             widgets.add(button);
         }

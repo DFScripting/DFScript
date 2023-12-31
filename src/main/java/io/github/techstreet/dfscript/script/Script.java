@@ -1,13 +1,6 @@
 package io.github.techstreet.dfscript.script;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptAction;
@@ -25,9 +18,12 @@ import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
 import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
+import io.github.techstreet.dfscript.script.options.ScriptOption;
+import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
+import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
 import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatType;
@@ -42,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 6;
+    public static int scriptVersion = 7;
 
     private String name;
     private String owner;
@@ -449,6 +445,26 @@ public class Script {
             script.setDescription(description);
 
             if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
+                if(version < 7) {
+                    if(element.isJsonObject()) {
+                        JsonObject obj = element.getAsJsonObject();
+
+                        if(obj.getAsJsonPrimitive("type").getAsString().equals("BOOL")) {
+                            obj.addProperty("type", "OLD_BOOL");
+                        }
+
+                        if(obj.has("subtypes") && obj.get("subtypes").isJsonArray()) {
+                            int i = 0;
+                            for (JsonElement el : obj.getAsJsonArray("subtypes")) {
+                                if(el.getAsString().equals("BOOL")) {
+                                    obj.getAsJsonArray("subtypes").set(i, new JsonPrimitive("OLD_BOOL"));
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                }
+
                 ScriptNamedOption option = context.deserialize(element, ScriptNamedOption.class);
                 script.addOption(script.getOptions().size(), option);
             }

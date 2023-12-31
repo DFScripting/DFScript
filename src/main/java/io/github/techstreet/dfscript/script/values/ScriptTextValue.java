@@ -23,6 +23,11 @@ public class ScriptTextValue extends ScriptValue {
     }
 
     @Override
+    public boolean asBoolean() {
+        return !value.equals("");
+    }
+
+    @Override
     public boolean valueEquals(ScriptValue other) {
         return other.asText().equals(value);
     }

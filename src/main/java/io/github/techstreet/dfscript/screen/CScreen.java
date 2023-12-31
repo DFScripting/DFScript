@@ -26,12 +26,14 @@ public class CScreen extends Screen {
 
     @Override
     public void render(@NotNull DrawContext context, int mouseX, int mouseY, float tickDelta) {
-        renderBackground(context);
+        //renderBackground(context, mouseX, mouseY, tickDelta);
+        super.render(context, mouseX, mouseY, tickDelta);
         context.getMatrices().push();
         MinecraftClient mc = DFScript.MC;
 
         MatrixStack stack = context.getMatrices();
 
+        assert mc.currentScreen != null;
         stack.translate(mc.currentScreen.width/2f, mc.currentScreen.height/2f, 0);
 
 //        float scaleFactor = (float) mc.getWindow().getScaleFactor();
@@ -58,7 +60,6 @@ public class CScreen extends Screen {
             cWidget.renderOverlay(context, mouseX, mouseY, tickDelta);
         }
         stack.pop();
-        super.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Override
@@ -100,20 +101,21 @@ public class CScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
         mouseX = translateMouseX(mouseX);
         mouseY = translateMouseY(mouseY);
 
         for (CWidget cWidget : widgets) {
-            cWidget.mouseScrolled(mouseX, mouseY, amount);
+            cWidget.mouseScrolled(mouseX, mouseY, vertical, horizontal);
         }
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
     }
 
     public double translateMouseX(double mouseX) {
         MinecraftClient mc = DFScript.MC;
 //        float s = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
+        assert mc.currentScreen != null;
         mouseX += -mc.currentScreen.width/2f;
         mouseX /= scaleFactor;
         mouseX += width/2f;
@@ -124,6 +126,7 @@ public class CScreen extends Screen {
         MinecraftClient mc = DFScript.MC;
 //        float scaleFactor = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
+        assert mc.currentScreen != null;
         mouseY += -mc.currentScreen.height/2f;
         mouseY /= scaleFactor;
         mouseY += height/2f;

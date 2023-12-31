@@ -179,6 +179,7 @@ public class ScriptActionArgument {
         VARIABLE("Variable", Items.MAGMA_CREAM, null, false),
         NUMBER("Number", Items.SLIME_BALL, ScriptNumberValue.class),
         TEXT("Text", Items.BOOK, ScriptTextValue.class),
+        BOOL("Boolean", Items.LEVER, ScriptBoolValue.class),
         LIST("List", Items.CHEST, null),
         DICTIONARY("Dictionary", Items.CHEST_MINECART, null),
         ANY("Any", Items.ENDER_EYE, ScriptValue.class);
