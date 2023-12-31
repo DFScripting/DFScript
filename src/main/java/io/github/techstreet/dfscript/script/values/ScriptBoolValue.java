@@ -18,7 +18,7 @@ public class ScriptBoolValue extends ScriptValue {
     }
 
     @Override
-    public String asText() {
+    public String asString() {
         return value ? "true" : "false";
     }
 

@@ -132,8 +132,8 @@ public enum ScriptConditionType {
         .arg("Text", ScriptActionArgumentType.TEXT)
         .arg("Subtext", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String subtext = ctx.value("Subtext").asText();
+            String text = ctx.value("Text").asString();
+            String subtext = ctx.value("Subtext").asString();
             return text.contains(subtext);
         })),
 
@@ -144,8 +144,8 @@ public enum ScriptConditionType {
         .arg("Text", ScriptActionArgumentType.TEXT)
         .arg("Regex", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String regex = ctx.value("Regex").asText();
+            String text = ctx.value("Text").asString();
+            String regex = ctx.value("Regex").asString();
             return text.matches(regex);
         })),
 
@@ -156,8 +156,8 @@ public enum ScriptConditionType {
         .arg("Text", ScriptActionArgumentType.TEXT)
         .arg("Subtext", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String subtext = ctx.value("Subtext").asText();
+            String text = ctx.value("Text").asString();
+            String subtext = ctx.value("Subtext").asString();
             return text.startsWith(subtext);
         })),
 
@@ -181,8 +181,8 @@ public enum ScriptConditionType {
         .arg("Subtext", ScriptActionArgumentType.TEXT)
         .deprecate(IF_TEXT_CONTAINS)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String subtext = ctx.value("Subtext").asText();
+            String text = ctx.value("Text").asString();
+            String subtext = ctx.value("Subtext").asString();
             return !text.contains(subtext);
         })),
 
@@ -194,8 +194,8 @@ public enum ScriptConditionType {
         .arg("Subtext", ScriptActionArgumentType.TEXT)
         .deprecate(IF_STARTS_WITH)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String subtext = ctx.value("Subtext").asText();
+            String text = ctx.value("Text").asString();
+            String subtext = ctx.value("Subtext").asString();
             return !text.startsWith(subtext);
         })),
 
@@ -207,8 +207,8 @@ public enum ScriptConditionType {
         .arg("Regex", ScriptActionArgumentType.TEXT)
         .deprecate(IF_MATCHES_REGEX)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String regex = ctx.value("Regex").asText();
+            String text = ctx.value("Text").asString();
+            String regex = ctx.value("Regex").asString();
             return !text.matches(regex);
         })),
 
@@ -220,7 +220,7 @@ public enum ScriptConditionType {
         .arg("Key", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asText();
+            String key = ctx.value("Key").asString();
             return dict.containsKey(key);
         })),
 
@@ -233,7 +233,7 @@ public enum ScriptConditionType {
         .deprecate(IF_DICT_KEY_EXISTS)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asText();
+            String key = ctx.value("Key").asString();
             return !dict.containsKey(key);
         })),
 
@@ -260,7 +260,7 @@ public enum ScriptConditionType {
         .category(ScriptActionCategory.MISC)
         .arg("Filename", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String filename = ctx.value("Filename").asText();
+            String filename = ctx.value("Filename").asString();
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 if (Files.exists(f)) {
@@ -279,7 +279,7 @@ public enum ScriptConditionType {
         .arg("Filename", ScriptActionArgumentType.TEXT)
         .deprecate(IF_FILE_EXISTS)
         .action(ctx -> {
-            String filename = ctx.value("Filename").asText();
+            String filename = ctx.value("Filename").asString();
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
                 if (!Files.exists(f)) {

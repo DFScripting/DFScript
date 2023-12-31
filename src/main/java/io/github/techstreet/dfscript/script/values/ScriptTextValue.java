@@ -18,7 +18,7 @@ public class ScriptTextValue extends ScriptValue {
     }
 
     @Override
-    public String asText() {
+    public String asString() {
         return value;
     }
 
@@ -29,12 +29,12 @@ public class ScriptTextValue extends ScriptValue {
 
     @Override
     public boolean valueEquals(ScriptValue other) {
-        return other.asText().equals(value);
+        return other.asString().equals(value);
     }
 
     @Override
     public String formatAsText() {
-        return '"'+asText()+'"';
+        return '"'+ asString()+'"';
     }
 
     public static class Serializer implements JsonSerializer<ScriptTextValue>, JsonDeserializer<ScriptTextValue> {
@@ -52,7 +52,7 @@ public class ScriptTextValue extends ScriptValue {
 
         @Override
         public JsonElement serialize(ScriptTextValue scriptValue, Type type, JsonSerializationContext context) {
-            return new JsonPrimitive(scriptValue.asText());
+            return new JsonPrimitive(scriptValue.asString());
         }
     }
 }

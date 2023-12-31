@@ -1,12 +1,7 @@
 package io.github.techstreet.dfscript.script.values;
 
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
-
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ScriptVariable extends ScriptValue {
     private ScriptValue value;
@@ -29,8 +24,8 @@ public class ScriptVariable extends ScriptValue {
     }
 
     @Override
-    public String asText() {
-        return get().asText();
+    public String asString() {
+        return get().asString();
     }
 
     @Override

@@ -12,7 +12,7 @@ public class ScriptValueJson {
         if (value instanceof ScriptNumberValue snv) {
             return new JsonPrimitive(snv.asNumber());
         } else if (value instanceof ScriptTextValue stv) {
-            return new JsonPrimitive(stv.asText());
+            return new JsonPrimitive(stv.asString());
         } else if (value instanceof ScriptBoolValue sbv) {
             return new JsonPrimitive(sbv.asBoolean());
         }else if (value instanceof ScriptListValue slv) {

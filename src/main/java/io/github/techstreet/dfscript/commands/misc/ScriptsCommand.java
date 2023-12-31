@@ -10,7 +10,6 @@ import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.script.values.ScriptVariable;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import java.util.List;
@@ -81,7 +80,7 @@ public class ScriptsCommand implements Command {
 
                 for (int i = 0; i < showing; i++) {
                     Entry<String, ScriptVariable> e = vars.get(i);
-                    ChatUtil.info(e.getKey() + ": " + e.getValue().asText());
+                    ChatUtil.info(e.getKey() + ": " + e.getValue().asString());
                 }
                 return;
             }

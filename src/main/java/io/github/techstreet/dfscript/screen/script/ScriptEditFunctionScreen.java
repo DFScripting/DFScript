@@ -173,7 +173,7 @@ public class ScriptEditFunctionScreen extends CReloadableScreen {
                                         DFScript.MC.setScreen(new ScriptSetValueScreen(script, () -> {
                                             DFScript.MC.setScreen(new ScriptEditFunctionScreen(function, script));
                                         }, arg::defaultValue, arg.type().getDefaultValueType(),
-                                                arg.defaultValue() instanceof ScriptUnknownValue ? null : arg.defaultValue().asText()));
+                                                arg.defaultValue() instanceof ScriptUnknownValue ? null : arg.defaultValue().asString()));
                                     }, false));
                                 }
                             }

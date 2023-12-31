@@ -31,7 +31,7 @@ public class ScriptValueItem {
 
     private static NbtElement nbtFromValue(ScriptValue value) {
         if (value instanceof ScriptTextValue) {
-            return NbtString.of(value.asText());
+            return NbtString.of(value.asString());
         } else if (value instanceof ScriptNumberValue) {
             return NbtDouble.of(value.asNumber());
         } else if (value instanceof ScriptListValue) {

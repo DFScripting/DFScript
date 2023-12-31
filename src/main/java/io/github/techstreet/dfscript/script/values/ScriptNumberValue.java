@@ -34,7 +34,7 @@ public class ScriptNumberValue extends ScriptValue {
     }
 
     @Override
-    public String asText() {
+    public String asString() {
         if (value % 1 == 0) {
             DecimalFormat df = new DecimalFormat("#");
             df.setRoundingMode(RoundingMode.UNNECESSARY);
@@ -61,7 +61,7 @@ public class ScriptNumberValue extends ScriptValue {
 
             return -1;
         }
-        return asText().compareTo(other.asText());
+        return asString().compareTo(other.asString());
     }
 
     public static class Serializer implements JsonSerializer<ScriptNumberValue>, JsonDeserializer<ScriptNumberValue> {

@@ -61,7 +61,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                sb.append(arg.asText())
+                sb.append(arg.asString())
                     .append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
@@ -76,7 +76,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                sb.append(arg.asText())
+                sb.append(arg.asString())
                     .append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
@@ -91,7 +91,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                sb.append(arg.asText())
+                sb.append(arg.asString())
                     .append(" ");
             }
 
@@ -129,7 +129,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             try{
             StringBuilder result = new StringBuilder();
-            URL url = new URL(ctx.value("Url").asText());
+            URL url = new URL(ctx.value("Url").asString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
@@ -188,7 +188,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
             for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                sb.append(arg.asText());
+                sb.append(arg.asString());
             }
             ctx.setVariable(
                 "Result",
@@ -501,7 +501,7 @@ public enum ScriptActionType {
                     int lowerLength = Math.min(keys.size(), values.size());
 
                     for (int i = 0; i < lowerLength; i++) {
-                        dict.put(keys.get(i).asText(), values.get(i));
+                        dict.put(keys.get(i).asString(), values.get(i));
                     }
                 }
 
@@ -535,7 +535,7 @@ public enum ScriptActionType {
         .arg("Key", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asText();
+            String key = ctx.value("Key").asString();
             if (dict.containsKey(key)) {
                 ctx.setVariable("Result", dict.get(key));
             } else {
@@ -552,7 +552,7 @@ public enum ScriptActionType {
         .arg("Value", ScriptActionArgumentType.ANY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asText();
+            String key = ctx.value("Key").asString();
             dict.put(key, ctx.value("Value"));
             ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
@@ -588,7 +588,7 @@ public enum ScriptActionType {
         .arg("Key", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asText();
+            String key = ctx.value("Key").asString();
             dict.remove(key);
             ctx.setVariable("Dictionary", new ScriptDictionaryValue(dict));
         })),
@@ -634,7 +634,7 @@ public enum ScriptActionType {
         .action(ctx -> {
             for (ScriptValue cmd : ctx.pluralValue("Commands")) {
                 try {
-                    String[] args = cmd.asText().split(" ", -1);
+                    String[] args = cmd.asString().split(" ", -1);
                     ArgumentBuilder<FabricClientCommandSource, ?> ab = RequiredArgumentBuilder.argument("args", StringArgumentType.greedyString());
 
                     ab.executes(ctx2 -> 0);
@@ -659,7 +659,7 @@ public enum ScriptActionType {
                     }
                 }
                 catch(Exception e){
-                    OverlayManager.getInstance().add("Cannot register command '" + cmd.asText() + "': " + e.getMessage());
+                    OverlayManager.getInstance().add("Cannot register command '" + cmd.asString() + "': " + e.getMessage());
 
                     for (StackTraceElement stackTraceElement : e.getStackTrace()) {
                         DFScript.LOGGER.error(stackTraceElement.toString());
@@ -674,7 +674,7 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.TEXTS)
         .arg("Text", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            io.github.techstreet.dfscript.DFScript.MC.keyboard.setClipboard(ctx.value("Text").asText());
+            io.github.techstreet.dfscript.DFScript.MC.keyboard.setClipboard(ctx.value("Text").asString());
         })),
 
     SPLIT_TEXT(builder -> builder.name("Split Text")
@@ -685,8 +685,8 @@ public enum ScriptActionType {
         .arg("Text", ScriptActionArgumentType.TEXT)
         .arg("Separator", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
-            String separator = ctx.value("Separator").asText();
+            String text = ctx.value("Text").asString();
+            String separator = ctx.value("Separator").asString();
             List<ScriptValue> split = new ArrayList<>();
 
             for (String s : text.split(Pattern.quote(separator))) {
@@ -704,8 +704,8 @@ public enum ScriptActionType {
             .arg("Text", ScriptActionArgumentType.TEXT)
             .arg("Separator (Regex)", ScriptActionArgumentType.TEXT)
             .action(ctx -> {
-                String text = ctx.value("Text").asText();
-                String separator = ctx.value("Separator (Regex)").asText();
+                String text = ctx.value("Text").asString();
+                String separator = ctx.value("Separator (Regex)").asString();
                 List<ScriptValue> split = new ArrayList<>();
 
                 for (String s : text.split(separator)) {
@@ -759,7 +759,7 @@ public enum ScriptActionType {
         .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
         .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(1))
         .action(ctx -> {
-            String sound = ctx.value("Sound").asText();
+            String sound = ctx.value("Sound").asString();
             double volume = 1;
             double pitch = 1;
 
@@ -825,7 +825,7 @@ public enum ScriptActionType {
             .arg("Volume", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
             .arg("Pitch", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(1))
             .action(ctx -> {
-                String sound = ctx.value("Sound").asText();
+                String sound = ctx.value("Sound").asString();
                 double volume = 1;
                 double pitch = 1;
 
@@ -898,14 +898,14 @@ public enum ScriptActionType {
         .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(60))
         .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
         .action(ctx -> {
-            String title = ctx.value("Title").asText();
+            String title = ctx.value("Title").asString();
             String subtitle = "";
             int fadeIn = 20;
             int stay = 60;
             int fadeOut = 20;
 
             if (ctx.argMap().containsKey("Subtitle")) {
-                subtitle = ctx.value("Subtitle").asText();
+                subtitle = ctx.value("Subtitle").asString();
             }
 
             if (ctx.argMap().containsKey("Fade In")) {
@@ -936,14 +936,14 @@ public enum ScriptActionType {
             .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(60))
             .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.rightOptional(true).defaultValue(20))
             .action(ctx -> {
-                String title = ctx.value("Title").asText();
+                String title = ctx.value("Title").asString();
                 String subtitle = "";
                 int fadeIn = 20;
                 int stay = 60;
                 int fadeOut = 20;
 
                 if (ctx.argMap().containsKey("Subtitle")) {
-                    subtitle = ctx.value("Subtitle").asText();
+                    subtitle = ctx.value("Subtitle").asString();
                 }
 
                 if (ctx.argMap().containsKey("Fade In")) {
@@ -974,12 +974,12 @@ public enum ScriptActionType {
             String separator = ", ";
 
             if (ctx.argMap().containsKey("Separator")) {
-                separator = ctx.value("Separator").asText();
+                separator = ctx.value("Separator").asString();
             }
 
             String result = ctx.value("List")
                 .asList().stream()
-                .map(ScriptValue::asText)
+                .map(ScriptValue::asString)
                 .collect(Collectors.joining(separator));
 
             ctx.setVariable("Result", new ScriptTextValue(result));
@@ -993,7 +993,7 @@ public enum ScriptActionType {
         .arg("Text",ScriptActionArgumentType.TEXT)
         .arg("Subtext",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            int result = ctx.value("Text").asText().indexOf(ctx.value("Subtext").asText()) + 1;
+            int result = ctx.value("Text").asString().indexOf(ctx.value("Subtext").asString()) + 1;
             ctx.setVariable("Result", new ScriptNumberValue(result));
         })),
 
@@ -1006,7 +1006,7 @@ public enum ScriptActionType {
         .arg("First Index",ScriptActionArgumentType.NUMBER)
         .arg("Last Index",ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
+            String text = ctx.value("Text").asString();
             int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
             String result = text.substring(start, end);
@@ -1023,7 +1023,7 @@ public enum ScriptActionType {
             .arg("Last Index",ScriptActionArgumentType.NUMBER)
             .deprecate(TEXT_SUBTEXT)
             .action(ctx -> {
-                String text = ctx.value("Text").asText();
+                String text = ctx.value("Text").asString();
                 int start = (int)ctx.value("First Index").asNumber()+1;
                 int end = (int)ctx.value("Last Index").asNumber();
                 String result = text.substring(start, end);
@@ -1037,7 +1037,7 @@ public enum ScriptActionType {
         .arg("Result",ScriptActionArgumentType.VARIABLE)
         .arg("Text",ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
+            String text = ctx.value("Text").asString();
             ctx.setVariable("Result", new ScriptNumberValue(text.length()));
         })),
 
@@ -1048,7 +1048,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Filename", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String filename = ctx.value("Filename").asText();
+            String filename = ctx.value("Filename").asString();
 
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
@@ -1075,7 +1075,7 @@ public enum ScriptActionType {
             .arg("Filename", ScriptActionArgumentType.TEXT)
             .deprecate(READ_FILE)
             .action(ctx -> {
-                String filename = ctx.value("Filename").asText();
+                String filename = ctx.value("Filename").asString();
 
                 if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                     Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
@@ -1101,7 +1101,7 @@ public enum ScriptActionType {
         .arg("Filename", ScriptActionArgumentType.TEXT)
         .arg("Content", ScriptActionArgumentType.ANY)
         .action(ctx -> {
-            String filename = ctx.value("Filename").asText();
+            String filename = ctx.value("Filename").asString();
             ScriptValue value = ctx.value("Content");
 
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
@@ -1126,7 +1126,7 @@ public enum ScriptActionType {
             .arg("Content", ScriptActionArgumentType.ANY)
             .deprecate(WRITE_FILE)
             .action(ctx -> {
-                String filename = ctx.value("Filename").asText();
+                String filename = ctx.value("Filename").asString();
                 ScriptValue value = ctx.value("Content");
 
                 if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
@@ -1150,7 +1150,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Text", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
+            String text = ctx.value("Text").asString();
             try {
                 ctx.setVariable("Result", new ScriptNumberValue(Double.parseDouble(text)));
             } catch (NumberFormatException e) {
@@ -1199,7 +1199,7 @@ public enum ScriptActionType {
         .arg("X", ScriptActionArgumentType.NUMBER)
         .arg("Y", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
+            String text = ctx.value("Text").asString();
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
 
@@ -1216,7 +1216,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Text", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asText();
+            String text = ctx.value("Text").asString();
             Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
             int width = DFScript.MC.textRenderer.getWidth(t);
             ctx.setVariable("Result", new ScriptNumberValue(width));
@@ -1250,8 +1250,8 @@ public enum ScriptActionType {
             int y = (int) ctx.value("Y").asNumber();
             int width = (int) ctx.value("Width").asNumber();
             int height = (int) ctx.value("Height").asNumber();
-            String text = ctx.value("Text").asText();
-            String identifier = ctx.value("Identifier").asText();
+            String text = ctx.value("Text").asString();
+            String identifier = ctx.value("Identifier").asString();
 
             if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
@@ -1276,7 +1276,7 @@ public enum ScriptActionType {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
             ItemStack item = ScriptValueItem.itemFromValue(ctx.value("Item"));
-            String identifier = ctx.value("Identifier").asText();
+            String identifier = ctx.value("Identifier").asString();
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
@@ -1300,8 +1300,8 @@ public enum ScriptActionType {
         .action(ctx -> {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
-            String rawText = ctx.value("Text").asText();
-            String identifier = ctx.value("Identifier").asText();
+            String rawText = ctx.value("Text").asString();
+            String identifier = ctx.value("Identifier").asString();
             Text text = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(rawText));
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
@@ -1329,7 +1329,7 @@ public enum ScriptActionType {
             int y = (int) ctx.value("Y").asNumber();
             int width = (int) ctx.value("Width").asNumber();
             int height = (int) ctx.value("Height").asNumber();
-            String identifier = ctx.value("Identifier").asText();
+            String identifier = ctx.value("Identifier").asString();
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
@@ -1348,7 +1348,7 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.MENUS)
         .arg("Identifier", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String identifier = ctx.value("Identifier").asText();
+            String identifier = ctx.value("Identifier").asString();
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     menu.removeChild(identifier);
@@ -1367,7 +1367,7 @@ public enum ScriptActionType {
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Identifier", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String identifier = ctx.value("Identifier").asText();
+            String identifier = ctx.value("Identifier").asString();
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     ScriptWidget w = menu.getWidget(identifier);
@@ -1395,13 +1395,13 @@ public enum ScriptActionType {
         .arg("Identifier", ScriptActionArgumentType.TEXT)
         .arg("Value", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String identifier = ctx.value("Identifier").asText();
+            String identifier = ctx.value("Identifier").asString();
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
                     ScriptWidget w = menu.getWidget(identifier);
                     if (w instanceof ScriptMenuTextField field) {
-                        field.setText(ctx.value("Value").asText());
+                        field.setText(ctx.value("Value").asString());
                     } else {
                         OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
                     }
@@ -1498,9 +1498,9 @@ public enum ScriptActionType {
             .arg("Replacement", ScriptActionArgumentType.TEXT)
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asText();
+                String result = ctx.value("Text to change").asString();
 
-                result = result.replace(ctx.value("Text part to replace").asText(), ctx.value("Replacement").asText());
+                result = result.replace(ctx.value("Text part to replace").asString(), ctx.value("Replacement").asString());
 
                 ctx.setVariable("Result", new ScriptTextValue(result));
     })),
@@ -1514,9 +1514,9 @@ public enum ScriptActionType {
             .arg("Replacement", ScriptActionArgumentType.TEXT)
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asText();
+                String result = ctx.value("Text to change").asString();
 
-                result = result.replaceAll(ctx.value("Regex").asText(), ctx.value("Replacement").asText());
+                result = result.replaceAll(ctx.value("Regex").asString(), ctx.value("Replacement").asString());
 
                 ctx.setVariable("Result", new ScriptTextValue(result));
     })),
@@ -1529,12 +1529,12 @@ public enum ScriptActionType {
             .arg("Text to remove", ScriptActionArgumentType.TEXT, b -> b.plural(true))
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asText();
+                String result = ctx.value("Text to change").asString();
 
                 List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
 
                 for (ScriptValue scriptValue : textsToRemove) {
-                    result = result.replace(scriptValue.asText(), "");
+                    result = result.replace(scriptValue.asString(), "");
                 }
 
                 ctx.setVariable("Result", new ScriptTextValue(result));
@@ -1550,9 +1550,9 @@ public enum ScriptActionType {
                 String result;
 
                 if (ctx.argMap().containsKey("Text")) {
-                    result = ctx.value("Text").asText();
+                    result = ctx.value("Text").asString();
                 } else {
-                    result = ctx.value("Result").asText();
+                    result = ctx.value("Result").asString();
                 }
 
                 result = result.replaceAll("&x(&[0-9a-fA-F]){6}", "");
@@ -1569,7 +1569,7 @@ public enum ScriptActionType {
             .arg("Times to repeat", ScriptActionArgumentType.NUMBER)
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
-                String input = ctx.value("Text to repeat").asText();
+                String input = ctx.value("Text to repeat").asString();
                 int times = (int) ctx.value("Times to repeat").asNumber();
 
                 String result = input.repeat(Math.max(0, times));
@@ -1586,7 +1586,7 @@ public enum ScriptActionType {
             .category(ScriptActionCategory.TEXTS)
             .action(ctx -> {
                 Date date = new Date((long) ctx.value("Timestamp").asNumber());
-                SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
+                SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asString());
 
                 ctx.setVariable("Result", new ScriptTextValue(format.format(date)));
             })),

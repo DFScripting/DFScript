@@ -77,7 +77,7 @@ public class ScriptDictionaryOption implements ScriptOption {
         {
             List<ScriptValue> s = o.getValue().asList();
 
-            result.put(s.get(0).asText(),s.get(1));
+            result.put(s.get(0).asString(),s.get(1));
         }
 
         return new ScriptDictionaryValue(result);

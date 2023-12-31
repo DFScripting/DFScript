@@ -43,7 +43,7 @@ public class ScriptListValue extends ScriptValue {
     }
 
     @Override
-    public String asText() {
+    public String asString() {
         return value.toString();
     }
 

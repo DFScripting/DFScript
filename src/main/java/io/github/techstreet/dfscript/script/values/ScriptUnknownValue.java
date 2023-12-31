@@ -12,7 +12,7 @@ public class ScriptUnknownValue extends ScriptValue{
     }
 
     @Override
-    public String asText() {
+    public String asString() {
         return "Unknown";
     }
 

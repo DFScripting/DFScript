@@ -1,8 +1,6 @@
 package io.github.techstreet.dfscript.script.values;
 
 import com.google.gson.*;
-import io.github.techstreet.dfscript.script.event.ScriptFunction;
-import net.minecraft.registry.Registries;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -12,8 +10,8 @@ public abstract class ScriptValue {
 
     abstract String typeName();
 
-    public String asText() {
-        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to text");
+    public String asString() {
+        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to string");
     }
 
     public double asNumber() {
@@ -25,11 +23,11 @@ public abstract class ScriptValue {
     }
 
     public HashMap<String,ScriptValue> asDictionary() {
-        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to directory");
+        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to dictionary");
     }
 
     public boolean asBoolean() {
-        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to directory");
+        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to boolean");
     }
 
     public ScriptValue get() {
@@ -38,7 +36,7 @@ public abstract class ScriptValue {
 
     @Override
     public String toString() {
-        return asText();
+        return asString();
     }
 
     public abstract boolean valueEquals(ScriptValue other);
@@ -48,11 +46,11 @@ public abstract class ScriptValue {
     }
 
     public int compare(ScriptValue other) {
-        return asText().compareTo(other.asText());
+        return asString().compareTo(other.asString());
     }
 
     public String formatAsText() {
-        return asText();
+        return asString();
     }
 
     public static class Serializer implements JsonSerializer<ScriptValue>, JsonDeserializer<ScriptValue> {
