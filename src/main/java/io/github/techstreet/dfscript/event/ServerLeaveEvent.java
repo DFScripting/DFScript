@@ -1,7 +1,7 @@
 package io.github.techstreet.dfscript.event;
 
 import io.github.techstreet.dfscript.event.system.Event;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
 
 public class ServerLeaveEvent implements Event {
     private final DisconnectS2CPacket packet;

@@ -11,7 +11,6 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
-import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
@@ -480,7 +479,6 @@ public enum ScriptActionType {
             }
 
             ctx.task().stop();//Stop the current thread
-            ctx.task().stack().increase();//Go to the next action
             Scheduler.schedule((int) ctx.value("Ticks").asNumber(), () -> ctx.task().run());//Resume the task after the given amount of ticks
         })),
 
@@ -1591,6 +1589,68 @@ public enum ScriptActionType {
                 SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asText());
 
                 ctx.setVariable("Result", new ScriptTextValue(format.format(date)));
+            })),
+
+    INVERT(builder -> builder.name("Invert Boolean")
+            .description("Returns true if the boolean is false and vice versa.")
+            .icon(Items.REDSTONE_TORCH)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.BOOL)
+            .category(ScriptActionCategory.CONDITIONS)
+            .action(ctx -> {
+                ctx.setVariable("Result", new ScriptBoolValue(!ctx.value("Value").asBoolean()));
+            })),
+
+    AND(builder -> builder.name("Set to AND Result")
+            .description("Returns true if all booleans are true.")
+            .icon(Items.REDSTONE_BLOCK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
+            .category(ScriptActionCategory.CONDITIONS)
+            .action(ctx -> {
+                for (ScriptValue val : ctx.pluralValue("Value")) {
+                    if(!val.asBoolean()) {
+                        ctx.setVariable("Result", new ScriptBoolValue(false));
+                        return;
+                    }
+                }
+
+                ctx.setVariable("Result", new ScriptBoolValue(true));
+            })),
+
+    OR(builder -> builder.name("Set to OR Result")
+            .description("Returns true if one of the booleans are true.")
+            .icon(Items.REDSTONE)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
+            .category(ScriptActionCategory.CONDITIONS)
+            .action(ctx -> {
+                for (ScriptValue val : ctx.pluralValue("Value")) {
+                    if(val.asBoolean()) {
+                        ctx.setVariable("Result", new ScriptBoolValue(true));
+                        return;
+                    }
+                }
+
+                ctx.setVariable("Result", new ScriptBoolValue(false));
+            })),
+
+    XOR(builder -> builder.name("Set to XOR Result")
+            .description("Returns true if an odd number of booleans are true.")
+            .icon(Items.REDSTONE, true)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
+            .category(ScriptActionCategory.CONDITIONS)
+            .action(ctx -> {
+                int trues = 0;
+
+                for (ScriptValue val : ctx.pluralValue("Value")) {
+                    if(val.asBoolean()) {
+                        trues++;
+                    }
+                }
+
+                ctx.setVariable("Result", new ScriptBoolValue(trues % 2 == 1));
             }));
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
@@ -1602,7 +1662,6 @@ public enum ScriptActionType {
     private boolean hasChildren = false;
     private ScriptActionCategory category = ScriptActionCategory.MISC;
     private List<String> description = new ArrayList();
-    private ScriptGroup group = ScriptGroup.ACTION;
 
     private ScriptActionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
@@ -1709,15 +1768,6 @@ public enum ScriptActionType {
         this.description.clear();
         this.description.addAll(Arrays.asList(description.split("\n", -1)));
         return this;
-    }
-
-    private ScriptActionType group(ScriptGroup group) {
-        this.group = group;
-        return this;
-    }
-
-    public ScriptGroup getGroup() {
-        return group;
     }
 
     public ScriptActionType arg(String name, ScriptActionArgumentType type, Consumer<ScriptActionArgument> builder) {

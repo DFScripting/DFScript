@@ -11,9 +11,8 @@
     "render.MInGameHUD",
     "render.MMultiplayerScreen",
     "render.MOptionsScreen",
-    "sound.MSoundSystem"
-  ],
-  "client": [
+    "sound.MSoundSystem",
+    "game.MClientCommonNetworkHandler"
   ],
   "injectors": {
     "defaultRequire": 1

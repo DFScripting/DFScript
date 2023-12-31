@@ -15,15 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public class MInGameHUD {
-
-    @Inject(at = @At("HEAD"), method = "renderScoreboardSidebar", cancellable = true)
-    private void renderScoreboardSidebar(CallbackInfo info) {
-        MinecraftClient client = DFScript.MC;
-        if (client.options.debugEnabled) {
-            info.cancel();
-        }
-    }
-
     @Inject(at = @At("HEAD"), method = "render")
     private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
         OverlayManager.getInstance().render(context);

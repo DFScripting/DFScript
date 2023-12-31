@@ -1,56 +1,29 @@
 package io.github.techstreet.dfscript.script.conditions;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.event.HudRenderEvent;
-import io.github.techstreet.dfscript.event.system.CancellableEvent;
-import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.menu.*;
-import io.github.techstreet.dfscript.script.util.ScriptValueItem;
-import io.github.techstreet.dfscript.script.util.ScriptValueJson;
 import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.*;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameMode;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public enum ScriptConditionType {
 
@@ -325,6 +298,13 @@ public enum ScriptConditionType {
             .arg("Value", ScriptActionArgumentType.ANY)
             .action(ctx -> (ctx.value("Value") instanceof ScriptUnknownValue))),
 
+    IF_BOOLEAN_TRUE(builder -> builder.name("Boolean Is True")
+            .description("Checks if a boolean is true.")
+            .icon(Items.YELLOW_WOOL)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.BOOL)
+            .action(ctx -> ctx.value("Value").asBoolean())),
+
     TRUE(builder -> builder.name("True")
             .description("Always executes.\nLiterally the only reason for this is so the\nlegacy deserializer code doesn't have to discard ELSEs\nthat aren't tied to a CONDITION...")
             .icon(Items.LIME_WOOL)
@@ -339,7 +319,6 @@ public enum ScriptConditionType {
     private boolean hasChildren = false;
     private ScriptActionCategory category = ScriptActionCategory.MISC;
     private List<String> description = new ArrayList();
-    private ScriptGroup group = ScriptGroup.ACTION;
 
     private ScriptConditionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
@@ -357,31 +336,8 @@ public enum ScriptConditionType {
 
         NbtList lore = new NbtList();
 
-        if(isDeprecated())
-        {
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("This action is deprecated!")
-                    .fillStyle(Style.EMPTY
-                            .withColor(Formatting.RED)
-                            .withItalic(false)))));
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("Use '" + deprecated.getName() + "'")
-                    .fillStyle(Style.EMPTY
-                            .withColor(Formatting.RED)
-                            .withItalic(false)))));
-        }
-
-        for (String descriptionLine: description) {
-            lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
-                .fillStyle(Style.EMPTY
-                      .withColor(Formatting.GRAY)
-                      .withItalic(false)))));
-        }
-
-        lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
-
-        for (ScriptActionArgument arg : arguments) {
-            for (Text txt : arg.text()) {
-                lore.add(NbtString.of(Text.Serializer.toJson(txt)));
-            }
+        for (Text txt : getLore()) {
+            lore.add(NbtString.of(Text.Serializer.toJson(txt)));
         }
 
         item.getSubNbt("display")
@@ -395,8 +351,40 @@ public enum ScriptConditionType {
 
         return item;
     }
+
     public String getName() {
         return name;
+    }
+
+    public List<Text> getLore() {
+        List<Text> lore = new ArrayList<>();
+
+        if(isDeprecated())
+        {
+            lore.add(Text.literal("This action is deprecated!")
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)));
+            lore.add(Text.literal("Use '" + deprecated.getName() + "'")
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.RED)
+                            .withItalic(false)));
+        }
+
+        for (String descriptionLine: description) {
+            lore.add(Text.literal(descriptionLine)
+                    .fillStyle(Style.EMPTY
+                            .withColor(Formatting.GRAY)
+                            .withItalic(false)));
+        }
+
+        lore.add(Text.literal(""));
+
+        for (ScriptActionArgument arg : arguments) {
+            lore.addAll(arg.text());
+        }
+
+        return lore;
     }
 
     public boolean isDeprecated() {

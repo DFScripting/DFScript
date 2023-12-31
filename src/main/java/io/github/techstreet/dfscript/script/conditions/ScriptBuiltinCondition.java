@@ -9,8 +9,10 @@ import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.render.ScriptPartRenderIconElement;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class ScriptBuiltinCondition extends ScriptCondition {
     ScriptConditionType type;
@@ -39,6 +41,11 @@ public class ScriptBuiltinCondition extends ScriptCondition {
     @Override
     public String getName(String prefix, String invertedPrefix) {
         return (isInverted() ? invertedPrefix : prefix) + " " + getType().getName();
+    }
+
+    @Override
+    public List<Text> getLore() {
+        return type.getLore();
     }
 
     public ScriptBuiltinCondition setType(ScriptConditionType newType) {

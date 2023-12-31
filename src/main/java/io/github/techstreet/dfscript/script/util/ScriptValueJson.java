@@ -1,16 +1,8 @@
 package io.github.techstreet.dfscript.script.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import io.github.techstreet.dfscript.script.values.ScriptDictionaryValue;
-import io.github.techstreet.dfscript.script.values.ScriptListValue;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import com.google.gson.*;
+import io.github.techstreet.dfscript.script.values.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +13,9 @@ public class ScriptValueJson {
             return new JsonPrimitive(snv.asNumber());
         } else if (value instanceof ScriptTextValue stv) {
             return new JsonPrimitive(stv.asText());
-        } else if (value instanceof ScriptListValue slv) {
+        } else if (value instanceof ScriptBoolValue sbv) {
+            return new JsonPrimitive(sbv.asBoolean());
+        }else if (value instanceof ScriptListValue slv) {
             JsonArray array = new JsonArray();
             for (ScriptValue sv : slv.asList()) {
                 array.add(toJson(sv));
@@ -45,6 +39,8 @@ public class ScriptValueJson {
                 return new ScriptNumberValue(primitive.getAsNumber().doubleValue());
             } else if (primitive.isString()) {
                 return new ScriptTextValue(primitive.getAsString());
+            } else if (primitive.isBoolean()) {
+                return new ScriptBoolValue(primitive.getAsBoolean());
             } else {
                 return new ScriptUnknownValue();
             }

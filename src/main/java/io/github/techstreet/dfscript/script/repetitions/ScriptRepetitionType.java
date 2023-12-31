@@ -1,7 +1,5 @@
 package io.github.techstreet.dfscript.script.repetitions;
 
-import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.script.ScriptGroup;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
@@ -10,7 +8,6 @@ import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
 import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
-import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
@@ -22,8 +19,6 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;

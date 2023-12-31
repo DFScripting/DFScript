@@ -57,13 +57,22 @@ public class ScriptAddArgumentScreen extends CScreen {
         functionArgumentIcon.setCustomName(Text.literal("Function Argument")
                 .fillStyle(Style.EMPTY.withItalic(false)));
 
+        ItemStack trueIcon = new ItemStack(Items.LIME_DYE);
+        trueIcon.setCustomName(Text.literal("True")
+                .fillStyle(Style.EMPTY.withItalic(false)));
+
+        ItemStack falseIcon = new ItemStack(Items.RED_DYE);
+        falseIcon.setCustomName(Text.literal("False")
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         CItem addNumber = new CItem(2, 40, numberIcon);
         CItem addText = new CItem(12, 40, textIcon);
-        CItem addVariable = new CItem(22, 40, variableIcon);
-        CItem addClientValue = new CItem(32, 40, clientValueIcon);
-        CItem addConfigValue = new CItem(42, 40, configValueIcon);
-        CItem addFunctionArgument = new CItem(52, 40, functionArgumentIcon);
+        CItem addTrue = new CItem(22, 40, trueIcon);
+        CItem addFalse = new CItem(32, 40, falseIcon);
+        CItem addVariable = new CItem(42, 40, variableIcon);
+        CItem addClientValue = new CItem(52, 40, clientValueIcon);
+        CItem addConfigValue = new CItem(62, 40, configValueIcon);
+        CItem addFunctionArgument = new CItem(72, 40, functionArgumentIcon);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
@@ -102,9 +111,23 @@ public class ScriptAddArgumentScreen extends CScreen {
             DFScript.MC.setScreen(new ScriptAddFunctionArgValueScreen(action, script, index, header, overwrite));
         });
 
+        addTrue.setClickListener((btn) -> {
+            if(overwrite != null) action.getArguments().remove(index);
+            action.getArguments().add(index, new ScriptBoolArgument(true));
+            close();
+        });
+
+        addFalse.setClickListener((btn) -> {
+            if(overwrite != null) action.getArguments().remove(index);
+            action.getArguments().add(index, new ScriptBoolArgument(false));
+            close();
+        });
+
         widgets.add(input);
         widgets.add(addNumber);
         widgets.add(addText);
+        widgets.add(addTrue);
+        widgets.add(addFalse);
         widgets.add(addVariable);
         widgets.add(addClientValue);
         widgets.add(addConfigValue);

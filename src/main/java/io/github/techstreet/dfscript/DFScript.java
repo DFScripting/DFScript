@@ -47,7 +47,7 @@ public class DFScript implements ModInitializer {
         // allows FileDialog class to open without a HeadlessException
         System.setProperty("java.awt.headless", "false");
 
-        PLAYER_UUID = MC.getSession().getUuid();
+        PLAYER_UUID = MC.getSession().getUuidOrNull().toString();
         PLAYER_NAME = MC.getSession().getUsername();
 
         MOD_VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).get().getMetadata().getVersion().getFriendlyString();

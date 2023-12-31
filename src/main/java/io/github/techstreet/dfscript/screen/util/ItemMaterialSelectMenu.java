@@ -34,7 +34,7 @@ public class ItemMaterialSelectMenu extends CReloadableScreen {
         searchField.setMultiline(false);
         searchField.setChangedListener(this::reload);
 
-        CTexturedButton finishButton = new CTexturedButton(162-8-5, 2, 8, 8, DFScript.MOD_ID + ":on_button.png", this::close, 0, 0, 1, 0.5f, 0, 0.5f);
+        CTexturedButton finishButton = new CTexturedButton(162-8-5, 2, 8, 8, DFScript.MOD_ID + ":on_button.png", DFScript.MOD_ID + ":on_button_highlight.png", this::close);
 
         panel = new CScrollPanel(2, 12, 160, 100-8);
 

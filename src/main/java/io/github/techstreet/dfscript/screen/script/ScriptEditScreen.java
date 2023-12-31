@@ -271,9 +271,9 @@ public class ScriptEditScreen extends CReloadableScreen {
         CText name = new CText(5,y+2,Text.literal(script.getName()),0,1,false,false);
         panel.add(name);
 
-        CButton settings = new CTexturedButton(120-8, y, 8, 8, DFScript.MOD_ID + ":settings.png", () -> {
+        CButton settings = new CTexturedButton(120-8, y, 8, 8, DFScript.MOD_ID + ":settings.png", DFScript.MOD_ID + ":settings_highlight.png", () -> {
             DFScript.MC.setScreen(new ScriptSettingsScreen(this.script, true));
-        }, 0, 0, 1, 0.5f, 0, 0.5f);
+        });
         panel.add(settings);
 
         y += 10;

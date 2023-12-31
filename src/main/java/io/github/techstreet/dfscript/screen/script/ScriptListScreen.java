@@ -71,9 +71,9 @@ public class ScriptListScreen extends CScreen {
 
             if (allowEditAndUpload) {
                 // Delete Button
-                CButton delete = new CTexturedButton(20 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":delete.png", () -> {
+                CButton delete = new CTexturedButton(20 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":delete.png", DFScript.MOD_ID + ":delete_highlight.png", () -> {
                     DFScript.MC.setScreen(new ScriptDeletionScreen(s));
-                }, 0, 0, 1, 0.5f, 0, 0.5f);
+                });
 
                 if (!Objects.equals(s.getServer(), "None") && s.getOwner() != null && s.getOwner().equals(DFScript.PLAYER_UUID)) {
                     delete.setOnClick(() -> {
@@ -87,17 +87,17 @@ public class ScriptListScreen extends CScreen {
             // Enable or Disable Button
             CButton enableDisable;
             if (s.disabled()) {
-                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":enable.png", () -> {
+                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":enable.png", DFScript.MOD_ID + ":enable_highlight.png", () -> {
                     s.setDisabled(false);
                     ScriptManager.getInstance().saveScript(s);
                     DFScript.MC.setScreen(new ScriptListScreen(allowEditAndUpload));
-                }, 0,0,1,0.5f,0,0.5f);
+                });
             } else {
-                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":disable.png", () -> {
+                enableDisable = new CTexturedButton(30 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":disable.png", DFScript.MOD_ID + ":disable_highlight.png", () -> {
                     s.setDisabled(true);
                     ScriptManager.getInstance().saveScript(s);
                     DFScript.MC.setScreen(new ScriptListScreen(allowEditAndUpload));
-                }, 0,0,1,0.5f,0,0.5f);
+                });
             }
 
             panel.add(enableDisable);
@@ -105,14 +105,14 @@ public class ScriptListScreen extends CScreen {
             if(allowEditAndUpload) {
                 if (s.getOwner() != null && s.getOwner().equals(DFScript.PLAYER_UUID)) {
                     // Edit Button
-                    CButton edit = new CTexturedButton(addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":wrench.png", () -> {
+                    CButton edit = new CTexturedButton(addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":wrench.png", DFScript.MOD_ID + ":wrench_highlight.png", () -> {
                         DFScript.MC.setScreen(new ScriptEditScreen(s));
-                    }, 0, 0, 1, 0.5f, 0, 0.5f);
+                    });
 
                     panel.add(edit);
 
                     // Upload or Remove Button
-                    CButton upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":upload.png", () -> {
+                    CButton upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":upload.png", DFScript.MOD_ID + ":upload_highlight.png", () -> {
                         try {
                             // Encode the script JSON to GZIP Base64
                             byte[] bytes = Files.readAllBytes(s.getFile().toPath());
@@ -161,10 +161,10 @@ public class ScriptListScreen extends CScreen {
                             DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "Failed to upload script to the server, please report this to a DFScript developer!"));
 //                            e.printStackTrace();
                         }
-                    }, 0, 0, 1, 0.5f, 0, 0.5f);
+                    });
 
                     if (!Objects.equals(s.getServer(), "None")) {
-                        upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":unupload.png", () -> {
+                        upload = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":unupload.png", DFScript.MOD_ID + ":unupload_highlight.png", () -> {
                             try {
                                 // Remove the script to the server
                                 URL url = new URL("https://DFScript-Server.techstreetdev.repl.co/scripts/remove/");
@@ -200,16 +200,16 @@ public class ScriptListScreen extends CScreen {
                                 DFScript.MC.setScreen(new ScriptMessageScreen(new ScriptListScreen(allowEditAndUpload), "Failed to remove the script from the server, please try again!"));
 //                                e.printStackTrace();
                             }
-                        }, 0, 0, 1, 0.5f, 0, 0.5f);
+                        });
                     }
 
                     panel.add(upload);
                 }
                 else {
                     //Script Settings Button
-                    CButton settings = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":settings.png", () -> {
+                    CButton settings = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":settings.png", DFScript.MOD_ID + ":settings_highlight.png", () -> {
                         DFScript.MC.setScreen(new ScriptSettingsScreen(s, false));
-                    }, 0, 0, 1, 0.5f, 0, 0.5f);
+                    });
 
                     panel.add(settings);
                 }

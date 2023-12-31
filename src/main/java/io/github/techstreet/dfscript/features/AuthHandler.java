@@ -9,7 +9,7 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
 import io.github.techstreet.dfscript.script.util.AuthcodeResponse;
 import io.github.techstreet.dfscript.script.util.ServercodeResponse;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.BufferedReader;
@@ -78,7 +78,7 @@ public class AuthHandler implements Loadable {
             // Authorization step two - Fake server connect
             try {
                 Session session = DFScript.MC.getSession();
-                DFScript.MC.getSessionService().joinServer(session.getProfile(), session.getAccessToken(), commonSecret);
+                DFScript.MC.getSessionService().joinServer(session.getUuidOrNull(), session.getAccessToken(), commonSecret);
             } catch (AuthenticationException e) {
 //                DFScript.LOGGER.error(e.getMessage());
 //                e.printStackTrace();

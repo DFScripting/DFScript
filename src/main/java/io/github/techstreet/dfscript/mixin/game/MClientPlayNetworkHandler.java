@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.network.packet.s2c.common.*;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -80,11 +81,11 @@ public class MClientPlayNetworkHandler {
 //        EventManager.getInstance().dispatch(event);
     }
 
-    @Inject(method = "onDisconnect", at = @At("RETURN"), cancellable = true)
+/*  @Inject(method = "onDisconnect", at = @At("RETURN"), cancellable = true)
     private void onDisconnect(DisconnectS2CPacket packet, CallbackInfo ci) {
         ServerLeaveEvent event = new ServerLeaveEvent(packet);
         EventManager.getInstance().dispatch(event);
-    }
+    }*/
 
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
     private void chat(String content, CallbackInfo ci) {

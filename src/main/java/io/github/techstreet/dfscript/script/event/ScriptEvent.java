@@ -5,9 +5,6 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptGroup;
-import io.github.techstreet.dfscript.script.ScriptPart;
-import io.github.techstreet.dfscript.script.ScriptSnippet;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;

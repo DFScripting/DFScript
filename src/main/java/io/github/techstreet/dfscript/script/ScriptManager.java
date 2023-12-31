@@ -13,12 +13,14 @@ import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.action.ScriptFunctionCall;
 import io.github.techstreet.dfscript.script.argument.*;
+import io.github.techstreet.dfscript.script.conditions.ScriptBooleanSet;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.event.*;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
+import io.github.techstreet.dfscript.script.repetitions.ScriptWhile;
 import io.github.techstreet.dfscript.script.util.ScriptValueJson;
 import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.FileUtil;
@@ -48,6 +50,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptArgument.class, new ScriptArgument.Serializer())
         .registerTypeAdapter(ScriptTextArgument.class, new ScriptTextArgument.Serializer())
         .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
+        .registerTypeAdapter(ScriptBoolArgument.class, new ScriptBoolArgument.Serializer())
         .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
         .registerTypeAdapter(ScriptClientValueArgument.class, new ScriptClientValueArgument.Serializer())
         .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
@@ -58,7 +61,9 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptBuiltinCondition.class, new ScriptBuiltinCondition.Serializer())
         .registerTypeAdapter(ScriptCondition.class, new ScriptCondition.Serializer())
         .registerTypeAdapter(ScriptBuiltinRepetition.class, new ScriptBuiltinRepetition.Serializer())
+        .registerTypeAdapter(ScriptWhile.class, new ScriptWhile.Serializer())
         .registerTypeAdapter(ScriptBranch.class, new ScriptBranch.Serializer())
+        .registerTypeAdapter(ScriptBooleanSet.class, new ScriptBooleanSet.Serializer())
         .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
         .registerTypeAdapter(ScriptFunction.class, new ScriptFunction.Serializer())
         .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
@@ -72,6 +77,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
         .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
         .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
+        .registerTypeAdapter(ScriptBoolValue.class, new ScriptDictionaryValue.Serializer())
         .create();
 
     public ScriptManager() {

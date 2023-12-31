@@ -36,6 +36,11 @@ public class ScriptUnknownValue extends ScriptValue{
         return 0;
     }
 
+    @Override
+    public boolean asBoolean() {
+        return false;
+    }
+
     public int compare(ScriptValue other) {
         return 0;
     }

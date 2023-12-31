@@ -44,6 +44,11 @@ public class ScriptNumberValue extends ScriptValue {
     }
 
     @Override
+    public boolean asBoolean() {
+        return value != 0;
+    }
+
+    @Override
     public int compare(ScriptValue other) {
         if(other instanceof ScriptNumberValue) {
             if(asNumber() == other.asNumber()) {

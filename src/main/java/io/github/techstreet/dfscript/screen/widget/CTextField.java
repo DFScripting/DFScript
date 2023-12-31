@@ -162,36 +162,35 @@ public class CTextField implements CWidget {
             int selectionEnd = Math.max(selectionPos, cursorPos);
 
             switch (keyCode) {
-                case 259: //backspace
+                case 259 -> { //backspace
                     if (hasSelection) {
                         deleteSelection(selectionStart, selectionEnd);
                     } else if (cursorPos > 0) {
                         text = text.substring(0, cursorPos - 1) + text.substring(cursorPos);
                         cursorPos--;
                     }
-                    break;
-                case 257: //enter
-                    if(!multiline) {
+                }
+                case 257 -> { //enter
+                    if (!multiline) {
                         return;
                     }
-
                     if (hasSelection) {
                         deleteSelection(selectionStart, selectionEnd);
                     }
                     text = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
                     cursorPos++;
-                    break;
-                case 263: //left
+                }
+                case 263 -> { //left
                     if (cursorPos > 0) {
                         cursorPos--;
                     }
-                    break;
-                case 262: //right
+                }
+                case 262 -> { //right
                     if (cursorPos < text.length()) {
                         cursorPos++;
                     }
-                    break;
-                case 265: //up
+                }
+                case 265 -> { //up
                     if (getCursorLineIndex() > 0) {
                         int x = f.getWidth(getCursorLine().substring(0, getIndexInCursorLine()));
                         int charPos = f.trimToWidth(getLine(getCursorLineIndex() - 1), x, true).length();
@@ -199,8 +198,8 @@ public class CTextField implements CWidget {
                     } else {
                         cursorPos = 0;
                     }
-                    break;
-                case 264: //down
+                }
+                case 264 -> { //down
                     if (getCursorLineIndex() < getLines().length - 1) {
                         int x = f.getWidth(getCursorLine().substring(0, getIndexInCursorLine()));
                         int charPos = f.trimToWidth(getLine(getCursorLineIndex() + 1), x, true).length();
@@ -208,29 +207,29 @@ public class CTextField implements CWidget {
                     } else {
                         cursorPos = text.length();
                     }
-                    break;
-                case 261: //delete
+                }
+                case 261 -> { //delete
                     if (hasSelection) {
                         deleteSelection(selectionStart, selectionEnd);
                     } else if (cursorPos < text.length()) {
                         text = text.substring(0, cursorPos) + text.substring(cursorPos + 1);
                     }
-                    break;
-                case 65: //a
+                }
+                case 65 -> { //a
                     if (modifiers == 2) {
                         selectionPos = 0;
                         cursorPos = text.length();
                         hasSelection = true;
                     }
-                    break;
-                case 67: //c
+                }
+                case 67 -> { //c
                     if (modifiers == 2) {
                         if (hasSelection) {
                             DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
                         }
                     }
-                    break;
-                case 86: //v
+                }
+                case 86 -> { //v
                     if (modifiers == 2) {
                         if (hasSelection) {
                             deleteSelection(selectionStart, selectionEnd);
@@ -239,14 +238,15 @@ public class CTextField implements CWidget {
                         text = text.substring(0, cursorPos) + clipboard + text.substring(cursorPos);
                         cursorPos += clipboard.length();
                     }
-                    break;
-                case 88: //x
+                }
+                case 88 -> { //x
                     if (modifiers == 2) {
                         if (hasSelection) {
                             DFScript.MC.keyboard.setClipboard(text.substring(selectionStart, selectionEnd));
                             deleteSelection(selectionStart, selectionEnd);
                         }
                     }
+                }
             }
 
             if (selectionPos == cursorPos) {
@@ -318,36 +318,37 @@ public class CTextField implements CWidget {
     }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double amount) {
+    public void mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
         if (!editable || !selected) {
             return;
         }
 
         TextRenderer f = DFScript.MC.textRenderer;
 
-        if(xScrolling)
-        {
-            int maxScroll = 0;
+        int maxScroll = 0;
 
-            for (String line : getLines()) {
-                int lineWidth = f.getWidth(line);
+        for (String line : getLines()) {
+            int lineWidth = f.getWidth(line);
 
-                if(maxScroll < lineWidth) {
-                    maxScroll = lineWidth;
-                }
+            if(maxScroll < lineWidth) {
+                maxScroll = lineWidth;
             }
-
-            maxScroll /= 2;
-            maxScroll -= width - 2;
-
-            xScroll += amount * 5;
-            xScroll = Math.min(0, Math.max(xScroll, -maxScroll));
-
-            return;
         }
 
-        scroll += amount * 5;
+        maxScroll /= 2;
+        maxScroll -= width - 2;
+
+        if(xScrolling)
+        {
+            double temp = vertical;
+            vertical = horizontal;
+            horizontal = temp;
+        }
+
+        scroll += vertical * 5;
         scroll = Math.min(0, Math.max(scroll, -(getLines().length + 1) * f.fontHeight / 2 + height - 2));
+        xScroll += horizontal * 5;
+        xScroll = Math.min(0, Math.max(xScroll, -maxScroll));
     }
 
     public int getCursorLineIndex() {
