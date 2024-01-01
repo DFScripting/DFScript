@@ -19,7 +19,7 @@ public class MMultiplayerScreen extends Screen {
     @Unique
     private final Identifier identifier_main = new Identifier(DFScript.MOD_ID + ":scripts");
     @Unique
-    private final Identifier identifier_main_highlight = new Identifier(DFScript.MOD_ID + "dfscript:scripts_highlight");
+    private final Identifier identifier_main_highlight = new Identifier(DFScript.MOD_ID + ":scripts_highlight");
 
     protected MMultiplayerScreen(Text title) {
         super(title);
