@@ -34,7 +34,7 @@ public enum ScriptActionCategory {
     LISTS("List Manipulation", Items.BOOKSHELF),
     TEXTS("Text Manipulation", Items.BOOK),
     STRINGS("String Manipulation", Items.STRING),
-    DICTIONARIES("Dictionaries", Items.ENDER_CHEST),
+    DICTIONARIES("Dictionary Manipulation", Items.ENDER_CHEST),
     CONDITIONS("Conditions and Branches", Items.OBSIDIAN),
     LOOPS("Loops and Repetitions", Items.PRISMARINE),
 
