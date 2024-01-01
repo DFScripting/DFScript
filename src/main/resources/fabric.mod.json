@@ -3,7 +3,7 @@
   "id": "dfscript",
   "version": "${project.version}",
   "name": "DFScript",
-  "description": "» DFScript is a community-made scripting mod that allows you to script your own QOL features and improve your DiamondFire experience, DFScript is a fork of CodeUtilities scripting feature origionally made by BlazeMCworld. (mcdiamondfire.com).\n» Maintainers:\nTechStreet, GeorgeRNG and XTerPL\n\n» Contributors:\nBlazeMCworld, RedVortexDev",
+  "description": "» DFScript is a community-made scripting mod that allows you to script your own QOL features and improve your DiamondFire experience, DFScript is a fork of CodeUtilities scripting feature originally made by BlazeMCworld. (mcdiamondfire.com).\n» Maintainers:\nTechStreet, GeorgeRNG and XTerPL\n\n» Contributors:\nBlazeMCworld, RedVortexDev",
   "authors": [],
   "contact": {
     "homepage": "https://modrinth.com/mod/dfscript",
