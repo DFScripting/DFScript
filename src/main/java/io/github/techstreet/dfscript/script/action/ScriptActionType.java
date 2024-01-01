@@ -1253,15 +1253,17 @@ public enum ScriptActionType {
             String text = ctx.value("Text").asText();
             String identifier = ctx.value("Identifier").asText();
 
-            if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.widgets.add(new ScriptMenuButton(x,y,width,height,text,identifier,ctx.task().context().script()));
+            DFScript.MC.send(() -> {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        menu.widgets.add(new ScriptMenuButton(x,y,width,height,text,identifier,ctx.task().context().script()));
+                    } else {
+                        OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
+                    }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add button to menu! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to add button to menu! (Unknown menu type)");
-            }
+            });
         })),
 
     ADD_MENU_ITEM(builder -> builder.name("Add Menu Item")
@@ -1278,15 +1280,17 @@ public enum ScriptActionType {
             ItemStack item = ScriptValueItem.itemFromValue(ctx.value("Item"));
             String identifier = ctx.value("Identifier").asText();
 
-            if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.widgets.add(new ScriptMenuItem(x,y,item,identifier));
+            DFScript.MC.send(() -> {
+                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        menu.widgets.add(new ScriptMenuItem(x,y,item,identifier));
+                    } else {
+                        OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
+                    }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add item to menu! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to add item to menu! (Unknown menu type)");
-            }
+            });
         })),
 
     ADD_MENU_TEXT(builder -> builder.name("Add Menu Text")
@@ -1304,15 +1308,17 @@ public enum ScriptActionType {
             String identifier = ctx.value("Identifier").asText();
             Text text = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(rawText));
 
-            if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.widgets.add(new ScriptMenuText(x,y,text,0x333333, 1, false, false,identifier));
+            DFScript.MC.send(() -> {
+                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        menu.widgets.add(new ScriptMenuText(x,y,text,0x333333, 1, false, false,identifier));
+                    } else {
+                        OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
+                    }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text to menu! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to add text to menu! (Unknown menu type)");
-            }
+            });
         })),
 
     ADD_MENU_TEXT_FIELD(builder -> builder.name("Add Menu Text Field")
@@ -1331,15 +1337,17 @@ public enum ScriptActionType {
             int height = (int) ctx.value("Height").asNumber();
             String identifier = ctx.value("Identifier").asText();
 
-            if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.widgets.add(new ScriptMenuTextField("",x,y,width,height,true,identifier));
+            DFScript.MC.send(() -> {
+                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        menu.widgets.add(new ScriptMenuTextField("", x, y, width, height, true, identifier));
+                    } else {
+                        OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
+                    }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to add text field to menu! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to add text field to menu! (Unknown menu type)");
-            }
+            });
         })),
 
     REMOVE_MENU_ELEMENT(builder -> builder.name("Remove Menu Element")
@@ -1349,15 +1357,17 @@ public enum ScriptActionType {
         .arg("Identifier", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
             String identifier = ctx.value("Identifier").asText();
-            if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.removeChild(identifier);
+            DFScript.MC.send(() -> {
+                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        menu.removeChild(identifier);
+                    } else {
+                        OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
+                    }
                 } else {
-                    OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to remove element from menu! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to remove element from menu! (Unknown menu type)");
-            }
+            });
         })),
 
     GET_MENU_TEXT_FIELD_VALUE(builder -> builder.name("Get Menu Text Field Value")
@@ -1397,20 +1407,22 @@ public enum ScriptActionType {
         .action(ctx -> {
             String identifier = ctx.value("Identifier").asText();
 
-            if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                if (menu.ownedBy(ctx.task().context().script())) {
-                    ScriptWidget w = menu.getWidget(identifier);
-                    if (w instanceof ScriptMenuTextField field) {
-                        field.setText(ctx.value("Value").asText());
+            DFScript.MC.send(() -> {
+                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                    if (menu.ownedBy(ctx.task().context().script())) {
+                        ScriptWidget w = menu.getWidget(identifier);
+                        if (w instanceof ScriptMenuTextField field) {
+                            field.setText(ctx.value("Value").asText());
+                        } else {
+                            OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
+                        }
                     } else {
-                        OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
+                        OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
+                    OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
                 }
-            } else {
-                OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
-            }
+            });
         })),
 
         RANDOM_INT(builder -> builder.name("Random Int")
