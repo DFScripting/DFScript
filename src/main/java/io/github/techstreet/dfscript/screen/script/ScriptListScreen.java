@@ -9,6 +9,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
 import io.github.techstreet.dfscript.script.util.UploadResponse;
+import io.github.techstreet.dfscript.util.Regex;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -103,7 +104,7 @@ public class ScriptListScreen extends CScreen {
             panel.add(enableDisable);
 
             if(allowEditAndUpload) {
-                if (s.getOwner() != null && s.getOwner().equals(DFScript.PLAYER_UUID)) {
+                if (s.getOwner() != null && s.getOwner().replaceAll("-", "").equals(DFScript.PLAYER_UUID.replaceAll("-", ""))) {
                     // Edit Button
                     CButton edit = new CTexturedButton(addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":wrench.png", DFScript.MOD_ID + ":wrench_highlight.png", () -> {
                         DFScript.MC.setScreen(new ScriptEditScreen(s));
