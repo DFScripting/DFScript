@@ -40,6 +40,7 @@ public interface ScriptArgument {
             String type = object.get("type").getAsString();
             return switch (type) {
                 case "TEXT" -> new ScriptTextArgument(object.get("value").getAsString());
+                case "STRING" -> new ScriptStringArgument(object.get("value").getAsString());
                 case "NUMBER" -> new ScriptNumberArgument(object.get("value").getAsDouble());
                 case "BOOL" -> new ScriptBoolArgument(object.get("value").getAsBoolean());
                 case "VARIABLE" -> context.deserialize(object, ScriptVariableArgument.class);

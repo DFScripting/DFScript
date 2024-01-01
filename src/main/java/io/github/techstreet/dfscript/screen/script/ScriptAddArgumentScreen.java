@@ -33,6 +33,10 @@ public class ScriptAddArgumentScreen extends CScreen {
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
         if(overwrite != null) input.setText(overwrite);
 
+        ItemStack stringIcon = new ItemStack(Items.STRING);
+        stringIcon.setCustomName(Text.literal("String")
+                .fillStyle(Style.EMPTY.withItalic(false)));
+
         ItemStack textIcon = new ItemStack(Items.BOOK);
         textIcon.setCustomName(Text.literal("Text")
             .fillStyle(Style.EMPTY.withItalic(false)));
@@ -67,18 +71,25 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         CItem addNumber = new CItem(2, 40, numberIcon);
         CItem addText = new CItem(12, 40, textIcon);
-        CItem addTrue = new CItem(22, 40, trueIcon);
-        CItem addFalse = new CItem(32, 40, falseIcon);
-        CItem addVariable = new CItem(42, 40, variableIcon);
-        CItem addClientValue = new CItem(52, 40, clientValueIcon);
-        CItem addConfigValue = new CItem(62, 40, configValueIcon);
-        CItem addFunctionArgument = new CItem(72, 40, functionArgumentIcon);
+        CItem addString = new CItem(22, 40, stringIcon);
+        CItem addTrue = new CItem(32, 40, trueIcon);
+        CItem addFalse = new CItem(42, 40, falseIcon);
+        CItem addVariable = new CItem(52, 40, variableIcon);
+        CItem addClientValue = new CItem(62, 40, clientValueIcon);
+        CItem addConfigValue = new CItem(72, 40, configValueIcon);
+        CItem addFunctionArgument = new CItem(82, 40, functionArgumentIcon);
 
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         addText.setClickListener((btn) -> {
             if(overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
+            close();
+        });
+
+        addString.setClickListener(btn -> {
+            if (overwrite != null) action.getArguments().remove(index);
+            action.getArguments().add(index, new ScriptStringArgument(input.getText()));
             close();
         });
 
@@ -126,6 +137,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         widgets.add(input);
         widgets.add(addNumber);
         widgets.add(addText);
+        widgets.add(addString);
         widgets.add(addTrue);
         widgets.add(addFalse);
         widgets.add(addVariable);

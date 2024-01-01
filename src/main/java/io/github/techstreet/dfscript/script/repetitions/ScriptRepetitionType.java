@@ -6,6 +6,7 @@ import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
+import io.github.techstreet.dfscript.script.values.ScriptStringValue;
 import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
@@ -28,7 +29,7 @@ public enum ScriptRepetitionType {
     REPEAT_MULTIPLE(builder -> builder.name("RepeatMultiple")
             .description("Repeats a specified amount of times.")
             .icon(Items.REDSTONE)
-            .category(ScriptActionCategory.NUMBERS)
+            .category(ScriptActionCategory.LOOPS)
             .arg("Times", ScriptActionArgumentType.NUMBER)
             .arg("Current", ScriptActionArgumentType.VARIABLE, b -> b.optional(true))
             .action(ctx -> {
@@ -51,7 +52,7 @@ public enum ScriptRepetitionType {
     FOR_EACH_IN_LIST(builder -> builder.name("For Each In List")
             .description("Iterates over a list.")
             .icon(Items.BOOKSHELF)
-            .category(ScriptActionCategory.LISTS)
+            .category(ScriptActionCategory.LOOPS)
             .arg("Variable", ScriptActionArgumentType.VARIABLE)
             .arg("List", ScriptActionArgumentType.LIST)
             .action(ctx -> {
@@ -70,10 +71,33 @@ public enum ScriptRepetitionType {
                 return false;
             })),
 
+    FOR_CHAR_IN_STRING(builder -> builder.name("For Character in String")
+            .description("Iterates over a string")
+            .icon(Items.WHITE_WOOL)
+            .category(ScriptActionCategory.LOOPS)
+            .arg("Variable", ScriptActionArgumentType.VARIABLE)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                if (!ctx.hasScopeVariable("Counter")) {
+                    ctx.setScopeVariable("Counter", 0);
+                }
+
+                int counter = (Integer) ctx.getScopeVariable("Counter") + 1;
+                String string = ctx.value("String").asString();
+
+                if (counter <= string.length()) {
+                    ctx.setScopeVariable("Counter", counter);
+                    ctx.setVariable("Variable", new ScriptStringValue(String.valueOf(string.charAt(counter - 1))));
+                    return true;
+                }
+                return false;
+            })
+    ),
+
     DICT_FOR_EACH(builder -> builder.name("For Each In Dictionary")
             .description("Iterates over a dictionary.")
             .icon(Items.BOOKSHELF)
-            .category(ScriptActionCategory.DICTIONARIES)
+            .category(ScriptActionCategory.LOOPS)
             .arg("Key", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.VARIABLE)
             .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
@@ -89,7 +113,7 @@ public enum ScriptRepetitionType {
                 if(iterator.hasNext()) {
                     Map.Entry<String, ScriptValue> entry = iterator.next();
                     ctx.setScopeVariable("Iterator", iterator);
-                    ctx.setVariable("Key", new ScriptTextValue(entry.getKey()));
+                    ctx.setVariable("Key", new ScriptStringValue(entry.getKey()));
                     ctx.setVariable("Value", entry.getValue());
                     return true;
                 }
@@ -99,7 +123,7 @@ public enum ScriptRepetitionType {
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
             .description("Repeats for eternity.\nMake sure to have a Stop Repetition, Stop Codeline or Wait somewhere in the code!\nThere's a lagslayer for the repetition actions.\nIt activates after 100000 iterations with no Wait.")
             .icon(Items.GOLD_INGOT)
-            .category(ScriptActionCategory.MISC)
+            .category(ScriptActionCategory.LOOPS)
             .action(ctx -> true));
 
     private Function<ScriptActionContext, Boolean> action = (ctx) -> false;

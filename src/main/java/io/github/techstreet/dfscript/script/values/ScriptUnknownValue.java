@@ -3,6 +3,7 @@ package io.github.techstreet.dfscript.script.values;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class ScriptUnknownValue extends ScriptValue{
 
@@ -23,7 +24,7 @@ public class ScriptUnknownValue extends ScriptValue{
 
     @Override
     public boolean valueEquals(ScriptValue other) {
-        return false;
+        return Objects.equals(other.typeName(), typeName());
     }
 
     @Override

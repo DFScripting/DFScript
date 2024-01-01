@@ -14,6 +14,10 @@ public abstract class ScriptValue {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to string");
     }
 
+    public ScriptTextValue asText() {
+        return new ScriptTextValue(asString());
+    }
+
     public double asNumber() {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to number");
     }
@@ -86,8 +90,9 @@ public abstract class ScriptValue {
                             default ->
                                 throw new JsonParseException("Unable to convert a json object of type '" + objectType + "' into a script value");
                         };
-                    }
-                    else {
+                    } else if (object.has("str_el")) {
+                        return context.deserialize(object, ScriptStringValue.class);
+                    } else {
                         return context.deserialize(object, ScriptDictionaryValue.class);
                     }
                 }

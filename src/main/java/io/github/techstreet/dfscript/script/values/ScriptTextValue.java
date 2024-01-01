@@ -1,6 +1,10 @@
 package io.github.techstreet.dfscript.script.values;
 
 import com.google.gson.*;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 
@@ -35,6 +39,10 @@ public class ScriptTextValue extends ScriptValue {
     @Override
     public String formatAsText() {
         return '"'+ asString()+'"';
+    }
+
+    public Component parse() {
+        return MiniMessage.miniMessage().deserialize(value);
     }
 
     public static class Serializer implements JsonSerializer<ScriptTextValue>, JsonDeserializer<ScriptTextValue> {

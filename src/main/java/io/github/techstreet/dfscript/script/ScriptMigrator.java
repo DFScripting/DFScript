@@ -3,6 +3,8 @@ package io.github.techstreet.dfscript.script;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
+import io.github.techstreet.dfscript.script.values.ScriptStringValue;
+import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 
 public class ScriptMigrator {
     public static void migrate(Script script) {
@@ -20,12 +22,12 @@ public class ScriptMigrator {
         }
 
         if (script.getVersion() == 2) {
-            script.replaceAction(ScriptActionType.TEXT_SUBTEXT, ScriptActionType.TEXT_SUBTEXT_V1);
+            script.replaceAction(ScriptActionType.GET_SUBSTRING, ScriptActionType.TEXT_SUBTEXT_V1);
             script.setVersion(3);
         }
 
         if (script.getVersion() == 3) {
-            script.replaceAction(ScriptActionType.SPLIT_TEXT, ScriptActionType.REGEX_SPLIT_TEXT);
+            script.replaceAction(ScriptActionType.SPLIT_STRING, ScriptActionType.REGEX_SPLIT_STRING);
             script.replaceAction(ScriptActionType.RANDOM_NUMBER, ScriptActionType.RANDOM_DOUBLE);
 
             script.setVersion(4);

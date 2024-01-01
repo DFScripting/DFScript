@@ -2,6 +2,9 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import java.awt.Rectangle;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.renderer.ComponentRenderer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,6 +15,7 @@ public class CText implements CWidget {
     int x;
     int y;
     Text text;
+    Component component;
     int color;
     float scale;
     boolean centered;
@@ -27,8 +31,22 @@ public class CText implements CWidget {
         this.shadow = shadow;
     }
 
+    public CText(int x, int y, Component component, int color, float scale, boolean centered, boolean shadow) {
+        this.x = x;
+        this.y = y;
+        this.component = component;
+        this.color = color;
+        this.scale = scale;
+        this.centered = centered;
+        this.shadow = shadow;
+    }
+
     public CText(int x, int y, Text text) {
         this(x, y, text, 0x333333, 1, false, false);
+    }
+
+    public CText(int x, int y, Component component) {
+        this(x, y, component, 0x333333, 1, false, false);
     }
 
     @Override

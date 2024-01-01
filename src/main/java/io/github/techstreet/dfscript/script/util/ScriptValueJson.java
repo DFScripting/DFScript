@@ -13,6 +13,12 @@ public class ScriptValueJson {
             return new JsonPrimitive(snv.asNumber());
         } else if (value instanceof ScriptTextValue stv) {
             return new JsonPrimitive(stv.asString());
+        } else if (value instanceof ScriptStringValue ssv) {
+            JsonObject inner = new JsonObject();
+            inner.add("value", new JsonPrimitive(ssv.toString()));
+            JsonObject outer = new JsonObject();
+            outer.add("str_el", inner);
+            return outer;
         } else if (value instanceof ScriptBoolValue sbv) {
             return new JsonPrimitive(sbv.asBoolean());
         }else if (value instanceof ScriptListValue slv) {
@@ -51,9 +57,17 @@ public class ScriptValueJson {
             }
             return new ScriptListValue(list);
         } else if (element.isJsonObject()) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            if (jsonObject.has("str_el")) {
+                if (jsonObject.get("str_el").isJsonObject()) {
+                    if (jsonObject.get("str_el").getAsJsonObject().has("value")) {
+                        return new ScriptStringValue(jsonObject.get("str").getAsJsonObject().get("value").getAsString());
+                    }
+                }
+            }
             HashMap<String, ScriptValue> map = new HashMap<>();
-            for (String key : element.getAsJsonObject().keySet()) {
-                map.put(key, fromJson(element.getAsJsonObject().get(key)));
+            for (String key : jsonObject.keySet()) {
+                map.put(key, fromJson(jsonObject.get(key)));
             }
             return new ScriptDictionaryValue(map);
         } else {

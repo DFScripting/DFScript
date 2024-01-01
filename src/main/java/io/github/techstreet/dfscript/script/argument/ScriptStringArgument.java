@@ -6,7 +6,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
+import io.github.techstreet.dfscript.script.values.ScriptStringValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,21 +16,21 @@ import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Type;
 
-public record ScriptTextArgument(String value) implements ScriptArgument {
+public record ScriptStringArgument(String value) implements ScriptArgument {
 
     @Override
     public ScriptValue getValue(ScriptTask task) {
-        return new ScriptTextValue(value);
+        return new ScriptStringValue(value);
     }
 
     @Override
     public boolean convertableTo(ScriptActionArgumentType type) {
-        return ScriptActionArgumentType.TEXT.convertableTo(type);
+        return ScriptActionArgumentType.STRING.convertableTo(type);
     }
 
     @Override
     public ItemStack getArgIcon() {
-        return new ItemStack(Items.BOOK).setCustomName(Text.literal("Text").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
+        return new ItemStack(Items.STRING).setCustomName(Text.literal("String").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
     }
 
     @Override
@@ -38,14 +38,15 @@ public record ScriptTextArgument(String value) implements ScriptArgument {
         return value;
     }
 
-    public static class Serializer implements JsonSerializer<ScriptTextArgument> {
+    public static class Serializer implements JsonSerializer<ScriptStringArgument> {
 
         @Override
-        public JsonElement serialize(ScriptTextArgument src, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(ScriptStringArgument src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("type", "TEXT");
+            object.addProperty("type", "STRING");
             object.addProperty("value", src.value());
             return object;
         }
     }
+
 }

@@ -1,17 +1,9 @@
 package io.github.techstreet.dfscript.screen.script;
 
-import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
-import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptTextArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptVariableScope;
-import io.github.techstreet.dfscript.script.event.ScriptFunction;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.values.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;

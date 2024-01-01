@@ -30,7 +30,7 @@ public enum ScriptConditionType {
     IF_EQUALS(builder -> builder.name("Equals")
         .description("Checks if one value is equal to another.")
         .icon(Items.IRON_INGOT)
-        .category(ScriptActionCategory.VARIABLES)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.ANY)
         .arg("Other", ScriptActionArgumentType.ANY)
         .action(ctx -> ctx.value("Value").valueEquals(ctx.value("Other")))),
@@ -38,7 +38,7 @@ public enum ScriptConditionType {
     IF_NOT_EQUALS(builder -> builder.name("Not Equals")
         .description("Checks if one value is not equal to another.")
         .icon(Items.BARRIER)
-        .category(ScriptActionCategory.VARIABLES)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.ANY)
         .arg("Other", ScriptActionArgumentType.ANY)
         .deprecate(IF_EQUALS)
@@ -47,7 +47,7 @@ public enum ScriptConditionType {
     IF_GREATER(builder -> builder.name("Greater")
         .description("Checks if one number is greater than another.")
         .icon(Items.BRICK)
-        .category(ScriptActionCategory.NUMBERS)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.NUMBER)
         .arg("Other", ScriptActionArgumentType.NUMBER)
         .action(ctx -> ctx.value("Value").asNumber() > ctx.value("Other").asNumber())),
@@ -55,7 +55,7 @@ public enum ScriptConditionType {
     IF_GREATER_EQUALS(builder -> builder.name("Greater Equals")
         .description("Checks if one number is greater than or equal to another.")
         .icon(Items.BRICKS)
-        .category(ScriptActionCategory.NUMBERS)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.NUMBER)
         .arg("Other", ScriptActionArgumentType.NUMBER)
         .action(ctx -> ctx.value("Value").asNumber() >= ctx.value("Other").asNumber())),
@@ -63,7 +63,7 @@ public enum ScriptConditionType {
     IF_LESS(builder -> builder.name("Less")
         .description("Checks if one number is less than another.")
         .icon(Items.NETHER_BRICK)
-        .category(ScriptActionCategory.NUMBERS)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.NUMBER)
         .arg("Other", ScriptActionArgumentType.NUMBER)
         .action(ctx -> ctx.value("Value").asNumber() < ctx.value("Other").asNumber())),
@@ -71,7 +71,7 @@ public enum ScriptConditionType {
     IF_LESS_EQUALS(builder -> builder.name("If Less Equals")
         .description("Checks if one number is less than or equal to another.")
         .icon(Items.NETHER_BRICKS)
-        .category(ScriptActionCategory.NUMBERS)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Value", ScriptActionArgumentType.NUMBER)
         .arg("Other", ScriptActionArgumentType.NUMBER)
         .action(ctx -> ctx.value("Value").asNumber() <= ctx.value("Other").asNumber())),
@@ -79,7 +79,7 @@ public enum ScriptConditionType {
     IF_WITHIN_RANGE(builder -> builder.name("Number Within Range")
             .description("Checks if a number is between\n2 different numbers (inclusive).")
             .icon(Items.CHEST)
-            .category(ScriptActionCategory.NUMBERS)
+            .category(ScriptActionCategory.CONDITIONS)
             .arg("Value", ScriptActionArgumentType.NUMBER)
             .arg("Minimum", ScriptActionArgumentType.NUMBER)
             .arg("Maximum", ScriptActionArgumentType.NUMBER)
@@ -97,7 +97,7 @@ public enum ScriptConditionType {
     IF_NOT_WITHIN_RANGE(builder -> builder.name("Number Not Within Range")
             .description("Checks if a number isn't between\n2 different numbers (inclusive).")
             .icon(Items.TRAPPED_CHEST)
-            .category(ScriptActionCategory.NUMBERS)
+            .category(ScriptActionCategory.CONDITIONS)
             .arg("Value", ScriptActionArgumentType.NUMBER)
             .arg("Minimum", ScriptActionArgumentType.NUMBER)
             .arg("Maximum", ScriptActionArgumentType.NUMBER)
@@ -117,7 +117,7 @@ public enum ScriptConditionType {
     IF_LIST_CONTAINS(builder -> builder.name("List Contains")
         .description("Checks if a list contains a value.")
         .icon(Items.BOOKSHELF)
-        .category(ScriptActionCategory.LISTS)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("List", ScriptActionArgumentType.LIST)
         .arg("Value", ScriptActionArgumentType.ANY)
         .action(ctx -> {
@@ -125,36 +125,36 @@ public enum ScriptConditionType {
             return list.stream().anyMatch(value -> value.valueEquals(ctx.value("Value")));
         })),
 
-    IF_TEXT_CONTAINS(builder -> builder.name("Text Contains")
-        .description("Checks if a text contains a value.")
+    IF_STRING_CONTAINS(builder -> builder.name("String Contains")
+        .description("Checks if a string contains a value.")
         .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Subtext", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.CONDITIONS)
+        .arg("String", ScriptActionArgumentType.STRING)
+        .arg("Sub-String", ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String subtext = ctx.value("Subtext").asString();
+            String text = ctx.value("String").asString();
+            String subtext = ctx.value("Sub-String").asString();
             return text.contains(subtext);
         })),
 
     IF_MATCHES_REGEX(builder -> builder.name("Matches Regex")
-        .description("Checks if a text matches a regex.")
+        .description("Checks if a string matches a regex.")
         .icon(Items.ANVIL)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Regex", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.CONDITIONS)
+        .arg("String", ScriptActionArgumentType.STRING)
+        .arg("Regex", ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
+            String text = ctx.value("String").asString();
             String regex = ctx.value("Regex").asString();
             return text.matches(regex);
         })),
 
     IF_STARTS_WITH(builder -> builder.name("Starts With")
-        .description("Checks if a text starts with an other.")
+        .description("Checks if a string starts with an other.")
         .icon(Items.FEATHER)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Subtext", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.CONDITIONS)
+        .arg("String", ScriptActionArgumentType.STRING)
+        .arg("Sub-String", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String text = ctx.value("Text").asString();
             String subtext = ctx.value("Subtext").asString();
@@ -179,7 +179,7 @@ public enum ScriptConditionType {
         .category(ScriptActionCategory.TEXTS)
         .arg("Text", ScriptActionArgumentType.TEXT)
         .arg("Subtext", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_TEXT_CONTAINS)
+        .deprecate(IF_STRING_CONTAINS)
         .action(ctx -> {
             String text = ctx.value("Text").asString();
             String subtext = ctx.value("Subtext").asString();
@@ -215,9 +215,9 @@ public enum ScriptConditionType {
     IF_DICT_KEY_EXISTS(builder -> builder.name("Dictionary Key Exists")
         .description("Checks if a key exists in a dictionary.")
         .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.DICTIONARIES)
+        .category(ScriptActionCategory.CONDITIONS)
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
-        .arg("Key", ScriptActionArgumentType.TEXT)
+        .arg("Key", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asString();
@@ -240,10 +240,8 @@ public enum ScriptConditionType {
     IF_GUI_OPEN(builder -> builder.name("GUI Open")
         .description("Executes if a gui is open.")
         .icon(Items.BOOK)
-        .category(ScriptActionCategory.MISC)
-        .action(ctx -> {
-            return DFScript.MC.currentScreen != null;
-        })),
+        .category(ScriptActionCategory.CONDITIONS)
+        .action(ctx -> DFScript.MC.currentScreen != null)),
 
     IF_GUI_CLOSED(builder -> builder.name("GUI Not Open")
         .description("Executes if no gui is open.")
@@ -257,8 +255,8 @@ public enum ScriptConditionType {
     IF_FILE_EXISTS(builder -> builder.name("File Exists")
         .description("Executes if the specified file exists.")
         .icon(Items.BOOK)
-        .category(ScriptActionCategory.MISC)
-        .arg("Filename", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.CONDITIONS)
+        .arg("Filename", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String filename = ctx.value("Filename").asString();
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
@@ -294,7 +292,7 @@ public enum ScriptConditionType {
     IF_UNKNOWN(builder -> builder.name("Unknown")
             .description("Checks if a value is of the unknown type.")
             .icon(Items.IRON_NUGGET)
-            .category(ScriptActionCategory.VARIABLES)
+            .category(ScriptActionCategory.CONDITIONS)
             .arg("Value", ScriptActionArgumentType.ANY)
             .action(ctx -> (ctx.value("Value") instanceof ScriptUnknownValue))),
 
@@ -308,7 +306,8 @@ public enum ScriptConditionType {
     TRUE(builder -> builder.name("True")
             .description("Always executes.\nLiterally the only reason for this is so the\nlegacy deserializer code doesn't have to discard ELSEs\nthat aren't tied to a CONDITION...")
             .icon(Items.LIME_WOOL)
-            .category(null)
+            .category(ScriptActionCategory.CONDITIONS)
+            .deprecate(IF_BOOLEAN_TRUE)
             .action(ctx -> true));
 
     private Function<ScriptActionContext, Boolean> action = (ctx) -> false;

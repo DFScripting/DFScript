@@ -1,11 +1,7 @@
 package io.github.techstreet.dfscript.script.util;
 
-import io.github.techstreet.dfscript.script.values.ScriptDictionaryValue;
-import io.github.techstreet.dfscript.script.values.ScriptListValue;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +26,7 @@ public class ScriptValueItem {
     }
 
     private static NbtElement nbtFromValue(ScriptValue value) {
-        if (value instanceof ScriptTextValue) {
+        if (value instanceof ScriptTextValue || value instanceof ScriptStringValue) {
             return NbtString.of(value.asString());
         } else if (value instanceof ScriptNumberValue) {
             return NbtDouble.of(value.asNumber());
@@ -53,7 +49,7 @@ public class ScriptValueItem {
 
     private static ScriptValue valueFromNbt(NbtElement nbt) {
         if (nbt instanceof NbtString nbts) {
-            return new ScriptTextValue(nbts.asString());
+            return new ScriptStringValue(nbts.asString());
         } else if (nbt instanceof AbstractNbtNumber nbtn) {
             return new ScriptNumberValue(nbtn.doubleValue());
         } else if (nbt instanceof NbtList nbtl) {

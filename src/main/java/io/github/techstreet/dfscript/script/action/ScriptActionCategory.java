@@ -25,15 +25,18 @@ public enum ScriptActionCategory {
     MISC("Misc", Items.COMPASS, List.of(
             new ScriptActionCategoryExtraPartCreator(new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false))), () -> new ScriptComment(""))
     )),
-    VARIABLES("Variables", Items.IRON_INGOT),
-    CONDITIONS("Conditions", Items.LEVER, List.of(
+    VARIABLES("Variable Manipulation", Items.IRON_INGOT),
+    BOOLEANS("Boolean Manipulation", Items.LEVER, List.of(
             new ScriptActionCategoryExtra(ScriptBooleanSet.booleanSetIcon, (sc, sn, ii) -> DFScript.MC.setScreen(new ScriptConditionCategoryScreen(sc, sn, ii, (con) -> new ScriptBooleanSet(new ArrayList<>(), con)))),
             new ScriptActionCategoryExtra(ScriptWhile.whileIcon, (sc, sn, ii) -> DFScript.MC.setScreen(new ScriptConditionCategoryScreen(sc, sn, ii, (con) -> new ScriptWhile(new ArrayList<>(), con))))
     )),
-    NUMBERS("Numbers", Items.SLIME_BALL),
-    LISTS("Lists", Items.BOOKSHELF),
-    TEXTS("Texts", Items.BOOK),
+    NUMBERS("Number Manipulation", Items.SLIME_BALL),
+    LISTS("List Manipulation", Items.BOOKSHELF),
+    TEXTS("Text Manipulation", Items.BOOK),
+    STRINGS("String Manipulation", Items.STRING),
     DICTIONARIES("Dictionaries", Items.ENDER_CHEST),
+    CONDITIONS("Conditions and Branches", Items.OBSIDIAN),
+    LOOPS("Loops and Repetitions", Items.PRISMARINE),
 
     MENUS("Menus", Items.PAINTING),
 

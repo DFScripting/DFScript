@@ -15,10 +15,7 @@ import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.menu.ScriptMenuClickButtonEvent;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
-import io.github.techstreet.dfscript.script.values.ScriptListValue;
-import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
-import io.github.techstreet.dfscript.script.values.ScriptTextValue;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.ComponentUtil;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -61,9 +58,9 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         }
     }),
 
-    ENTERED_MESSAGE("EnteredMessage","The message entered. (SendChatEvent)", Items.WRITABLE_BOOK, ScriptActionArgumentType.TEXT, (task) -> {
+    ENTERED_MESSAGE("EnteredMessage","The message entered. (SendChatEvent)", Items.WRITABLE_BOOK, ScriptActionArgumentType.STRING, (task) -> {
         if (task.event() instanceof SendChatEvent e) {
-            return new ScriptTextValue(e.getMessage());
+            return new ScriptStringValue(e.getMessage());
         } else {
             throw new IllegalStateException("Event is not a SendChatEvent");
         }
@@ -71,7 +68,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
 
     TIMESTAMP("Timestamp","The current timestamp in milliseconds.", Items.CLOCK, ScriptActionArgumentType.NUMBER, (task) -> new ScriptNumberValue(System.currentTimeMillis())),
 
-    CLIPBOARD("Clipboard", "The current text on the clipboard", Items.PAPER, ScriptActionArgumentType.TEXT, (task) -> new ScriptTextValue(DFScript.MC.keyboard.getClipboard())),
+    CLIPBOARD("Clipboard", "The current text on the clipboard", Items.PAPER, ScriptActionArgumentType.STRING, (task) -> new ScriptStringValue(DFScript.MC.keyboard.getClipboard())),
 
     MAIN_HAND_ITEM("MainHandItem","The item in the players main hand.", Items.STONE_BUTTON, ScriptActionArgumentType.DICTIONARY,
             (task) -> ScriptValueItem.valueFromItem(DFScript.MC.player.getMainHandStack())
@@ -117,8 +114,8 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (task) -> new ScriptNumberValue(DFScript.MC.player.getInventory().selectedSlot)
     ),
 
-    GAME_MODE("Game Mode", "The gamemode the player is in.", Items.BEDROCK, ScriptActionArgumentType.TEXT,
-            (task) -> new ScriptTextValue(DFScript.MC.interactionManager.getCurrentGameMode().getName())
+    GAME_MODE("Game Mode", "The gamemode the player is in.", Items.BEDROCK, ScriptActionArgumentType.STRING,
+            (task) -> new ScriptStringValue(DFScript.MC.interactionManager.getCurrentGameMode().getName())
     ),
 
     WINDOW_WIDTH("Window Width", "The width of the current window.", Items.STICK, ScriptActionArgumentType.NUMBER,
@@ -129,23 +126,23 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (task) -> new ScriptNumberValue(DFScript.MC.getWindow().getScaledHeight())
     ),
 
-    MENU_ELEMENT_IDENTIFIER("Menu Element Identifier", "The identifier of the menu element that triggered the event.", Items.NAME_TAG, ScriptActionArgumentType.TEXT,(task) -> {
+    MENU_ELEMENT_IDENTIFIER("Menu Element Identifier", "The identifier of the menu element that triggered the event.", Items.NAME_TAG, ScriptActionArgumentType.STRING,(task) -> {
         if (task.event() instanceof ScriptMenuClickButtonEvent e) {
-            return new ScriptTextValue(e.identifier());
+            return new ScriptStringValue(e.identifier());
         } else {
             throw new IllegalStateException("The event is not a menu click event.");
         }
     }),
     
-    PLAYER_UUID("Player UUID", "The UUID of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
-            (task) -> new ScriptTextValue(DFScript.PLAYER_UUID)),
+    PLAYER_UUID("Player UUID", "The UUID of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.STRING,
+            (task) -> new ScriptStringValue(DFScript.PLAYER_UUID)),
 
-    PLAYER_NAME("Player Name", "The name of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.TEXT,
-            (task) -> new ScriptTextValue(DFScript.PLAYER_NAME)),
+    PLAYER_NAME("Player Name", "The name of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.STRING,
+            (task) -> new ScriptStringValue(DFScript.PLAYER_NAME)),
 
-    EVENT_SOUND("ReceivedSound", "The ID of the sound. (OnReceiveSound)", Items.NAUTILUS_SHELL, ScriptActionArgumentType.TEXT, (task) -> {
+    EVENT_SOUND("ReceivedSound", "The ID of the sound. (OnReceiveSound)", Items.NAUTILUS_SHELL, ScriptActionArgumentType.STRING, (task) -> {
         if(task.event() instanceof RecieveSoundEvent e) {
-            return new ScriptTextValue(e.getSoundId().toString().replaceAll("^minecraft:", ""));
+            return new ScriptStringValue(e.getSoundId().toString().replaceAll("^minecraft:", ""));
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
         }

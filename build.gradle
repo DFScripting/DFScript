@@ -14,6 +14,12 @@ targetCompatibility = JavaVersion.VERSION_17
 sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
+    maven {
+        name = "sonatype-oss-snapshots1"
+        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
+    }
+
     mavenCentral()
     jcenter()
 
@@ -52,6 +58,9 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // MiniMessaging
+    modImplementation include("net.kyori:adventure-platform-fabric:5.10.0")
 }
 
 processResources {

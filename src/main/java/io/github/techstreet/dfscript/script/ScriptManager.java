@@ -49,6 +49,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptPart.class, new ScriptPart.Serializer())
         .registerTypeAdapter(ScriptArgument.class, new ScriptArgument.Serializer())
         .registerTypeAdapter(ScriptTextArgument.class, new ScriptTextArgument.Serializer())
+            .registerTypeAdapter(ScriptStringArgument.class, new ScriptStringArgument.Serializer())
         .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
         .registerTypeAdapter(ScriptBoolArgument.class, new ScriptBoolArgument.Serializer())
         .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())

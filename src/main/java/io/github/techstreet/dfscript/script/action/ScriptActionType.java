@@ -11,6 +11,7 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.HudRenderEvent;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
+import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
@@ -25,6 +26,7 @@ import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.kyori.adventure.text.Component;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -52,7 +54,6 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 public enum ScriptActionType {
-
     DISPLAY_CHAT(builder -> builder.name("DisplayChat")
         .description("Displays a message in the chat.")
         .icon(Items.BOOK)
@@ -65,11 +66,13 @@ public enum ScriptActionType {
                     .append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
-            ChatUtil.sendMessage(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(sb.toString())));
+            ScriptTextValue finalText = new ScriptTextValue(sb.toString());
+            Component sendComponent = finalText.parse();
+            ChatUtil.sendMessage(sendComponent);
         })),
 
     ACTIONBAR(builder -> builder.name("ActionBar")
-        .description("Displays a message in theq action bar.")
+        .description("Displays a message in the action bar.")
         .icon(Items.SPRUCE_SIGN)
         .category(ScriptActionCategory.VISUALS)
         .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
@@ -80,17 +83,19 @@ public enum ScriptActionType {
                     .append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
-            ChatUtil.sendActionBar(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(sb.toString())));
+            ScriptTextValue finalText = new ScriptTextValue(sb.toString());
+            Component sendComponent = finalText.parse();
+            ChatUtil.sendActionBar(sendComponent);
         })),
 
     SEND_CHAT(builder -> builder.name("SendChat")
         .description("Makes the player send a chat message.")
         .icon(Items.PAPER)
         .category(ScriptActionCategory.ACTIONS)
-        .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
+        .arg("Messages", ScriptActionArgumentType.STRING, arg -> arg.plural(true))
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
-            for (ScriptValue arg : ctx.pluralValue("Texts")) {
+            for (ScriptValue arg : ctx.pluralValue("Messages")) {
                 sb.append(arg.asString())
                     .append(" ");
             }
@@ -101,11 +106,11 @@ public enum ScriptActionType {
             {
                 sb.deleteCharAt(0);
 
-                io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler().sendCommand(sb.toString());
+                DFScript.MC.getNetworkHandler().sendCommand(sb.toString());
             }
             else
             {
-                io.github.techstreet.dfscript.DFScript.MC.getNetworkHandler().sendChatMessage(sb.toString());
+                DFScript.MC.getNetworkHandler().sendChatMessage(sb.toString());
             }
         })),
 
@@ -120,16 +125,16 @@ public enum ScriptActionType {
             ctx.value("Value")
         ))),
 
-    GET_REQUEST(builder -> builder.name("Get Webrequest")
+    GET_REQUEST(builder -> builder.name("GET Web Request")
         .description("Makes a get request to the internet.")
         .icon(Items.GRASS_BLOCK)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Url", ScriptActionArgumentType.TEXT)
+        .arg("URL", ScriptActionArgumentType.STRING)
         .category(ScriptActionCategory.VARIABLES)
         .action(ctx -> {
             try{
             StringBuilder result = new StringBuilder();
-            URL url = new URL(ctx.value("Url").asString());
+            URL url = new URL(ctx.value("URL").asString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
@@ -139,8 +144,8 @@ public enum ScriptActionType {
             }
             ctx.setVariable("Result", new ScriptTextValue(result.toString()));
           }catch(MalformedURLException ex){
-                OverlayManager.getInstance().add("Malformed URL error!");
-          }catch(IOException ex){
+                OverlayManager.getInstance().add("The URL is malformed! (" + ctx.value("URL").asString() + ")");
+          }catch(IOException ignored){
 
           }
         })),
@@ -150,7 +155,11 @@ public enum ScriptActionType {
         .icon(Items.GLOWSTONE_DUST)
         .category(ScriptActionCategory.NUMBERS)
         .arg("Variable", ScriptActionArgumentType.VARIABLE)
-        .arg("Amount", ScriptActionArgumentType.NUMBER, arg -> arg.plural(true))
+        .arg("Amount", ScriptActionArgumentType.NUMBER, arg -> {
+            arg.plural(true);
+            arg.optional(true);
+            arg.defaultValue(1);
+        })
         .action(ctx -> {
             double value = ctx.value("Variable").asNumber();
             for (ScriptValue val : ctx.pluralValue("Amount")) {
@@ -167,7 +176,11 @@ public enum ScriptActionType {
         .icon(Items.REDSTONE)
         .category(ScriptActionCategory.NUMBERS)
         .arg("Variable", ScriptActionArgumentType.VARIABLE)
-        .arg("Amount", ScriptActionArgumentType.NUMBER, arg -> arg.plural(true))
+        .arg("Amount", ScriptActionArgumentType.NUMBER, arg -> {
+            arg.plural(true);
+            arg.optional(true);
+            arg.defaultValue(1);
+        })
         .action(ctx -> {
             double value = ctx.value("Variable").asNumber();
             for (ScriptValue val : ctx.pluralValue("Amount")) {
@@ -179,20 +192,20 @@ public enum ScriptActionType {
             );
         })),
 
-    JOIN_TEXT(builder -> builder.name("JoinText")
-        .description("Joins multiple texts into one.")
+    JOIN_TEXT(builder -> builder.name("JoinString")
+        .description("Joins multiple strings into one.")
         .icon(Items.BOOK)
         .category(ScriptActionCategory.TEXTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
+        .arg("Strings", ScriptActionArgumentType.STRING, arg -> arg.plural(true))
         .action(ctx -> {
             StringBuilder sb = new StringBuilder();
-            for (ScriptValue arg : ctx.pluralValue("Texts")) {
+            for (ScriptValue arg : ctx.pluralValue("Strings")) {
                 sb.append(arg.asString());
             }
             ctx.setVariable(
                 "Result",
-                new ScriptTextValue(sb.toString())
+                new ScriptStringValue(sb.toString())
             );
         })),
 
@@ -327,7 +340,7 @@ public enum ScriptActionType {
             ctx.setVariable("Variable", new ScriptListValue(values));
         })),
 
-    APPEND_VALUE(builder -> builder.name("Append Value")
+    APPEND_VALUE(builder -> builder.name("Append Values")
         .description("Appends values to a list.")
         .icon(Items.FURNACE)
         .category(ScriptActionCategory.LISTS)
@@ -460,18 +473,6 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.CONTROL)
         .arg("Ticks", ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
-            int n = 0;
-            /*while(!(ctx.task().stack().peekOriginal(n) < 0)) {
-                int pos = ctx.task().stack().peekOriginal(n);
-                n++;
-                if(pos >= 0 && ctx.script().getParts().get(pos).getGroup() == ScriptGroup.REPETITION) {
-                    if(ctx.task().stack().peekElement(n).hasVariable("LagslayerCounter"))
-                    {
-                        ctx.task().stack().peekElement(n).setVariable("LagslayerCounter", 0);
-                    }
-                }
-            }*/
-
             for(int i = 0; i < ctx.task().stack().size(); i++) {
                 if(ctx.task().stack().peek(i).getParent() instanceof ScriptRepetition) {
                     ctx.task().stack().peek(i).setVariable("Lagslayer Count", 0);
@@ -513,7 +514,7 @@ public enum ScriptActionType {
         .icon(Items.ANVIL)
         .category(ScriptActionCategory.DICTIONARIES)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("JSON", ScriptActionArgumentType.TEXT)
+        .arg("JSON", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             ScriptValue dict;
 
@@ -532,7 +533,7 @@ public enum ScriptActionType {
         .category(ScriptActionCategory.DICTIONARIES)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
-        .arg("Key", ScriptActionArgumentType.TEXT)
+        .arg("Key", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asString();
@@ -548,7 +549,7 @@ public enum ScriptActionType {
         .icon(Items.WRITABLE_BOOK)
         .category(ScriptActionCategory.DICTIONARIES)
         .arg("Dictionary", ScriptActionArgumentType.VARIABLE)
-        .arg("Key", ScriptActionArgumentType.TEXT)
+        .arg("Key", ScriptActionArgumentType.STRING)
         .arg("Value", ScriptActionArgumentType.ANY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
@@ -576,7 +577,7 @@ public enum ScriptActionType {
         .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            ctx.setVariable("Result", new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptTextValue(x)).toList()));
+            ctx.setVariable("Result", new ScriptListValue(dict.keySet().stream().map(x -> (ScriptValue) new ScriptStringValue(x)).toList()));
         })
     ),
 
@@ -585,7 +586,7 @@ public enum ScriptActionType {
         .icon(Items.TNT_MINECART)
         .category(ScriptActionCategory.DICTIONARIES)
         .arg("Dictionary", ScriptActionArgumentType.VARIABLE)
-        .arg("Key", ScriptActionArgumentType.TEXT)
+        .arg("Key", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
             String key = ctx.value("Key").asString();
@@ -630,7 +631,7 @@ public enum ScriptActionType {
         .description("Registers a /cmd completion.")
         .icon(Items.COMMAND_BLOCK)
         .category(ScriptActionCategory.MISC)
-        .arg("Commands", ScriptActionArgumentType.TEXT, b -> b.plural(true))
+        .arg("Commands", ScriptActionArgumentType.STRING, b -> b.plural(true))
         .action(ctx -> {
             for (ScriptValue cmd : ctx.pluralValue("Commands")) {
                 try {
@@ -668,63 +669,63 @@ public enum ScriptActionType {
             }
         })),
 
-    COPY_TEXT(builder -> builder.name("Copy Text")
-        .description("Copies the text to the clipboard.")
+    COPY_STRING(builder -> builder.name("Copy String")
+        .description("Copies the string to the clipboard.")
         .icon(Items.PAPER)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
+        .category(ScriptActionCategory.STRINGS)
+        .arg("String", ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            io.github.techstreet.dfscript.DFScript.MC.keyboard.setClipboard(ctx.value("Text").asString());
+            DFScript.MC.keyboard.setClipboard(ctx.value("String").asString());
         })),
 
-    SPLIT_TEXT(builder -> builder.name("Split Text")
-        .description("Splits a text into a list of texts.")
+    SPLIT_STRING(builder -> builder.name("Split String")
+        .description("Splits a strings into a list of strings.")
         .icon(Items.SHEARS)
         .category(ScriptActionCategory.TEXTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Text", ScriptActionArgumentType.TEXT)
+        .arg("String", ScriptActionArgumentType.STRING)
         .arg("Separator", ScriptActionArgumentType.TEXT)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
+            String text = ctx.value("String").asString();
             String separator = ctx.value("Separator").asString();
             List<ScriptValue> split = new ArrayList<>();
 
             for (String s : text.split(Pattern.quote(separator))) {
-                split.add(new ScriptTextValue(s));
+                split.add(new ScriptStringValue(s));
             }
 
             ctx.setVariable("Result", new ScriptListValue(split));
         })),
 
-    REGEX_SPLIT_TEXT(builder -> builder.name("Split Text by Regex")
-            .description("Splits a text into a list of texts\nusing a regex as a separator.")
+    REGEX_SPLIT_STRING(builder -> builder.name("Split String by Regex")
+            .description("Splits a string into a list of strings\nusing a regex as a separator.")
             .icon(Items.SHEARS, true)
             .category(ScriptActionCategory.TEXTS)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text", ScriptActionArgumentType.TEXT)
-            .arg("Separator (Regex)", ScriptActionArgumentType.TEXT)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .arg("Separator (Regex)", ScriptActionArgumentType.STRING)
             .action(ctx -> {
-                String text = ctx.value("Text").asString();
+                String text = ctx.value("String").asString();
                 String separator = ctx.value("Separator (Regex)").asString();
                 List<ScriptValue> split = new ArrayList<>();
 
                 for (String s : text.split(separator)) {
-                    split.add(new ScriptTextValue(s));
+                    split.add(new ScriptStringValue(s));
                 }
 
                 ctx.setVariable("Result", new ScriptListValue(split));
             })),
 
-    STOP(builder -> builder.name("Stop Codeline")
-        .description("Stops the current codeline.")
+    STOP(builder -> builder.name("Halts")
+        .description("Halts the current thread")
         .icon(Items.BARRIER)
         .category(ScriptActionCategory.CONTROL)
         .action(ctx -> {
             ctx.task().stop();
         })),
 
-    SKIP_ITERATION(builder -> builder.name("Skip Iteration")
-        .description("Skips the current iteration of the latest loop.")
+    SKIP_ITERATION(builder -> builder.name("Continue")
+        .description("Skips the current iteration of the latest loop.\nContinues to the next.")
         .icon(Items.ENDER_PEARL)
         .category(ScriptActionCategory.CONTROL)
         .action(ctx -> {
@@ -737,8 +738,8 @@ public enum ScriptActionType {
             }
         })),
 
-    STOP_REPETITION(builder -> builder.name("Stop Repetition")
-        .description("Stops the latest loop.")
+    STOP_REPETITION(builder -> builder.name("Break")
+        .description("Stops the latest loop.\nBreaks out of the current loop.")
         .icon(Items.PRISMARINE_SHARD)
         .category(ScriptActionCategory.CONTROL)
         .action(ctx -> {
@@ -898,14 +899,14 @@ public enum ScriptActionType {
         .arg("Stay", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(60))
         .arg("Fade Out", ScriptActionArgumentType.NUMBER, b -> b.optional(true).defaultValue(20))
         .action(ctx -> {
-            String title = ctx.value("Title").asString();
-            String subtitle = "";
+            Component title = ctx.value("Title").asText().parse();
+            Component subtitle = Component.empty();
             int fadeIn = 20;
             int stay = 60;
             int fadeOut = 20;
 
             if (ctx.argMap().containsKey("Subtitle")) {
-                subtitle = ctx.value("Subtitle").asString();
+                subtitle = ctx.value("Subtitle").asText().parse();
             }
 
             if (ctx.argMap().containsKey("Fade In")) {
@@ -920,9 +921,8 @@ public enum ScriptActionType {
                 fadeOut = (int) ctx.value("Fade Out").asNumber();
             }
 
-            io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(title)));
-            io.github.techstreet.dfscript.DFScript.MC.inGameHud.setSubtitle(ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(subtitle)));
-            io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
+            ChatUtil.sendTitle(title, subtitle);
+            DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
         })),
 
     DISPLAY_TITLE_OLD(builder -> builder.name("Display Title OLD")
@@ -963,13 +963,13 @@ public enum ScriptActionType {
                 io.github.techstreet.dfscript.DFScript.MC.inGameHud.setTitleTicks(fadeIn, stay, fadeOut);
             })),
 
-    JOIN_LIST_TO_TEXT(builder -> builder.name("Join List to Text")
-        .description("Joins a list into a single text.")
+    JOIN_LIST_TO_STRING(builder -> builder.name("Join List to String")
+        .description("Joins a list into a single string.")
         .icon(Items.SLIME_BALL)
         .category(ScriptActionCategory.LISTS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("List", ScriptActionArgumentType.LIST)
-        .arg("Separator", ScriptActionArgumentType.TEXT, b -> b.optional(true).defaultValue(", "))
+        .arg("Separator", ScriptActionArgumentType.STRING, b -> b.optional(true).defaultValue(", "))
         .action(ctx -> {
             String separator = ", ";
 
@@ -982,35 +982,35 @@ public enum ScriptActionType {
                 .map(ScriptValue::asString)
                 .collect(Collectors.joining(separator));
 
-            ctx.setVariable("Result", new ScriptTextValue(result));
+            ctx.setVariable("Result", new ScriptStringValue(result));
         })),
 
-    TEXT_INDEX_OF(builder -> builder.name("Index Of Text")
-        .description("Gets the index of the first occurrence of a text within another text.")
+    STRING_INDEX_OF(builder -> builder.name("Index Of String")
+        .description("Gets the index of the first occurrence of a string within another string.")
         .icon(Items.FLINT)
         .category(ScriptActionCategory.TEXTS)
         .arg("Result",ScriptActionArgumentType.VARIABLE)
-        .arg("Text",ScriptActionArgumentType.TEXT)
-        .arg("Subtext",ScriptActionArgumentType.TEXT)
+        .arg("String",ScriptActionArgumentType.STRING)
+        .arg("Sub-String",ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            int result = ctx.value("Text").asString().indexOf(ctx.value("Subtext").asString()) + 1;
+            int result = ctx.value("String").asString().indexOf(ctx.value("Sub-String").asString()) + 1;
             ctx.setVariable("Result", new ScriptNumberValue(result));
         })),
 
-    TEXT_SUBTEXT(builder -> builder.name("Get Subtext")
-        .description("Gets a piece of text within another text.")
+    GET_SUBSTRING(builder -> builder.name("Get Sub-String")
+        .description("Gets a piece of string within another string.")
         .icon(Items.KNOWLEDGE_BOOK)
         .category(ScriptActionCategory.TEXTS)
         .arg("Result",ScriptActionArgumentType.VARIABLE)
-        .arg("Text",ScriptActionArgumentType.TEXT)
+        .arg("String",ScriptActionArgumentType.STRING)
         .arg("First Index",ScriptActionArgumentType.NUMBER)
         .arg("Last Index",ScriptActionArgumentType.NUMBER)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
+            String string = ctx.value("String").asString();
             int start = (int)ctx.value("First Index").asNumber()-1;
             int end = (int)ctx.value("Last Index").asNumber();
-            String result = text.substring(start, end);
-            ctx.setVariable("Result", new ScriptTextValue(result));
+            String result = string.substring(start, end);
+            ctx.setVariable("Result", new ScriptStringValue(result));
         })),
 
     TEXT_SUBTEXT_V1(builder -> builder.name("Get Subtext OLD")
@@ -1021,7 +1021,7 @@ public enum ScriptActionType {
             .arg("Text",ScriptActionArgumentType.TEXT)
             .arg("First Index",ScriptActionArgumentType.NUMBER)
             .arg("Last Index",ScriptActionArgumentType.NUMBER)
-            .deprecate(TEXT_SUBTEXT)
+            .deprecate(GET_SUBSTRING)
             .action(ctx -> {
                 String text = ctx.value("Text").asString();
                 int start = (int)ctx.value("First Index").asNumber()+1;
@@ -1030,14 +1030,14 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptTextValue(result));
             })),
 
-    TEXT_LENGTH(builder -> builder.name("Get Text Length")
-        .description("Get the length of a text value.")
+    STRING_LENGTH(builder -> builder.name("Get String Length")
+        .description("Get the length of a string value.")
         .icon(Items.BOOKSHELF)
         .category(ScriptActionCategory.TEXTS)
         .arg("Result",ScriptActionArgumentType.VARIABLE)
-        .arg("Text",ScriptActionArgumentType.TEXT)
+        .arg("String",ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
+            String text = ctx.value("String").asString();
             ctx.setVariable("Result", new ScriptNumberValue(text.length()));
         })),
 
@@ -1046,7 +1046,7 @@ public enum ScriptActionType {
         .icon(Items.WRITTEN_BOOK)
         .category(ScriptActionCategory.MISC)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Filename", ScriptActionArgumentType.TEXT)
+        .arg("Filename", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String filename = ctx.value("Filename").asString();
 
@@ -1098,7 +1098,7 @@ public enum ScriptActionType {
         .description("Writes a file to the scripts folder.")
         .icon(Items.WRITABLE_BOOK)
         .category(ScriptActionCategory.MISC)
-        .arg("Filename", ScriptActionArgumentType.TEXT)
+        .arg("Filename", ScriptActionArgumentType.STRING)
         .arg("Content", ScriptActionArgumentType.ANY)
         .action(ctx -> {
             String filename = ctx.value("Filename").asString();
@@ -1148,9 +1148,9 @@ public enum ScriptActionType {
         .icon(Items.ANVIL)
         .category(ScriptActionCategory.NUMBERS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Text", ScriptActionArgumentType.TEXT)
+        .arg("String", ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
+            String text = ctx.value("String").asString();
             try {
                 ctx.setVariable("Result", new ScriptNumberValue(Double.parseDouble(text)));
             } catch (NumberFormatException e) {
@@ -1243,8 +1243,8 @@ public enum ScriptActionType {
         .arg("Y", ScriptActionArgumentType.NUMBER)
         .arg("Width", ScriptActionArgumentType.NUMBER)
         .arg("Height", ScriptActionArgumentType.NUMBER)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Text", ScriptActionArgumentType.STRING)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
@@ -1271,7 +1271,7 @@ public enum ScriptActionType {
         .arg("X", ScriptActionArgumentType.NUMBER)
         .arg("Y", ScriptActionArgumentType.NUMBER)
         .arg("Item", ScriptActionArgumentType.DICTIONARY)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
@@ -1296,17 +1296,17 @@ public enum ScriptActionType {
         .arg("X", ScriptActionArgumentType.NUMBER)
         .arg("Y", ScriptActionArgumentType.NUMBER)
         .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
-            String rawText = ctx.value("Text").asString();
             String identifier = ctx.value("Identifier").asString();
-            Text text = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(rawText));
+            String text = ctx.value("Text").toString();
+            Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
 
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                 if (menu.ownedBy(ctx.task().context().script())) {
-                    menu.widgets.add(new ScriptMenuText(x,y,text,0x333333, 1, false, false,identifier));
+                    menu.widgets.add(new ScriptMenuText(x,y,t,0x333333, 1, false, false,identifier));
                 } else {
                     OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                 }
@@ -1323,7 +1323,7 @@ public enum ScriptActionType {
         .arg("Y", ScriptActionArgumentType.NUMBER)
         .arg("Width", ScriptActionArgumentType.NUMBER)
         .arg("Height", ScriptActionArgumentType.NUMBER)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             int x = (int) ctx.value("X").asNumber();
             int y = (int) ctx.value("Y").asNumber();
@@ -1346,7 +1346,7 @@ public enum ScriptActionType {
         .description("Removes an element from an open custom menu.")
         .icon(Items.TNT_MINECART)
         .category(ScriptActionCategory.MENUS)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String identifier = ctx.value("Identifier").asString();
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
@@ -1361,11 +1361,11 @@ public enum ScriptActionType {
         })),
 
     GET_MENU_TEXT_FIELD_VALUE(builder -> builder.name("Get Menu Text Field Value")
-        .description("Gets the text inside a text field in an open custom menu.")
+        .description("Gets the string inside a text field in an open custom menu.")
         .icon(Items.BOOKSHELF)
         .category(ScriptActionCategory.MENUS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String identifier = ctx.value("Identifier").asString();
             if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
@@ -1375,7 +1375,7 @@ public enum ScriptActionType {
                     if (w instanceof ScriptMenuTextField field) {
                         ctx.setVariable(
                             "Result",
-                            new ScriptTextValue(field.getText())
+                            new ScriptStringValue(field.getText())
                         );
                     } else {
                         OverlayManager.getInstance().add("Unable to get text field value! (Unknown widget type)");
@@ -1389,11 +1389,11 @@ public enum ScriptActionType {
         })),
 
     SET_MENU_TEXT_FIELD_VALUE(builder -> builder.name("Set Menu Text Field Value")
-        .description("Sets the text inside a text field in an open custom menu.")
+        .description("Sets the string inside a text field in an open custom menu.")
         .icon(Items.KNOWLEDGE_BOOK)
         .category(ScriptActionCategory.MENUS)
-        .arg("Identifier", ScriptActionArgumentType.TEXT)
-        .arg("Value", ScriptActionArgumentType.TEXT)
+        .arg("Identifier", ScriptActionArgumentType.STRING)
+        .arg("Value", ScriptActionArgumentType.STRING)
         .action(ctx -> {
             String identifier = ctx.value("Identifier").asString();
 
@@ -1489,55 +1489,55 @@ public enum ScriptActionType {
             ctx.setVariable("Result", new ScriptListValue(list));
     })),
 
-    REPLACE_TEXT(builder -> builder.name("Replace Text")
-            .description("Searches for part of a text and replaces it.")
+    REPLACE_STRING(builder -> builder.name("Replace String")
+            .description("Searches for part of a string and replaces it.")
             .icon(Items.LEAD)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text to change", ScriptActionArgumentType.TEXT)
-            .arg("Text part to replace", ScriptActionArgumentType.TEXT)
-            .arg("Replacement", ScriptActionArgumentType.TEXT)
-            .category(ScriptActionCategory.TEXTS)
+            .arg("String to change", ScriptActionArgumentType.STRING)
+            .arg("String part to replace", ScriptActionArgumentType.STRING)
+            .arg("Replacement", ScriptActionArgumentType.STRING)
+            .category(ScriptActionCategory.STRINGS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asString();
+                String result = ctx.value("String to change").asString();
 
-                result = result.replace(ctx.value("Text part to replace").asString(), ctx.value("Replacement").asString());
+                result = result.replace(ctx.value("String part to replace").asString(), ctx.value("Replacement").asString());
 
-                ctx.setVariable("Result", new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptStringValue(result));
     })),
 
-    REGEX_REPLACE_TEXT(builder -> builder.name("Replace Text using Regex")
-            .description("Searches for part of a text\nusing a regex and replaces it.")
+    REGEX_REPLACE_STRING(builder -> builder.name("Replace String using Regex")
+            .description("Searches for part of a string\nusing a regex and replaces it.")
             .icon(Items.LEAD, true)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text to change", ScriptActionArgumentType.TEXT)
-            .arg("Regex", ScriptActionArgumentType.TEXT)
-            .arg("Replacement", ScriptActionArgumentType.TEXT)
-            .category(ScriptActionCategory.TEXTS)
+            .arg("String to change", ScriptActionArgumentType.STRING)
+            .arg("Regex", ScriptActionArgumentType.STRING)
+            .arg("Replacement", ScriptActionArgumentType.STRING)
+            .category(ScriptActionCategory.STRINGS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asString();
+                String result = ctx.value("String to change").asString();
 
                 result = result.replaceAll(ctx.value("Regex").asString(), ctx.value("Replacement").asString());
 
-                ctx.setVariable("Result", new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptStringValue(result));
     })),
 
-    REMOVE_TEXT(builder -> builder.name("Remove Text")
-            .description("Searches for part of a text and removes it.")
+    REMOVE_STRING(builder -> builder.name("Remove String")
+            .description("Searches for part of a string and removes it.")
             .icon(Items.WRITABLE_BOOK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text to change", ScriptActionArgumentType.TEXT)
-            .arg("Text to remove", ScriptActionArgumentType.TEXT, b -> b.plural(true))
-            .category(ScriptActionCategory.TEXTS)
+            .arg("String to change", ScriptActionArgumentType.STRING)
+            .arg("String to remove", ScriptActionArgumentType.STRING, b -> b.plural(true))
+            .category(ScriptActionCategory.STRINGS)
             .action(ctx -> {
-                String result = ctx.value("Text to change").asString();
+                String result = ctx.value("String to change").asString();
 
-                List<ScriptValue> textsToRemove = ctx.pluralValue("Text to remove");
+                List<ScriptValue> textsToRemove = ctx.pluralValue("String to remove");
 
                 for (ScriptValue scriptValue : textsToRemove) {
                     result = result.replace(scriptValue.asString(), "");
                 }
 
-                ctx.setVariable("Result", new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptStringValue(result));
     })),
 
     STRIP_COLOR(builder -> builder.name("Strip Color from Text")
@@ -1561,20 +1561,20 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptTextValue(result));
     })),
 
-    REPEAT_TEXT(builder -> builder.name("Repeat Text")
-            .description("Repeats a text the given number of times.")
+    REPEAT_STRING(builder -> builder.name("Repeat String")
+            .description("Repeats a string the given number of times.")
             .icon(Items.REPEATING_COMMAND_BLOCK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Text to repeat", ScriptActionArgumentType.TEXT)
+            .arg("String to repeat", ScriptActionArgumentType.TEXT)
             .arg("Times to repeat", ScriptActionArgumentType.NUMBER)
-            .category(ScriptActionCategory.TEXTS)
+            .category(ScriptActionCategory.STRINGS)
             .action(ctx -> {
-                String input = ctx.value("Text to repeat").asString();
+                String input = ctx.value("String to repeat").asString();
                 int times = (int) ctx.value("Times to repeat").asNumber();
 
                 String result = input.repeat(Math.max(0, times));
 
-                ctx.setVariable("Result", new ScriptTextValue(result));
+                ctx.setVariable("Result", new ScriptStringValue(result));
     })),
 
     FORMAT_TIME(builder -> builder.name("Format Timestamp")
@@ -1582,13 +1582,13 @@ public enum ScriptActionType {
             .icon(Items.CLOCK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Timestamp", ScriptActionArgumentType.NUMBER)
-            .arg("Format", ScriptActionArgumentType.TEXT)
-            .category(ScriptActionCategory.TEXTS)
+            .arg("Format", ScriptActionArgumentType.STRING)
+            .category(ScriptActionCategory.STRINGS)
             .action(ctx -> {
                 Date date = new Date((long) ctx.value("Timestamp").asNumber());
                 SimpleDateFormat format = new SimpleDateFormat(ctx.value("Format").asString());
 
-                ctx.setVariable("Result", new ScriptTextValue(format.format(date)));
+                ctx.setVariable("Result", new ScriptStringValue(format.format(date)));
             })),
 
     INVERT(builder -> builder.name("Invert Boolean")
@@ -1596,7 +1596,7 @@ public enum ScriptActionType {
             .icon(Items.REDSTONE_TORCH)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.BOOL)
-            .category(ScriptActionCategory.CONDITIONS)
+            .category(ScriptActionCategory.BOOLEANS)
             .action(ctx -> {
                 ctx.setVariable("Result", new ScriptBoolValue(!ctx.value("Value").asBoolean()));
             })),
@@ -1606,7 +1606,7 @@ public enum ScriptActionType {
             .icon(Items.REDSTONE_BLOCK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
-            .category(ScriptActionCategory.CONDITIONS)
+            .category(ScriptActionCategory.BOOLEANS)
             .action(ctx -> {
                 for (ScriptValue val : ctx.pluralValue("Value")) {
                     if(!val.asBoolean()) {
@@ -1623,7 +1623,7 @@ public enum ScriptActionType {
             .icon(Items.REDSTONE)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
-            .category(ScriptActionCategory.CONDITIONS)
+            .category(ScriptActionCategory.BOOLEANS)
             .action(ctx -> {
                 for (ScriptValue val : ctx.pluralValue("Value")) {
                     if(val.asBoolean()) {
@@ -1640,7 +1640,7 @@ public enum ScriptActionType {
             .icon(Items.REDSTONE, true)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.BOOL, b -> b.plural(true))
-            .category(ScriptActionCategory.CONDITIONS)
+            .category(ScriptActionCategory.BOOLEANS)
             .action(ctx -> {
                 int trues = 0;
 

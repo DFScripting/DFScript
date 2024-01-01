@@ -2,13 +2,46 @@ package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.DFScript;
 import java.awt.Color;
+import java.util.Objects;
+
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
+import net.kyori.adventure.title.Title;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
+import net.minecraft.text.*;
+import org.jetbrains.annotations.NotNull;
 
 public class ChatUtil {
+    public static class PlayerAudience implements Audience {
+        final private ClientPlayerEntity player = DFScript.MC.player;
+
+        private boolean assertPlayer() {
+            return player != null;
+        }
+
+        @Override
+        public void sendMessage(final @NotNull Component message) {
+            if (assertPlayer()) {
+                player.sendMessage(message);
+            }
+        }
+
+        @Override
+        public void sendActionBar(final @NotNull Component message) {
+            if (assertPlayer()) {
+                player.sendActionBar(message);
+            }
+        }
+
+        public void sendTitle(final @NotNull Component title, final @NotNull Component subtitle) {
+            if (assertPlayer()) {
+                player.showTitle(Title.title(title, subtitle));
+            }
+        }
+    }
+    private static final PlayerAudience audience = new PlayerAudience();
 
     public static void playSound(SoundEvent sound) {
         playSound(sound, 1F);
@@ -19,13 +52,13 @@ public class ChatUtil {
     }
 
     public static void playSound(SoundEvent sound, float pitch, float volume) {
-        if (sound != null) {
+        if (sound != null && DFScript.MC.player != null) {
             DFScript.MC.player.playSound(sound, volume, pitch);
         }
     }
 
     public static void chat(String message) {
-        DFScript.MC.getNetworkHandler().sendChatMessage(message);
+        Objects.requireNonNull(DFScript.MC.getNetworkHandler()).sendChatMessage(message);
     }
 
     public static void executeCommand(String command) {
@@ -49,6 +82,10 @@ public class ChatUtil {
         sendMessage(text, null);
     }
 
+    public static void sendMessage(Component component) {
+        audience.sendMessage(component);
+    }
+
     public static void sendMessage(String text, ChatType prefixType) {
         sendMessage(Text.literal(text), prefixType);
     }
@@ -62,6 +99,15 @@ public class ChatUtil {
         DFScript.MC.player.sendMessage(Text.literal(prefix).append(text), false);
     }
 
+    public static void sendMessage(Component component, ChatType prefixType) {
+        if (DFScript.MC.player == null) return;
+        Component prefix = Component.empty();
+        if (prefixType != null) {
+            prefix = prefixType.getComponent();
+        }
+        audience.sendMessage(prefix.append(component));
+    }
+
     public static MutableText setColor(MutableText component, Color color) {
         Style colorStyle = component.getStyle().withColor(TextColor.fromRgb(color.getRGB()));
         component.setStyle(colorStyle);
@@ -71,6 +117,16 @@ public class ChatUtil {
     public static void sendActionBar(Text msg) {
         if (DFScript.MC.player == null) return;
         DFScript.MC.player.sendMessage(msg, true);
+    }
+
+    public static void sendActionBar(Component component) {
+        if (DFScript.MC.player == null) return;
+        audience.sendActionBar(component);
+    }
+
+    public static void sendTitle(Component title, Component subtitle) {
+        if (DFScript.MC.player == null) return;
+        audience.sendTitle(title, subtitle);
     }
 
     public static void error(String s) {
