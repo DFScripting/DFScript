@@ -26,6 +26,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -59,7 +60,7 @@ public enum ScriptActionType {
     /* VISUALS */
     /////////////
 
-    DISPLAY_CHAT(builder -> builder.name("DisplayChat")
+    DISPLAY_CHAT(builder -> builder.name("Display Chat")
         .description("Displays a message in the chat.")
         .icon(Items.BOOK)
         .category(ScriptActionCategory.VISUALS)
@@ -76,7 +77,7 @@ public enum ScriptActionType {
             ChatUtil.sendMessage(sendComponent);
         })),
 
-    ACTIONBAR(builder -> builder.name("ActionBar")
+    ACTIONBAR(builder -> builder.name("Action Bar")
         .description("Displays a message in the action bar.")
         .icon(Items.SPRUCE_SIGN)
         .category(ScriptActionCategory.VISUALS)
@@ -224,7 +225,7 @@ public enum ScriptActionType {
     /* ACTIONS */
     /////////////
 
-    SEND_CHAT(builder -> builder.name("SendChat")
+    SEND_CHAT(builder -> builder.name("Send Chat")
         .description("Makes the player send a chat message.")
         .icon(Items.PAPER)
         .category(ScriptActionCategory.ACTIONS)
@@ -411,7 +412,7 @@ public enum ScriptActionType {
     /* VARIABLE */
     //////////////
 
-    SET_VARIABLE(builder -> builder.name("SetVariable")
+    SET_VARIABLE(builder -> builder.name("Set Variable")
         .description("Sets a variable to a value.")
         .icon(Items.IRON_INGOT)
         .category(ScriptActionCategory.VARIABLES)
@@ -427,7 +428,7 @@ public enum ScriptActionType {
     //////////////
 
 
-    INVERT(builder -> builder.name("Invert Boolean")
+    INVERT(builder -> builder.name("Bitwise NOT")
             .description("Returns true if the boolean is false and vice versa.")
             .icon(Items.REDSTONE_TORCH)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -437,7 +438,7 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptBoolValue(!ctx.value("Value").asBoolean()));
             })),
 
-    AND(builder -> builder.name("Set to AND Result")
+    AND(builder -> builder.name("Bitwise AND")
             .description("Returns true if all booleans are true.")
             .icon(Items.REDSTONE_BLOCK)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -454,7 +455,7 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptBoolValue(true));
             })),
 
-    OR(builder -> builder.name("Set to OR Result")
+    OR(builder -> builder.name("Bitwise OR")
             .description("Returns true if one of the booleans are true.")
             .icon(Items.REDSTONE)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -471,7 +472,7 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptBoolValue(false));
             })),
 
-    XOR(builder -> builder.name("Set to XOR Result")
+    XOR(builder -> builder.name("Bitwise XOR")
             .description("Returns true if an odd number of booleans are true.")
             .icon(Items.REDSTONE, true)
             .arg("Result", ScriptActionArgumentType.VARIABLE)
@@ -891,6 +892,39 @@ public enum ScriptActionType {
     /* TEXTS */
     ///////////
 
+    SET_TO_TEXT(builder -> builder.name("Set to Text")
+            .description("Sets a variable to a text.")
+            .icon(Items.BOOK)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Add Spaces", ScriptActionArgumentType.BOOL)
+            .arg("Values", ScriptActionArgumentType.ANY, arg -> {
+                arg.plural(true);
+                arg.optional(true);
+            })
+            .action(ctx -> {
+                boolean addSpaces = ctx.value("Add Spaces").asBoolean();
+
+                String result;
+
+                if (ctx.argMap().containsKey("Values")) {
+                    StringBuilder sb = new StringBuilder();
+                    for (ScriptValue arg : ctx.pluralValue("Values")) {
+                        sb.append(arg.asString());
+                        if (addSpaces) {
+                            sb.append(" ");
+                        }
+                    }
+                    if (addSpaces) {
+                        sb.deleteCharAt(sb.length() - 1);
+                    }
+                    result = sb.toString();
+                } else {
+                    result = "";
+                }
+                ctx.setVariable("Result", new ScriptStringValue(result));
+            })),
+
     MEASURE_TEXT(builder -> builder.name("Measure Text")
             .description("Measures the width of a text in pixels.")
             .icon(Items.STICK)
@@ -926,13 +960,53 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptTextValue(result));
             })),
 
+    CLEAR_FORMATTING(builder -> builder.name("Clear Formatting")
+            .description("Clears all formatting from the text")
+            .icon(Items.GLASS)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .action(ctx -> {
+                Component parsed = ctx.value("Text").asText().parse();
+                String plain = PlainTextComponentSerializer.plainText().serialize(parsed);
+                ctx.setVariable("Result", new ScriptStringValue(plain));
+            })),
+
+    GET_MINIMESSAGE(builder -> builder.name("Get MiniMessage Expression")
+            .description("Gets the expression for a text.")
+            .icon(Items.STRING)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .action(ctx -> ctx.setVariable("Result", new ScriptStringValue(ctx.value("Text").asString())))),
+
+    PARSE_MINIMESSAGE(builder -> builder.name("Parse MiniMessage Expression")
+            .description("Parses a MiniMessage expression into a text.")
+            .icon(Items.FILLED_MAP)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .action(ctx -> ctx.setVariable("Result", new ScriptTextValue(ctx.value("String").asString())))),
+
+    GET_TEXT_LENGTH(builder -> builder.name("Get Text Content Length")
+            .description("Get the length of the text content.")
+            .icon(Items.CHISELED_BOOKSHELF)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .action(ctx -> {
+                Component parsed = ctx.value("Text").asText().parse();
+                String plain = PlainTextComponentSerializer.plainText().serialize(parsed);
+                ctx.setVariable("Result", new ScriptNumberValue(plain.length()));
+            })),
+
     /////////////
     /* STRINGS */
     /////////////
 
-    JOIN_STRING(builder -> builder.name("JoinString")
+    JOIN_STRING(builder -> builder.name("Join String")
         .description("Joins multiple strings into one.")
-        .icon(Items.BOOK)
+        .icon(Items.STRING)
         .category(ScriptActionCategory.STRINGS)
         .arg("Result", ScriptActionArgumentType.VARIABLE)
         .arg("Strings", ScriptActionArgumentType.STRING, arg -> arg.plural(true))
@@ -1032,7 +1106,7 @@ public enum ScriptActionType {
 
     GET_SUBSTRING(builder -> builder.name("Get Sub-String")
             .description("Gets a piece of string within another string.")
-            .icon(Items.KNOWLEDGE_BOOK)
+            .icon(Items.SADDLE)
             .category(ScriptActionCategory.STRINGS)
             .arg("Result",ScriptActionArgumentType.VARIABLE)
             .arg("String",ScriptActionArgumentType.STRING)
@@ -1109,6 +1183,29 @@ public enum ScriptActionType {
                 ctx.setVariable("Result", new ScriptStringValue(result));
             })),
 
+    STRING_UPPER(builder -> builder.name("Uppercase String")
+            .description("Sets all characters in a string to uppercase")
+            .icon(Items.IRON_INGOT)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .category(ScriptActionCategory.STRINGS)
+            .action(ctx -> {
+                String result = ctx.value("String").asString();
+                String upped = result.toUpperCase();
+                ctx.setVariable("Result", new ScriptStringValue(upped));
+            })),
+
+    STRING_LOWER(builder -> builder.name("Lowercase String")
+            .description("Sets all characters in a string to lowercase")
+            .icon(Items.BRICK)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .category(ScriptActionCategory.STRINGS)
+            .action(ctx -> {
+                String result = ctx.value("String").asString();
+                String lowered = result.toLowerCase();
+                ctx.setVariable("Result", new ScriptStringValue(lowered));
+            })),
 
     REPEAT_STRING(builder -> builder.name("Repeat String")
             .description("Repeats a string the given number of times.")
@@ -1143,7 +1240,6 @@ public enum ScriptActionType {
     //////////////////
     /* DICTIONARIES */
     //////////////////
-
 
     CREATE_DICT(builder -> builder.name("Create Dictionary")
             .description("Creates a new dictionary.")

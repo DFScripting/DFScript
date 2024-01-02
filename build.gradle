@@ -61,6 +61,7 @@ dependencies {
 
     // MiniMessaging
     modImplementation include("net.kyori:adventure-platform-fabric:5.10.0")
+    implementation "net.kyori:adventure-text-serializer-plain:4.14.0"
 }
 
 processResources {
