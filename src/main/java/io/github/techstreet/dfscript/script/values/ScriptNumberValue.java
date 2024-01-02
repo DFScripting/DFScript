@@ -5,6 +5,8 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScriptNumberValue extends ScriptValue {
 
@@ -17,6 +19,22 @@ public class ScriptNumberValue extends ScriptValue {
     @Override
     String typeName() {
         return "Number";
+    }
+
+    @Override
+    public ScriptValue convertTo(ScriptValue type) {
+        if (type instanceof ScriptDictionaryValue) {
+            HashMap<String, ScriptValue> map = new HashMap<>();
+            map.put("Number", this);
+            return new ScriptDictionaryValue(map);
+        } else if (type instanceof ScriptListValue) {
+            List<ScriptValue> list = List.of(this);
+            return new ScriptListValue(list);
+        } else if (type instanceof ScriptBoolValue) {
+            return new ScriptBoolValue(value != 0);
+        } else {
+            return super.convertTo(type);
+        }
     }
 
     @Override

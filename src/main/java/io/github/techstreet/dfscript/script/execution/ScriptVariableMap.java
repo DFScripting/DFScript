@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ScriptVariableMap {
-    private final HashMap<String, ScriptVariable> variables = new HashMap<>();
+    public final HashMap<String, ScriptVariable> variables = new HashMap<>();
 
     public ScriptValue get(String name) {
         if (!has(name)) {

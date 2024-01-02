@@ -7,6 +7,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScriptTextValue extends ScriptValue {
 
@@ -19,6 +21,25 @@ public class ScriptTextValue extends ScriptValue {
     @Override
     String typeName() {
         return "Text";
+    }
+
+    @Override
+    public ScriptValue convertTo(ScriptValue type) {
+        if (type instanceof ScriptDictionaryValue) {
+            HashMap<String, ScriptValue> map = new HashMap<>();
+            map.put("String", this);
+            return new ScriptDictionaryValue(map);
+        } else if (type instanceof ScriptListValue) {
+            List<ScriptValue> list = new java.util.ArrayList<>(List.of());
+            for (char c : value.toCharArray()) {
+                list.add(new ScriptTextValue(String.valueOf(c)));
+            }
+            return new ScriptListValue(list);
+        } else if (type instanceof ScriptBoolValue) {
+            return new ScriptBoolValue(asBoolean());
+        } else {
+            return super.convertTo(type);
+        }
     }
 
     @Override

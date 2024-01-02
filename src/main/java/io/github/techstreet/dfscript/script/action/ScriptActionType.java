@@ -408,6 +408,40 @@ public enum ScriptActionType {
                 }
             })),
 
+    MESSAGE_BOX(builder -> builder.name("Send Message Box")
+            .description("Sends a MessageBox pop up. Returns the option index.\nDoes not work on POJAV Launcher")
+            .icon(Items.OAK_SIGN)
+            .category(ScriptActionCategory.MISC)
+            .arg("Result", ScriptActionArgumentType.NUMBER)
+            .arg("Title", ScriptActionArgumentType.STRING)
+            .arg("Message", ScriptActionArgumentType.STRING)
+            .arg("Options", ScriptActionArgumentType.LIST)
+            .action(ctx -> {
+                String title = ctx.value("Title").asString();
+                String message = ctx.value("Message").asString();
+                ArrayList<String> options = new ArrayList<String>();
+                for (ScriptValue option : ctx.value("Options").asList()) {
+                    options.add(option.asString());
+                }
+                String[] optionsList = options.stream().toList().toArray(new String[0]);
+                int selected = PopUpUtil.messageBox(title, message, optionsList);
+                ctx.setVariable("Result", new ScriptNumberValue(selected));
+            })),
+
+    INPUT_BOX(builder -> builder.name("Send Input Box")
+            .description("Sends an Input Box pop up. Returns the input text.\nDoes not work on POJAV Launcher")
+            .icon(Items.DAMAGED_ANVIL)
+            .category(ScriptActionCategory.MISC)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Title", ScriptActionArgumentType.STRING)
+            .arg("Message", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                String title = ctx.value("Title").asString();
+                String message = ctx.value("Message").asString();
+                String input = PopUpUtil.inputBox(title, message);
+                ctx.setVariable("Result", new ScriptStringValue(input));
+            })),
+
     //////////////
     /* VARIABLE */
     //////////////
@@ -422,6 +456,46 @@ public enum ScriptActionType {
             "Variable",
             ctx.value("Value")
         ))),
+
+    CONVERT_TYPE(builder -> builder.name("Convert Type")
+            .description("Converts one type of data to another.\nType can be any value with the data type you want.")
+            .icon(Items.END_CRYSTAL)
+            .category(ScriptActionCategory.VARIABLES)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .arg("Type", ScriptActionArgumentType.ANY)
+            .action(ctx -> {
+                ScriptValue type = ctx.value("Type");
+                ScriptValue value = ctx.value("Value");
+                if (type.getTypeName().equals(value.getTypeName())) {
+                    ctx.setVariable("Result", value);
+                } else if (type instanceof ScriptUnknownValue) {
+                    ctx.setVariable("Result", new ScriptUnknownValue());
+                } else if (type instanceof ScriptStringValue) {
+                    ctx.setVariable("Result", new ScriptStringValue(value.toString()));
+                } else if (type instanceof ScriptTextValue) {
+                    ctx.setVariable("Result", new ScriptTextValue(value.toString()));
+                } else {
+                    ctx.setVariable("Result", value.convertTo(type));
+                }
+            })),
+
+    PURGE_VAR(builder -> builder.name("Purge Variable")
+            .description("Purges all variables with name matching a RegEx.")
+            .icon(Items.DEAD_BRAIN_CORAL)
+            .category(ScriptActionCategory.VARIABLES)
+            .arg("RegEx", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                List<String> vars = new ArrayList<>();
+                ctx.task().variables().variables.forEach((key, value) -> {
+                    if (key.matches(ctx.value("RegEx").asString())) {
+                        vars.add(key);
+                    }
+                });
+                vars.forEach(key -> {
+                    ctx.task().variables().variables.remove(key);
+                });
+            })),
 
     //////////////
     /* BOOLEANS */

@@ -3,6 +3,8 @@ package io.github.techstreet.dfscript.script.values;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScriptBoolValue extends ScriptValue {
 
@@ -15,6 +17,22 @@ public class ScriptBoolValue extends ScriptValue {
     @Override
     String typeName() {
         return "Boolean";
+    }
+
+    @Override
+    public ScriptValue convertTo(ScriptValue type) {
+        if (type instanceof ScriptDictionaryValue) {
+            HashMap<String, ScriptValue> map = new HashMap<>();
+            map.put("Boolean", this);
+            return new ScriptDictionaryValue(map);
+        } else if (type instanceof ScriptListValue) {
+            List<ScriptValue> list = List.of(this);
+            return new ScriptListValue(list);
+        } else if (type instanceof ScriptNumberValue) {
+            return new ScriptNumberValue(asNumber());
+        } else {
+            return super.convertTo(type);
+        }
     }
 
     @Override
