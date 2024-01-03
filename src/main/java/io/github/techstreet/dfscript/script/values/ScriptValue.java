@@ -95,11 +95,10 @@ public abstract class ScriptValue {
                         String objectType = object.get("___objectType").getAsString();
                         return switch(objectType) {
                             case "dict" -> context.deserialize(object.get("dict"), ScriptDictionaryValue.class);
+                            case "string" -> context.deserialize(object.get("string"), ScriptStringValue.class);
                             default ->
                                 throw new JsonParseException("Unable to convert a json object of type '" + objectType + "' into a script value");
                         };
-                    } else if (object.has("str_el")) {
-                        return context.deserialize(object, ScriptStringValue.class);
                     } else {
                         return context.deserialize(object, ScriptDictionaryValue.class);
                     }

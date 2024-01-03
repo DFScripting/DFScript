@@ -62,29 +62,15 @@ public class ScriptStringValue extends ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptStringValue>, JsonDeserializer<ScriptStringValue> {
         @Override
         public ScriptStringValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonObject()) {
-                JsonObject object = jsonElement.getAsJsonObject();
-                if (object.has("str_el")) {
-                    JsonObject value = (JsonObject) object.get("str_el");
-                    if (value.get("value").isJsonPrimitive()) {
-                        JsonPrimitive prim = (JsonPrimitive) value.get("value");
-                        if (prim.isString()) {
-                            return new ScriptStringValue(prim.getAsString());
-                        }
-                    }
-                }
-            }
-
-            throw new JsonParseException("Unable to convert the json into a script string value!");
+            return new ScriptStringValue(jsonElement.getAsString());
         }
 
         @Override
         public JsonElement serialize(ScriptStringValue scriptValue, Type type, JsonSerializationContext context) {
-            JsonObject internalValue = new JsonObject();
-            internalValue.add("value", new JsonPrimitive(scriptValue.toString()));
-            JsonObject strEl = new JsonObject();
-            strEl.add("str_el", internalValue);
-            return strEl;
+            JsonObject obj = new JsonObject();
+            obj.add("string", new JsonPrimitive(scriptValue.value));
+            obj.addProperty("___objectType", "string");
+            return obj;
         }
     }
 }

@@ -106,7 +106,7 @@ public class ScriptDictionaryValue extends ScriptValue {
                 dictObj.add(key, context.serialize(dict.get(key)));
             }
             JsonObject obj = new JsonObject();
-            obj.add("dict", obj);
+            obj.add("dict", dictObj);
             obj.addProperty("___objectType", "dict");
             return obj;
         }
