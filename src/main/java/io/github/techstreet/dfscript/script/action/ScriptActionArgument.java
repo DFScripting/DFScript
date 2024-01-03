@@ -37,6 +37,22 @@ public class ScriptActionArgument {
         defaultValue = new ScriptUnknownValue();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public boolean isPlural() {
+        return plural;
+    }
+
+    public ScriptActionArgumentType getType() {
+        return type;
+    }
+
     public ScriptActionArgument optional(boolean optional) {
         this.optional = optional;
         this.rightOptional = false;
@@ -203,6 +219,14 @@ public class ScriptActionArgument {
             this.icon = icon;
             this.defaultValueType = defaultValueType;
             this.allowOptional = allowOptional;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Item getIcon() {
+            return icon;
         }
 
         public MutableText text() {
