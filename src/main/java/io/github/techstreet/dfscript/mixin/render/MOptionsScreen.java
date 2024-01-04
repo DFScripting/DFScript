@@ -22,6 +22,11 @@ public class MOptionsScreen extends Screen {
     @Unique
     private final Identifier identifier_main_highlight = new Identifier(DFScript.MOD_ID + ":scripts_highlight");
 
+    @Unique
+    private final Identifier identifier_test = new Identifier(DFScript.MOD_ID + ":scripts");
+    @Unique
+    private final Identifier identifier_test_highlight = new Identifier(DFScript.MOD_ID + ":scripts_highlight");
+
     public MOptionsScreen(Text literalText) {
         super(literalText);
     }

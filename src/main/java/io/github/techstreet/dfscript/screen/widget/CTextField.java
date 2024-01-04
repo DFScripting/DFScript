@@ -319,9 +319,9 @@ public class CTextField implements CWidget {
     }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
         if (!editable || !selected) {
-            return;
+            return false;
         }
 
         TextRenderer f = DFScript.MC.textRenderer;
@@ -350,6 +350,8 @@ public class CTextField implements CWidget {
         scroll = Math.min(0, Math.max(scroll, -(getLines().length + 1) * f.fontHeight / 2 + height - 2));
         xScroll += horizontal * 5;
         xScroll = Math.min(0, Math.max(xScroll, -maxScroll));
+
+        return true;
     }
 
     public int getCursorLineIndex() {
