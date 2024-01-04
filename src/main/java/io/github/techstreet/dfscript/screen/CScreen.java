@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public class CScreen extends Screen {
 
 //        float scaleFactor = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
-        stack.scale(scaleFactor,scaleFactor,0);
+        stack.scale(scaleFactor,scaleFactor,1F);
 
         stack.translate(-width/2f, -height/2f, 0);
 
@@ -142,5 +143,35 @@ public class CScreen extends Screen {
         }
 
         return super.shouldCloseOnEsc();
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        mouseX = translateMouseX(mouseX);
+        mouseY = translateMouseY(mouseY);
+
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            if (widgets.get(i).mouseReleased(mouseX, mouseY, button)) {
+                break;
+            }
+        }
+
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        mouseX = translateMouseX(mouseX);
+        mouseY = translateMouseY(mouseY);
+        deltaX = translateMouseX(deltaX);
+        deltaY = translateMouseY(deltaY);
+
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            if (widgets.get(i).mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+                break;
+            }
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 }
