@@ -18,6 +18,9 @@ Steps to reproduce the behaviour:
 4. [how to reproduce]
 5. [remove/add steps as you see fit]
 
+**Mod Version and OS**
+[What mod version are you using and operating system. **Remove this line!**]
+
 **Screenshot/Video**
 [Screenshots/video evidence of the issue occuring is applicable. **Remove this line!**]
 
