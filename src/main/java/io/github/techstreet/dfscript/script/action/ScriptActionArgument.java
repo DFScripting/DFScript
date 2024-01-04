@@ -213,6 +213,7 @@ public class ScriptActionArgument {
         public boolean convertableTo(ScriptActionArgumentType to) {
             return to == ANY
                 || to == TEXT
+                || to == STRING
                 || this == VARIABLE
                 || this == to;
         }

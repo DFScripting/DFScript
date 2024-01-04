@@ -197,6 +197,7 @@ public class ScriptManager implements Loadable {
             }
 
             String content = FileUtil.readFile(file.toPath());
+            content = LiteralScriptMigrator.migrate(content);
             Script s = GSON.fromJson(content, Script.class);
             s.setFile(file);
 
@@ -208,7 +209,7 @@ public class ScriptManager implements Loadable {
             LOGGER.info("Loaded script: " + file.getName());
         } catch (Exception e) {
             LOGGER.error("Failed to load script: " + file.getName());
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -217,7 +218,7 @@ public class ScriptManager implements Loadable {
             FileUtil.writeFile(script.getFile().toPath(), GSON.toJson(script));
         } catch (Exception e) {
             LOGGER.error("Failed to save script: " + script.getFile().getName());
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

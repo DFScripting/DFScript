@@ -50,6 +50,10 @@ public class ScriptMigrator {
             script.setVersion(7);
         }
 
+        if (script.getVersion() == 7) {
+            script.setVersion(8);
+        }
+
         if (previousVer != script.getVersion()) {
             ScriptManager.LOGGER.info("Migrated script '" + script.getName() + "' from version " + previousVer + " to version " + script.getVersion() + "!");
             ScriptManager.getInstance().saveScript(script);

@@ -38,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Script {
-    public static int scriptVersion = 7;
+    public static int scriptVersion = 8;
 
     private String name;
     private String owner;
@@ -445,7 +445,7 @@ public class Script {
             script.setDescription(description);
 
             if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
-                if(version < 7) {
+                if(version < 8) {
                     if(element.isJsonObject()) {
                         JsonObject obj = element.getAsJsonObject();
 

@@ -13,6 +13,7 @@ import java.security.InvalidParameterException;
 
 public enum ScriptOptionEnum {
     TEXT("Text", "A single option, no checks.", Items.BOOK, ScriptTextOption.class),
+    STRING("String", "A single option, no checks.", Items.STRING, ScriptStringOption.class),
     INT("Integer", "A single option, must be an int.", Items.SLIME_BALL, ScriptIntOption.class),
     FLOAT("Floating-Point", "A single option, must be an int or a float.", Items.SLIME_BLOCK, ScriptFloatOption.class),
     KEY("Key", "A single option, acts as a key bind.", Items.STONE_BUTTON, ScriptKeyOption.class),

@@ -419,13 +419,13 @@ public enum ScriptActionType {
             .action(ctx -> {
                 String title = ctx.value("Title").asString();
                 String message = ctx.value("Message").asString();
-                ArrayList<String> options = new ArrayList<String>();
+                ArrayList<String> options = new ArrayList<>();
                 for (ScriptValue option : ctx.value("Options").asList()) {
                     options.add(option.asString());
                 }
                 String[] optionsList = options.stream().toList().toArray(new String[0]);
                 int selected = PopUpUtil.messageBox(title, message, optionsList);
-                ctx.setVariable("Result", new ScriptNumberValue(selected));
+                ctx.setVariable("Result", new ScriptNumberValue(selected + 1));
             })),
 
     INPUT_BOX(builder -> builder.name("Send Input Box")
@@ -897,6 +897,24 @@ public enum ScriptActionType {
                 ctx.setVariable("List", new ScriptListValue(list));
             })),
 
+    POP_AT_INDEX(builder -> builder.name("Pop Index in List")
+            .description("Pops the index from a list and returns the value.")
+            .icon(Items.POPPED_CHORUS_FRUIT)
+            .category(ScriptActionCategory.LISTS)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
+            .arg("List", ScriptActionArgumentType.VARIABLE)
+            .arg("Index", ScriptActionArgumentType.NUMBER)
+            .action(ctx -> {
+                List<ScriptValue> list = ctx.value("List").asList();
+                int index = (int) ctx.value("Index").asNumber() - 1;
+                if (index < 0 || index >= list.size()) {
+                    return;
+                }
+                ScriptValue popped = list.remove(index);
+                ctx.setVariable("List", new ScriptListValue(list));
+                ctx.setVariable("Result", popped);
+            })),
+
     REMOVE_LIST_AT_INDEX_VALUE(builder -> builder.name("Remove List Value")
             .description("Removes a value from a list.")
             .icon(Items.TNT)
@@ -905,7 +923,7 @@ public enum ScriptActionType {
             .arg("Index", ScriptActionArgumentType.NUMBER)
             .action(ctx -> {
                 List<ScriptValue> list = ctx.value("List").asList();
-                // force index consistent with diamondfire indexes
+                // 1-based indexes
                 int index = (int) ctx.value("Index").asNumber() - 1;
                 if (index < 0 || index >= list.size()) {
                     return;
@@ -1441,7 +1459,7 @@ public enum ScriptActionType {
                 int width = (int) ctx.value("Width").asNumber();
                 int height = (int) ctx.value("Height").asNumber();
 
-                DFScript.MC.send(() -> io.github.techstreet.dfscript.DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script())));
+                DFScript.MC.send(() -> DFScript.MC.setScreen(new ScriptMenu(width,height,ctx.task().context().script())));
             })),
 
     ADD_MENU_BUTTON(builder -> builder.name("Add Menu Button")
@@ -1621,6 +1639,12 @@ public enum ScriptActionType {
                     OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
                 }
             })),
+
+    CLOSE_MENU(builder -> builder.name("Close Menu")
+            .description("Closes the current menu")
+            .category(ScriptActionCategory.MENUS)
+            .icon(Items.BARRIER)
+            .action(ctx -> DFScript.MC.setScreen(null))),
 
     /////////////
     /* CONTROL */
