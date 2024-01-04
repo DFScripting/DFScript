@@ -1479,7 +1479,7 @@ public enum ScriptActionType {
 
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        menu.widgets.add(new ScriptMenuButton(x, y, width, height, text, identifier, ctx.task().context().script()));
+                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuButton(x, y, width, height, text, identifier, ctx.task().context().script())));
                     } else {
                         OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
                     }
@@ -1502,9 +1502,9 @@ public enum ScriptActionType {
                 ItemStack item = ScriptValueItem.itemFromValue(ctx.value("Item"));
                 String identifier = ctx.value("Identifier").asString();
 
-                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        menu.widgets.add(new ScriptMenuItem(x, y, item, identifier));
+                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuItem(x, y, item, identifier)));
                     } else {
                         OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
                     }
@@ -1528,9 +1528,9 @@ public enum ScriptActionType {
                 String text = ctx.value("Text").toString();
                 Text t = ComponentUtil.fromString(ComponentUtil.andsToSectionSigns(text));
 
-                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        menu.widgets.add(new ScriptMenuText(x, y, t, 0x333333, 1, false, false, identifier));
+                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuText(x, y, t, 0x333333, 1, false, false, identifier)));
                     } else {
                         OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                     }
@@ -1555,9 +1555,9 @@ public enum ScriptActionType {
                 int height = (int) ctx.value("Height").asNumber();
                 String identifier = ctx.value("Identifier").asString();
 
-                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        menu.widgets.add(new ScriptMenuTextField("", x, y, width, height, true, identifier));
+                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuTextField("", x, y, width, height, true, identifier)));
                     } else {
                         OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
                     }
@@ -1573,9 +1573,9 @@ public enum ScriptActionType {
             .arg("Identifier", ScriptActionArgumentType.STRING)
             .action(ctx -> {
                 String identifier = ctx.value("Identifier").asString();
-                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        menu.removeChild(identifier);
+                        DFScript.MC.send(() -> menu.removeChild(identifier));
                     } else {
                         OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
                     }
@@ -1592,7 +1592,7 @@ public enum ScriptActionType {
             .arg("Identifier", ScriptActionArgumentType.STRING)
             .action(ctx -> {
                 String identifier = ctx.value("Identifier").asString();
-                if (io.github.techstreet.dfscript.DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
                         ScriptWidget w = menu.getWidget(identifier);
 
@@ -1625,7 +1625,7 @@ public enum ScriptActionType {
                     if (menu.ownedBy(ctx.task().context().script())) {
                         ScriptWidget w = menu.getWidget(identifier);
                         if (w instanceof ScriptMenuTextField field) {
-                            field.setText(ctx.value("Value").asString());
+                            DFScript.MC.send(() -> field.setText(ctx.value("Value").asString()));
                         } else {
                             OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
                         }
@@ -1641,7 +1641,7 @@ public enum ScriptActionType {
             .description("Closes the current menu")
             .category(ScriptActionCategory.MENUS)
             .icon(Items.BARRIER)
-            .action(ctx -> DFScript.MC.setScreen(null))),
+            .action(ctx -> DFScript.MC.send(() -> DFScript.MC.setScreen(null)))),
 
     /////////////
     /* CONTROL */
