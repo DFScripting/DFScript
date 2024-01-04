@@ -23,8 +23,9 @@ public class ScriptSetValueScreen extends CScreen {
     private final Class<? extends ScriptValue> type;
 
     public ScriptSetValueScreen(Script script, Runnable onClose, Consumer<ScriptValue> onSave, Class<? extends ScriptValue> type) {
-        this(script,onClose,onSave, type,null);
+        this(script, onClose, onSave, type, null);
     }
+
     public ScriptSetValueScreen(Script script, Runnable onClose, Consumer<ScriptValue> onSave, Class<? extends ScriptValue> type, String overwrite) {
         super(100, 50);
         this.script = script;
@@ -33,7 +34,7 @@ public class ScriptSetValueScreen extends CScreen {
         this.type = type;
 
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
-        if(overwrite != null) input.setText(overwrite);
+        if (overwrite != null) input.setText(overwrite);
 
         ItemStack unknownIcon = new ItemStack(Items.LIGHT_GRAY_DYE);
         unknownIcon.setCustomName(Text.literal("Unknown")
@@ -41,11 +42,11 @@ public class ScriptSetValueScreen extends CScreen {
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
         textIcon.setCustomName(Text.literal("Text")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
         numberIcon.setCustomName(Text.literal("Number")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack trueIcon = new ItemStack(Items.LIME_DYE);
         trueIcon.setCustomName(Text.literal("True")
@@ -63,7 +64,7 @@ public class ScriptSetValueScreen extends CScreen {
 
         int x = 2;
 
-        if(type == ScriptValue.class || type == ScriptNumberValue.class) {
+        if (type == ScriptValue.class || type == ScriptNumberValue.class) {
             addNumber = new CItem(x, 40, numberIcon);
             x += 10;
 
@@ -80,7 +81,7 @@ public class ScriptSetValueScreen extends CScreen {
             widgets.add(addNumber);
         }
 
-        if(type == ScriptValue.class || type == ScriptTextValue.class) {
+        if (type == ScriptValue.class || type == ScriptTextValue.class) {
             addText = new CItem(x, 40, textIcon);
             x += 10;
 
@@ -92,7 +93,7 @@ public class ScriptSetValueScreen extends CScreen {
             widgets.add(addText);
         }
 
-        if(type == ScriptValue.class || type == ScriptBoolValue.class) {
+        if (type == ScriptValue.class || type == ScriptBoolValue.class) {
             addTrue = new CItem(x, 40, trueIcon);
             x += 10;
             addFalse = new CItem(x, 40, falseIcon);
@@ -112,7 +113,7 @@ public class ScriptSetValueScreen extends CScreen {
             widgets.add(addFalse);
         }
 
-        addUnknown = new CItem(100-12, 40, unknownIcon);
+        addUnknown = new CItem(100 - 12, 40, unknownIcon);
 
         addUnknown.setClickListener((btn) -> {
             onSave.accept(new ScriptUnknownValue());

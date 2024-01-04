@@ -10,7 +10,6 @@ import io.github.techstreet.dfscript.script.options.ScriptOption;
 import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
@@ -19,7 +18,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ScriptAddSettingSubtypeScreen extends CScreen {
 
@@ -40,7 +38,7 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
     }
 
     public ScriptAddSettingSubtypeScreen(Script script, ScriptOptionEnum option, int pos) {
-        super(calculateWidth(option.getExtraTypes()),calculateHeight(option.getExtraTypes()));
+        super(calculateWidth(option.getExtraTypes()), calculateHeight(option.getExtraTypes()));
         width = calculateWidth(option.getExtraTypes());
         height = calculateHeight(option.getExtraTypes());
 
@@ -51,21 +49,20 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
         optionPos = 0;
 
         subtypes = new ArrayList<>(option.getExtraTypes());
-        for(int i = 0; i < option.getExtraTypes(); i++) subtypes.add(null);
+        for (int i = 0; i < option.getExtraTypes(); i++) subtypes.add(null);
 
         reloadMenu();
     }
 
     private static int calculateWidth(int extraTypes) {
-        return (int) Math.max((Math.ceil(Math.sqrt(primitiveTypes.size())) * 10)+4, 2+8+4+extraTypes*10+2+8+2);
+        return (int) Math.max((Math.ceil(Math.sqrt(primitiveTypes.size())) * 10) + 4, 2 + 8 + 4 + extraTypes * 10 + 2 + 8 + 2);
     }
 
     private static int calculateHeight(int extraTypes) {
-        return (int) Math.ceil(primitiveTypes.size()/((calculateWidth(extraTypes)-2)/10f))*10+4+12;
+        return (int) Math.ceil(primitiveTypes.size() / ((calculateWidth(extraTypes) - 2) / 10f)) * 10 + 4 + 12;
     }
 
-    public void reloadMenu()
-    {
+    public void reloadMenu() {
         widgets.clear();
 
         int x = 3;
@@ -81,18 +78,17 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
 
         boolean noNull = true;
 
-        for(ScriptOptionEnum o : subtypes) {
+        for (ScriptOptionEnum o : subtypes) {
             ItemStack icon;
 
-            if(o == null) {
+            if (o == null) {
                 noNull = false;
                 icon = new ItemStack(Items.BARRIER).setCustomName(Text.of("None"));
-            }
-            else {
+            } else {
                 icon = o.getIcon();
             }
 
-            if(optionPos == i) citem = new CItem(x, y, icon) {
+            if (optionPos == i) citem = new CItem(x, y, icon) {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     super.render(context, mouseX, mouseY, tickDelta);
@@ -115,7 +111,7 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
             i++;
         }
 
-        if(noNull) {
+        if (noNull) {
             CTexturedButton button = new CTexturedButton(width - 10, 3, 8, 8, DFScript.MOD_ID + ":on_button.png", DFScript.MOD_ID + ":on_button_highlight.png", () -> {
                 try {
                     script.addOption(pos, new ScriptNamedOption(ScriptOption.instantiate(option, subtypes), script.getUnnamedOption()));
@@ -130,18 +126,16 @@ public class ScriptAddSettingSubtypeScreen extends CScreen {
         }
 
         x = 3;
-        y = 3+12;
+        y = 3 + 12;
 
-        for(ScriptOptionEnum o : primitiveTypes) {
+        for (ScriptOptionEnum o : primitiveTypes) {
             citem = new CItem(x, y, o.getIcon());
 
             citem.setClickListener((a) -> {
-                if(optionPos < subtypes.size()-1 && subtypes.get(optionPos) == null) {
+                if (optionPos < subtypes.size() - 1 && subtypes.get(optionPos) == null) {
                     subtypes.set(optionPos, o);
                     optionPos++;
-                }
-                else
-                {
+                } else {
                     subtypes.set(optionPos, o);
                 }
 

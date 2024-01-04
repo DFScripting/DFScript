@@ -18,6 +18,7 @@ public class ReceiveSoundEvent implements CancellableEvent {
     public Identifier getSoundId() {
         return soundId;
     }
+
     public float getVolume() {
         return volume;
     }

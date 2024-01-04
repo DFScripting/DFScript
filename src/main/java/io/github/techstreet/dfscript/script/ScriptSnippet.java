@@ -17,12 +17,10 @@ import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.execution.ScriptPosStackElement;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
-import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.RenderUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -34,16 +32,15 @@ import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ScriptSnippet extends ArrayList<ScriptPart> {
     boolean hidden = false;
+
     ScriptSnippet() {
 
     }
 
-    public void run(ScriptTask task, ScriptScopeParent parent, ScriptActionContext context)
-    {
+    public void run(ScriptTask task, ScriptScopeParent parent, ScriptActionContext context) {
         task.stack().push(this, parent, context);
     }
 
@@ -51,7 +48,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
         ScriptSnippet thisSnippet = this;
         panel.add(new CButton(3, y, 2, 8, "", () -> {
             thisSnippet.hidden = !thisSnippet.hidden;
-            if(DFScript.MC.currentScreen instanceof ScriptEditScreen e) {
+            if (DFScript.MC.currentScreen instanceof ScriptEditScreen e) {
                 e.reload();
             }
         }) {
@@ -62,32 +59,31 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
 
                 int color = 0xFF323232;
 
-                if(b.contains(mouseX, mouseY)) {
+                if (b.contains(mouseX, mouseY)) {
                     color = 0xFF707070;
                 }
 
-                if(thisSnippet.hidden) {
-                    RenderUtil.renderLine(stack, b.x, b.y, b.x+b.width, b.y+(b.height/2f), color, 0.5f);
-                    RenderUtil.renderLine(stack, b.x, b.y+b.height, b.x+b.width, b.y+(b.height/2f), color, 0.5f);
-                }
-                else {
-                    RenderUtil.renderLine(stack, b.x, b.y, b.x+(b.width/2f), b.y+b.height, color, 0.5f);
-                    RenderUtil.renderLine(stack, b.x+b.width, b.y, b.x+(b.width/2f), b.y+b.height, color, 0.5f);
+                if (thisSnippet.hidden) {
+                    RenderUtil.renderLine(stack, b.x, b.y, b.x + b.width, b.y + (b.height / 2f), color, 0.5f);
+                    RenderUtil.renderLine(stack, b.x, b.y + b.height, b.x + b.width, b.y + (b.height / 2f), color, 0.5f);
+                } else {
+                    RenderUtil.renderLine(stack, b.x, b.y, b.x + (b.width / 2f), b.y + b.height, color, 0.5f);
+                    RenderUtil.renderLine(stack, b.x + b.width, b.y, b.x + (b.width / 2f), b.y + b.height, color, 0.5f);
                 }
             }
         });
 
-        if(hidden) {
+        if (hidden) {
             ScriptPartRender.createIndent(panel, indent, y, 8);
 
             panel.add(new CText(15 + indent * 5, y + 2, Text.literal("...")));
 
-            return y+10;
+            return y + 10;
         }
 
         int index = 0;
 
-        for(ScriptPart part : this) {
+        for (ScriptPart part : this) {
             ScriptPartRender render = new ScriptPartRender();
             part.create(render, script);
             y = render.create(panel, y, indent, script, header);
@@ -116,9 +112,9 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                             }
                         }
 
-                        if(drawFill) {
-                            for(var renderButtonPos : render.getButtonPositions()) {
-                                context.fill(b.x, renderButtonPos.y()-1, b.x + b.width, renderButtonPos.y()-1 + renderButtonPos.height(), color);
+                        if (drawFill) {
+                            for (var renderButtonPos : render.getButtonPositions()) {
+                                context.fill(b.x, renderButtonPos.y() - 1, b.x + b.width, renderButtonPos.y() - 1 + renderButtonPos.height(), color);
                             }
                         }
                     }
@@ -129,9 +125,9 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                             DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
 
                             if (button == 0) {
-                                if(part instanceof ScriptParametrizedPart parametrizedPart)
+                                if (part instanceof ScriptParametrizedPart parametrizedPart)
                                     DFScript.MC.setScreen(new ScriptEditPartScreen(parametrizedPart, script, header));
-                                if(part instanceof ScriptComment)
+                                if (part instanceof ScriptComment)
                                     return false;
                             } else {
                                 List<ContextMenuButton> contextMenu = new ArrayList<>();
@@ -146,8 +142,7 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
                                 }));
                                 contextMenu.addAll(part.getContextMenu());
                                 DFScript.MC.send(() -> {
-                                    if(DFScript.MC.currentScreen instanceof ScriptEditScreen editScreen)
-                                    {
+                                    if (DFScript.MC.currentScreen instanceof ScriptEditScreen editScreen) {
                                         editScreen.contextMenu((int) x, (int) y, contextMenu);
                                     }
                                 });
@@ -162,97 +157,97 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
         }
 
         ScriptPartRender.createIndent(panel, indent, y, 8);
-        CButton add = new CButton((ScriptEditScreen.width-30)/2, y, 30, 8, "Add Part", () -> {
+        CButton add = new CButton((ScriptEditScreen.width - 30) / 2, y, 30, 8, "Add Part", () -> {
             DFScript.MC.setScreen(new ScriptPartCategoryScreen(script, thisSnippet, thisSnippet.size()));
         });
 
         panel.add(add);
 
-        return y+10;
+        return y + 10;
     }
 
     public void replaceAction(ScriptActionType oldAction, ScriptActionType newAction) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptBuiltinAction a) {
-                if(a.getType() == oldAction) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptBuiltinAction a) {
+                if (a.getType() == oldAction) {
                     a.setType(newAction);
                 }
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceAction(oldAction, newAction));
             }
         }
     }
 
     public void replaceCondition(ScriptConditionType oldCondition, ScriptConditionType newCondition) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptBranch b) {
-                if(b.getCondition() instanceof ScriptBuiltinCondition c) {
-                    if(c.getType() == oldCondition) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptBranch b) {
+                if (b.getCondition() instanceof ScriptBuiltinCondition c) {
+                    if (c.getType() == oldCondition) {
                         c.setType(newCondition);
                     }
                 }
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceCondition(oldCondition, newCondition));
             }
         }
     }
 
     public void replaceRepetition(ScriptRepetitionType oldRepetition, ScriptRepetitionType newRepetition) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptBuiltinRepetition r) {
-                if(r.getType() == oldRepetition) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptBuiltinRepetition r) {
+                if (r.getType() == oldRepetition) {
                     r.setType(newRepetition);
                 }
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceRepetition(oldRepetition, newRepetition));
             }
         }
     }
 
     public void updateScriptReferences(Script script, ScriptHeader header) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptParametrizedPart p) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptParametrizedPart p) {
                 p.updateScriptReferences(script, header);
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.updateScriptReferences(script, header));
             }
         }
     }
 
     public void replaceOption(String oldOption, String newOption) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptParametrizedPart p) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptParametrizedPart p) {
                 p.updateConfigArguments(oldOption, newOption);
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceOption(oldOption, newOption));
             }
         }
     }
 
     public void removeOption(String option) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptParametrizedPart p) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptParametrizedPart p) {
                 p.removeConfigArguments(option);
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.removeOption(option));
             }
         }
     }
 
     public void replaceFunction(String oldFunction, String newFunction) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptFunctionCall fc) {
-                if(fc.getFunctionName() == oldFunction) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptFunctionCall fc) {
+                if (fc.getFunctionName() == oldFunction) {
                     fc.setFunction(newFunction);
                 }
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
             }
         }
@@ -261,15 +256,15 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
     public void removeFunction(String function) {
         int index = 0;
 
-        while(index < this.size()) {
+        while (index < this.size()) {
             ScriptPart part = this.get(index);
-            if(part instanceof ScriptFunctionCall fc) {
-                if(fc.getFunctionName() == function) {
+            if (part instanceof ScriptFunctionCall fc) {
+                if (fc.getFunctionName() == function) {
                     this.remove(index);
                     continue;
                 }
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.removeFunction(function));
             }
             index++;
@@ -277,22 +272,22 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
     }
 
     public void replaceFunctionArgument(String oldArg, String newArg) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptParametrizedPart p) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptParametrizedPart p) {
                 p.replaceFunctionArgument(oldArg, newArg);
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.replaceFunctionArgument(oldArg, newArg));
             }
         }
     }
 
     public void removeFunctionArgument(String arg) {
-        for(ScriptPart part : this) {
-            if(part instanceof ScriptParametrizedPart p) {
+        for (ScriptPart part : this) {
+            if (part instanceof ScriptParametrizedPart p) {
                 p.removeFunctionArgument(arg);
             }
-            if(part instanceof ScriptScopeParent p) {
+            if (part instanceof ScriptScopeParent p) {
                 p.forEach((snippet) -> snippet.removeFunctionArgument(arg));
             }
         }
@@ -305,11 +300,11 @@ public class ScriptSnippet extends ArrayList<ScriptPart> {
             JsonObject obj = json.getAsJsonObject();
             ScriptSnippet snippet = new ScriptSnippet();
 
-            for(JsonElement element : obj.getAsJsonArray("parts")) {
+            for (JsonElement element : obj.getAsJsonArray("parts")) {
                 snippet.add(context.deserialize(element, ScriptPart.class));
             }
 
-            if(obj.has("hidden")) {
+            if (obj.has("hidden")) {
                 snippet.hidden = obj.get("hidden").getAsBoolean();
             }
 

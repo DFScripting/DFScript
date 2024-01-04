@@ -6,8 +6,9 @@ import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptAc
 import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
-import io.github.techstreet.dfscript.script.values.*;
-import io.github.techstreet.dfscript.util.*;
+import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
+import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
@@ -21,60 +22,63 @@ import net.minecraft.util.Formatting;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public enum ScriptConditionType {
 
     IF_EQUALS(builder -> builder.name("Equals")
-        .description("Checks if one value is equal to another.")
-        .icon(Items.IRON_INGOT)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.ANY)
-        .arg("Other", ScriptActionArgumentType.ANY)
-        .action(ctx -> ctx.value("Value").valueEquals(ctx.value("Other")))),
+            .description("Checks if one value is equal to another.")
+            .icon(Items.IRON_INGOT)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .arg("Other", ScriptActionArgumentType.ANY)
+            .action(ctx -> ctx.value("Value").valueEquals(ctx.value("Other")))),
 
     IF_NOT_EQUALS(builder -> builder.name("Not Equals")
-        .description("Checks if one value is not equal to another.")
-        .icon(Items.BARRIER)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.ANY)
-        .arg("Other", ScriptActionArgumentType.ANY)
-        .deprecate(IF_EQUALS)
-        .action(ctx -> !ctx.value("Value").valueEquals(ctx.value("Other")))),
+            .description("Checks if one value is not equal to another.")
+            .icon(Items.BARRIER)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .arg("Other", ScriptActionArgumentType.ANY)
+            .deprecate(IF_EQUALS)
+            .action(ctx -> !ctx.value("Value").valueEquals(ctx.value("Other")))),
 
     IF_GREATER(builder -> builder.name("Greater")
-        .description("Checks if one number is greater than another.")
-        .icon(Items.BRICK)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.NUMBER)
-        .arg("Other", ScriptActionArgumentType.NUMBER)
-        .action(ctx -> ctx.value("Value").asNumber() > ctx.value("Other").asNumber())),
+            .description("Checks if one number is greater than another.")
+            .icon(Items.BRICK)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Other", ScriptActionArgumentType.NUMBER)
+            .action(ctx -> ctx.value("Value").asNumber() > ctx.value("Other").asNumber())),
 
     IF_GREATER_EQUALS(builder -> builder.name("Greater Equals")
-        .description("Checks if one number is greater than or equal to another.")
-        .icon(Items.BRICKS)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.NUMBER)
-        .arg("Other", ScriptActionArgumentType.NUMBER)
-        .action(ctx -> ctx.value("Value").asNumber() >= ctx.value("Other").asNumber())),
+            .description("Checks if one number is greater than or equal to another.")
+            .icon(Items.BRICKS)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Other", ScriptActionArgumentType.NUMBER)
+            .action(ctx -> ctx.value("Value").asNumber() >= ctx.value("Other").asNumber())),
 
     IF_LESS(builder -> builder.name("Less")
-        .description("Checks if one number is less than another.")
-        .icon(Items.NETHER_BRICK)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.NUMBER)
-        .arg("Other", ScriptActionArgumentType.NUMBER)
-        .action(ctx -> ctx.value("Value").asNumber() < ctx.value("Other").asNumber())),
+            .description("Checks if one number is less than another.")
+            .icon(Items.NETHER_BRICK)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Other", ScriptActionArgumentType.NUMBER)
+            .action(ctx -> ctx.value("Value").asNumber() < ctx.value("Other").asNumber())),
 
     IF_LESS_EQUALS(builder -> builder.name("If Less Equals")
-        .description("Checks if one number is less than or equal to another.")
-        .icon(Items.NETHER_BRICKS)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Value", ScriptActionArgumentType.NUMBER)
-        .arg("Other", ScriptActionArgumentType.NUMBER)
-        .action(ctx -> ctx.value("Value").asNumber() <= ctx.value("Other").asNumber())),
+            .description("Checks if one number is less than or equal to another.")
+            .icon(Items.NETHER_BRICKS)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Value", ScriptActionArgumentType.NUMBER)
+            .arg("Other", ScriptActionArgumentType.NUMBER)
+            .action(ctx -> ctx.value("Value").asNumber() <= ctx.value("Other").asNumber())),
 
     IF_WITHIN_RANGE(builder -> builder.name("Number Within Range")
             .description("Checks if a number is between\n2 different numbers (inclusive).")
@@ -115,179 +119,179 @@ public enum ScriptConditionType {
             })),
 
     IF_LIST_CONTAINS(builder -> builder.name("List Contains")
-        .description("Checks if a list contains a value.")
-        .icon(Items.BOOKSHELF)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("List", ScriptActionArgumentType.LIST)
-        .arg("Value", ScriptActionArgumentType.ANY)
-        .action(ctx -> {
-            List<ScriptValue> list = ctx.value("List").asList();
-            return list.stream().anyMatch(value -> value.valueEquals(ctx.value("Value")));
-        })),
+            .description("Checks if a list contains a value.")
+            .icon(Items.BOOKSHELF)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("List", ScriptActionArgumentType.LIST)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .action(ctx -> {
+                List<ScriptValue> list = ctx.value("List").asList();
+                return list.stream().anyMatch(value -> value.valueEquals(ctx.value("Value")));
+            })),
 
     IF_STRING_CONTAINS(builder -> builder.name("String Contains")
-        .description("Checks if a string contains a value.")
-        .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("String", ScriptActionArgumentType.STRING)
-        .arg("Sub-String", ScriptActionArgumentType.STRING)
-        .action(ctx -> {
-            String text = ctx.value("String").asString();
-            String subtext = ctx.value("Sub-String").asString();
-            return text.contains(subtext);
-        })),
+            .description("Checks if a string contains a value.")
+            .icon(Items.NAME_TAG)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .arg("Sub-String", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                String text = ctx.value("String").asString();
+                String subtext = ctx.value("Sub-String").asString();
+                return text.contains(subtext);
+            })),
 
     IF_MATCHES_REGEX(builder -> builder.name("Matches Regex")
-        .description("Checks if a string matches a regex.")
-        .icon(Items.ANVIL)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("String", ScriptActionArgumentType.STRING)
-        .arg("Regex", ScriptActionArgumentType.STRING)
-        .action(ctx -> {
-            String text = ctx.value("String").asString();
-            String regex = ctx.value("Regex").asString();
-            return text.matches(regex);
-        })),
+            .description("Checks if a string matches a regex.")
+            .icon(Items.ANVIL)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .arg("Regex", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                String text = ctx.value("String").asString();
+                String regex = ctx.value("Regex").asString();
+                return text.matches(regex);
+            })),
 
     IF_STARTS_WITH(builder -> builder.name("Starts With")
-        .description("Checks if a string starts with an other.")
-        .icon(Items.FEATHER)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("String", ScriptActionArgumentType.STRING)
-        .arg("Sub-String", ScriptActionArgumentType.STRING)
-        .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String subtext = ctx.value("Subtext").asString();
-            return text.startsWith(subtext);
-        })),
+            .description("Checks if a string starts with an other.")
+            .icon(Items.FEATHER)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("String", ScriptActionArgumentType.STRING)
+            .arg("Sub-String", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                String text = ctx.value("Text").asString();
+                String subtext = ctx.value("Subtext").asString();
+                return text.startsWith(subtext);
+            })),
 
     IF_LIST_DOESNT_CONTAIN(builder -> builder.name("List Doesnt Contain")
-        .description("Checks if a list doesnt contain a value.")
-        .icon(Items.BOOKSHELF)
-        .category(ScriptActionCategory.LISTS)
-        .arg("List", ScriptActionArgumentType.LIST)
-        .arg("Value", ScriptActionArgumentType.ANY)
-        .deprecate(IF_LIST_CONTAINS)
-        .action(ctx -> {
-            List<ScriptValue> list = ctx.value("List").asList();
-            return list.stream().noneMatch(value -> value.valueEquals(ctx.value("Value")));
-        })),
+            .description("Checks if a list doesnt contain a value.")
+            .icon(Items.BOOKSHELF)
+            .category(ScriptActionCategory.LISTS)
+            .arg("List", ScriptActionArgumentType.LIST)
+            .arg("Value", ScriptActionArgumentType.ANY)
+            .deprecate(IF_LIST_CONTAINS)
+            .action(ctx -> {
+                List<ScriptValue> list = ctx.value("List").asList();
+                return list.stream().noneMatch(value -> value.valueEquals(ctx.value("Value")));
+            })),
 
     IF_TEXT_DOESNT_CONTAIN(builder -> builder.name("Text Doesnt Contain")
-        .description("Checks if a text doesnt contain a value.")
-        .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Subtext", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_STRING_CONTAINS)
-        .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String subtext = ctx.value("Subtext").asString();
-            return !text.contains(subtext);
-        })),
+            .description("Checks if a text doesnt contain a value.")
+            .icon(Items.NAME_TAG)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .arg("Subtext", ScriptActionArgumentType.TEXT)
+            .deprecate(IF_STRING_CONTAINS)
+            .action(ctx -> {
+                String text = ctx.value("Text").asString();
+                String subtext = ctx.value("Subtext").asString();
+                return !text.contains(subtext);
+            })),
 
     IF_DOESNT_START_WITH(builder -> builder.name("Doesnt Start With")
-        .description("Checks if a text doesnt start with an other.")
-        .icon(Items.FEATHER)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Subtext", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_STARTS_WITH)
-        .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String subtext = ctx.value("Subtext").asString();
-            return !text.startsWith(subtext);
-        })),
+            .description("Checks if a text doesnt start with an other.")
+            .icon(Items.FEATHER)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .arg("Subtext", ScriptActionArgumentType.TEXT)
+            .deprecate(IF_STARTS_WITH)
+            .action(ctx -> {
+                String text = ctx.value("Text").asString();
+                String subtext = ctx.value("Subtext").asString();
+                return !text.startsWith(subtext);
+            })),
 
     IF_DOESNT_MATCH_REGEX(builder -> builder.name("Doesnt Match Regex")
-        .description("Checks if a text doesnt match a regex.")
-        .icon(Items.ANVIL)
-        .category(ScriptActionCategory.TEXTS)
-        .arg("Text", ScriptActionArgumentType.TEXT)
-        .arg("Regex", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_MATCHES_REGEX)
-        .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String regex = ctx.value("Regex").asString();
-            return !text.matches(regex);
-        })),
+            .description("Checks if a text doesnt match a regex.")
+            .icon(Items.ANVIL)
+            .category(ScriptActionCategory.TEXTS)
+            .arg("Text", ScriptActionArgumentType.TEXT)
+            .arg("Regex", ScriptActionArgumentType.TEXT)
+            .deprecate(IF_MATCHES_REGEX)
+            .action(ctx -> {
+                String text = ctx.value("Text").asString();
+                String regex = ctx.value("Regex").asString();
+                return !text.matches(regex);
+            })),
 
     IF_DICT_KEY_EXISTS(builder -> builder.name("Dictionary Key Exists")
-        .description("Checks if a key exists in a dictionary.")
-        .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
-        .arg("Key", ScriptActionArgumentType.STRING)
-        .action(ctx -> {
-            HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asString();
-            return dict.containsKey(key);
-        })),
+            .description("Checks if a key exists in a dictionary.")
+            .icon(Items.NAME_TAG)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
+            .arg("Key", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
+                String key = ctx.value("Key").asString();
+                return dict.containsKey(key);
+            })),
 
     IF_DICT_KEY_DOESNT_EXIST(builder -> builder.name("Dictionary Key Doesnt Exist")
-        .description("Checks if a key doesnt exist in a dictionary.")
-        .icon(Items.NAME_TAG)
-        .category(ScriptActionCategory.DICTIONARIES)
-        .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
-        .arg("Key", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_DICT_KEY_EXISTS)
-        .action(ctx -> {
-            HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
-            String key = ctx.value("Key").asString();
-            return !dict.containsKey(key);
-        })),
+            .description("Checks if a key doesnt exist in a dictionary.")
+            .icon(Items.NAME_TAG)
+            .category(ScriptActionCategory.DICTIONARIES)
+            .arg("Dictionary", ScriptActionArgumentType.DICTIONARY)
+            .arg("Key", ScriptActionArgumentType.TEXT)
+            .deprecate(IF_DICT_KEY_EXISTS)
+            .action(ctx -> {
+                HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
+                String key = ctx.value("Key").asString();
+                return !dict.containsKey(key);
+            })),
 
     IF_GUI_OPEN(builder -> builder.name("GUI Open")
-        .description("Executes if a gui is open.")
-        .icon(Items.BOOK)
-        .category(ScriptActionCategory.CONDITIONS)
-        .action(ctx -> DFScript.MC.currentScreen != null)),
+            .description("Executes if a gui is open.")
+            .icon(Items.BOOK)
+            .category(ScriptActionCategory.CONDITIONS)
+            .action(ctx -> DFScript.MC.currentScreen != null)),
 
     IF_GUI_CLOSED(builder -> builder.name("GUI Not Open")
-        .description("Executes if no gui is open.")
-        .icon(Items.BOOK)
-        .deprecate(IF_GUI_OPEN)
-        .category(ScriptActionCategory.MISC)
-        .action(ctx -> {
-            return DFScript.MC.currentScreen == null;
-        })),
+            .description("Executes if no gui is open.")
+            .icon(Items.BOOK)
+            .deprecate(IF_GUI_OPEN)
+            .category(ScriptActionCategory.MISC)
+            .action(ctx -> {
+                return DFScript.MC.currentScreen == null;
+            })),
 
     IF_FILE_EXISTS(builder -> builder.name("File Exists")
-        .description("Executes if the specified file exists.")
-        .icon(Items.BOOK)
-        .category(ScriptActionCategory.CONDITIONS)
-        .arg("Filename", ScriptActionArgumentType.STRING)
-        .action(ctx -> {
-            String filename = ctx.value("Filename").asString();
-            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
-                Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
-                if (Files.exists(f)) {
-                    return true;
+            .description("Executes if the specified file exists.")
+            .icon(Items.BOOK)
+            .category(ScriptActionCategory.CONDITIONS)
+            .arg("Filename", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asString();
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName() + "-files").resolve(filename);
+                    if (Files.exists(f)) {
+                        return true;
+                    }
+                } else {
+                    ChatUtil.error("Illegal filename: " + filename);
                 }
-            } else {
-                ChatUtil.error("Illegal filename: " + filename);
-            }
-            return false;
-        })),
+                return false;
+            })),
 
     IF_FILE_DOESNT_EXIST(builder -> builder.name("File Doesnt Exist")
-        .description("Executes if the specified file doesnt exist.")
-        .icon(Items.BOOK)
-        .category(ScriptActionCategory.MISC)
-        .arg("Filename", ScriptActionArgumentType.TEXT)
-        .deprecate(IF_FILE_EXISTS)
-        .action(ctx -> {
-            String filename = ctx.value("Filename").asString();
-            if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
-                Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
-                if (!Files.exists(f)) {
-                    return true;
+            .description("Executes if the specified file doesnt exist.")
+            .icon(Items.BOOK)
+            .category(ScriptActionCategory.MISC)
+            .arg("Filename", ScriptActionArgumentType.TEXT)
+            .deprecate(IF_FILE_EXISTS)
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asString();
+                if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName() + "-files").resolve(filename);
+                    if (!Files.exists(f)) {
+                        return true;
+                    }
+                } else {
+                    ChatUtil.error("Illegal filename: " + filename);
                 }
-            } else {
-                ChatUtil.error("Illegal filename: " + filename);
-            }
-            return false;
-        })),
+                return false;
+            })),
 
     IF_UNKNOWN(builder -> builder.name("Unknown")
             .description("Checks if a value is of the unknown type.")
@@ -321,17 +325,19 @@ public enum ScriptConditionType {
 
     private ScriptConditionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
+
     ScriptConditionType(Consumer<ScriptConditionType> builder) {
         description.add("No description provided.");
         builder.accept(this);
     }
+
     public ItemStack getIcon(String prefix) {
         ItemStack item = new ItemStack(icon);
 
         item.setCustomName(Text.literal(prefix + (prefix.equals("") ? "" : " ") + name)
-            .fillStyle(Style.EMPTY
-                .withColor(Formatting.WHITE)
-                .withItalic(false)));
+                .fillStyle(Style.EMPTY
+                        .withColor(Formatting.WHITE)
+                        .withItalic(false)));
 
         NbtList lore = new NbtList();
 
@@ -340,10 +346,9 @@ public enum ScriptConditionType {
         }
 
         item.getSubNbt("display")
-            .put("Lore", lore);
+                .put("Lore", lore);
 
-        if(glow)
-        {
+        if (glow) {
             item.addEnchantment(Enchantments.UNBREAKING, 1);
             item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
         }
@@ -358,8 +363,7 @@ public enum ScriptConditionType {
     public List<Text> getLore() {
         List<Text> lore = new ArrayList<>();
 
-        if(isDeprecated())
-        {
+        if (isDeprecated()) {
             lore.add(Text.literal("This action is deprecated!")
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
@@ -370,7 +374,7 @@ public enum ScriptConditionType {
                             .withItalic(false)));
         }
 
-        for (String descriptionLine: description) {
+        for (String descriptionLine : description) {
             lore.add(Text.literal(descriptionLine)
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.GRAY)
@@ -454,13 +458,10 @@ public enum ScriptConditionType {
     }
 
     public boolean run(ScriptActionContext ctx) {
-        try
-        {
+        try {
             arguments.getArgMap(ctx);
             return action.apply(ctx);
-        }
-        catch(IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             ChatUtil.error("Invalid arguments for " + name + ".");
             return false;
         }

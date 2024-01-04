@@ -15,7 +15,7 @@ public class MKeyboardHandler {
 
     @Inject(method = "onKey", at = @At("HEAD"), cancellable = true)
     private void keyPress(long window, int i, int j, int k, int m, CallbackInfo ci) {
-        Key key = InputUtil.fromKeyCode(i,j);
+        Key key = InputUtil.fromKeyCode(i, j);
 
         KeyPressEvent event = new KeyPressEvent(key, k);
         EventManager.getInstance().dispatch(event);

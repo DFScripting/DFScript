@@ -58,8 +58,7 @@ public enum ScriptOptionEnum {
         this.deprecate = deprecate;
     }
 
-    public ItemStack getIcon()
-    {
+    public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
 
         item.setCustomName(Text.literal(name + " Option").fillStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
@@ -80,8 +79,7 @@ public enum ScriptOptionEnum {
         return name;
     }
 
-    public int getExtraTypes()
-    {
+    public int getExtraTypes() {
         return extraTypes;
     }
 
@@ -91,7 +89,7 @@ public enum ScriptOptionEnum {
 
     public static ScriptOptionEnum fromName(String name) {
         for (ScriptOptionEnum t : ScriptOptionEnum.values()) {
-            if(t.name().equals(name)) {
+            if (t.name().equals(name)) {
                 return t;
             }
         }
@@ -101,7 +99,7 @@ public enum ScriptOptionEnum {
 
     public static ScriptOptionEnum fromClass(Class<? extends ScriptOption> name) {
         for (ScriptOptionEnum t : ScriptOptionEnum.values()) {
-            if(t.getOptionType().equals(name)) {
+            if (t.getOptionType().equals(name)) {
                 return t;
             }
         }

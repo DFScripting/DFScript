@@ -28,13 +28,11 @@ public class ScriptListOption implements ScriptOption {
     public ScriptListOption(JsonElement value, ScriptOptionEnum valueType) throws ScriptOptionSubtypeMismatchException {
         this.valueType = valueType;
 
-        if(!value.isJsonArray())
-        {
+        if (!value.isJsonArray()) {
             DFScript.LOGGER.error("Not a JSON Array!");
         }
 
-        for(JsonElement e : value.getAsJsonArray())
-        {
+        for (JsonElement e : value.getAsJsonArray()) {
             this.value.add(ScriptOption.fromJson(e, valueType, new ArrayList<>()));
         }
 
@@ -48,15 +46,12 @@ public class ScriptListOption implements ScriptOption {
     }
 
     private void checkValidity() throws ScriptOptionSubtypeMismatchException {
-        if(valueType.getExtraTypes() != 0)
-        {
+        if (valueType.getExtraTypes() != 0) {
             throw new ScriptOptionSubtypeMismatchException("Incorrect amount of extra types");
         }
 
-        for(ScriptOption o : value)
-        {
-            if(valueType.getOptionType() != o.getClass())
-            {
+        for (ScriptOption o : value) {
+            if (valueType.getOptionType() != o.getClass()) {
                 throw new ScriptOptionSubtypeMismatchException("Incorrect type of an item");
             }
         }
@@ -66,8 +61,7 @@ public class ScriptListOption implements ScriptOption {
     public ScriptValue getValue() {
         List<ScriptValue> result = new ArrayList<>();
 
-        for(ScriptOption o : value)
-        {
+        for (ScriptOption o : value) {
             result.add(o.getValue());
         }
 
@@ -82,11 +76,12 @@ public class ScriptListOption implements ScriptOption {
     @Override
     public int create(CScrollPanel panel, int x, int y, int width) {
         int i = 0;
-        for(ScriptOption o : value) {
+        for (ScriptOption o : value) {
             int y1 = y;
-            y = o.create(panel,x+5,y,width-5);
+            y = o.create(panel, x + 5, y, width - 5);
             int finalI = i;
-            panel.add(new CButton(5, y1, 115, y-y1, "",() -> {}) {
+            panel.add(new CButton(5, y1, 115, y - y1, "", () -> {
+            }) {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
@@ -99,7 +94,7 @@ public class ScriptListOption implements ScriptOption {
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
                         if (button != 0) {
-                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
+                            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
                             if (DFScript.MC.currentScreen instanceof ScriptSettingsScreen s) {
                                 CButton insertBefore = new CButton((int) x, (int) y, 50, 8, "Insert Item Before", () -> {
                                     try {
@@ -132,21 +127,21 @@ public class ScriptListOption implements ScriptOption {
             i++;
         }
 
-        CButton button = new CButton(x+5, y, width-5, 8, "Add Item", ()->{
+        CButton button = new CButton(x + 5, y, width - 5, 8, "Add Item", () -> {
             try {
                 value.add(valueType.getOptionType().getConstructor().newInstance());
             } catch (Exception e) {
                 ChatUtil.error(String.valueOf(e.getCause()));
             }
 
-            if(DFScript.MC.currentScreen instanceof ScriptSettingsScreen s) {
+            if (DFScript.MC.currentScreen instanceof ScriptSettingsScreen s) {
                 s.reloadMenu();
             }
         });
 
         panel.add(button);
 
-        return y+10;
+        return y + 10;
     }
 
     @Override

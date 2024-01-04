@@ -3,28 +3,24 @@ package io.github.techstreet.dfscript.script.event;
 import com.google.gson.*;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.*;
-import io.github.techstreet.dfscript.script.action.*;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class ScriptHeader implements ScriptRunnable, ScriptScopeParent {
 
     ScriptContainer container;
-    ScriptHeader()
-    {
+
+    ScriptHeader() {
         container = new ScriptContainer(1);
     }
 
     @Override
-    public void run(ScriptTask task)
-    {
+    public void run(ScriptTask task) {
         container.runSnippet(task, 0, this);
     }
 

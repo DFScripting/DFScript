@@ -22,8 +22,9 @@ public class ScriptAddArgumentScreen extends CScreen {
     private final ScriptParametrizedPart action;
 
     public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, ScriptHeader header) {
-        this(script,action,index, header,null);
+        this(script, action, index, header, null);
     }
+
     public ScriptAddArgumentScreen(Script script, ScriptParametrizedPart action, int index, ScriptHeader header, String overwrite) {
         super(100, 50);
         this.script = script;
@@ -31,7 +32,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         this.header = header;
 
         CTextField input = new CTextField("Input", 2, 2, 96, 35, true);
-        if(overwrite != null) input.setText(overwrite);
+        if (overwrite != null) input.setText(overwrite);
 
         ItemStack stringIcon = new ItemStack(Items.STRING);
         stringIcon.setCustomName(Text.literal("String")
@@ -39,23 +40,23 @@ public class ScriptAddArgumentScreen extends CScreen {
 
         ItemStack textIcon = new ItemStack(Items.BOOK);
         textIcon.setCustomName(Text.literal("Text")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack numberIcon = new ItemStack(Items.SLIME_BALL);
         numberIcon.setCustomName(Text.literal("Number")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack variableIcon = new ItemStack(Items.MAGMA_CREAM);
         variableIcon.setCustomName(Text.literal("Variable")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack clientValueIcon = new ItemStack(Items.NAME_TAG);
         clientValueIcon.setCustomName(Text.literal("Client Value")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack configValueIcon = new ItemStack(Items.INK_SAC);
         configValueIcon.setCustomName(Text.literal("Config Value")
-            .fillStyle(Style.EMPTY.withItalic(false)));
+                .fillStyle(Style.EMPTY.withItalic(false)));
 
         ItemStack functionArgumentIcon = new ItemStack(Items.BLUE_DYE);
         functionArgumentIcon.setCustomName(Text.literal("Function Argument")
@@ -82,7 +83,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         addText.setClickListener((btn) -> {
-            if(overwrite != null) action.getArguments().remove(index);
+            if (overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptTextArgument(input.getText()));
             close();
         });
@@ -96,7 +97,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         addNumber.setClickListener((btn) -> {
             try {
                 double number = Double.parseDouble(input.getText());
-                if(overwrite != null) action.getArguments().remove(index);
+                if (overwrite != null) action.getArguments().remove(index);
                 action.getArguments().add(index, new ScriptNumberArgument(number));
                 close();
             } catch (Exception err) {
@@ -105,7 +106,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         });
 
         addVariable.setClickListener((btn) -> {
-            if(overwrite != null) action.getArguments().remove(index);
+            if (overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptVariableArgument(input.getText(), ScriptVariableScope.SCRIPT));
             close();
         });
@@ -123,13 +124,13 @@ public class ScriptAddArgumentScreen extends CScreen {
         });
 
         addTrue.setClickListener((btn) -> {
-            if(overwrite != null) action.getArguments().remove(index);
+            if (overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptBoolArgument(true));
             close();
         });
 
         addFalse.setClickListener((btn) -> {
-            if(overwrite != null) action.getArguments().remove(index);
+            if (overwrite != null) action.getArguments().remove(index);
             action.getArguments().add(index, new ScriptBoolArgument(false));
             close();
         });
@@ -143,7 +144,7 @@ public class ScriptAddArgumentScreen extends CScreen {
         widgets.add(addVariable);
         widgets.add(addClientValue);
         widgets.add(addConfigValue);
-        if(header instanceof ScriptFunction) {
+        if (header instanceof ScriptFunction) {
             widgets.add(addFunctionArgument);
         }
     }

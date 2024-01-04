@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.screen;
 
 import io.github.techstreet.dfscript.DFScript;
-import io.github.techstreet.dfscript.screen.script.ScriptEditScreen;
 
 public class ContextMenuButton {
     String name;
@@ -22,11 +21,10 @@ public class ContextMenuButton {
     }
 
     public Runnable getOnClick() {
-        if(reloadOnClick) {
+        if (reloadOnClick) {
             return () -> {
                 onClick.run();
-                if(DFScript.MC.currentScreen instanceof CReloadableScreen screen)
-                {
+                if (DFScript.MC.currentScreen instanceof CReloadableScreen screen) {
                     screen.reload();
                 }
             };

@@ -4,16 +4,9 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
-import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
-import io.github.techstreet.dfscript.script.action.ScriptActionCategoryExtra;
-import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.event.ScriptEvent;
 import io.github.techstreet.dfscript.script.event.ScriptEventType;
 import io.github.techstreet.dfscript.script.event.ScriptHeaderCategory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScriptAddHeaderScreen extends CScreen {
 
@@ -40,7 +33,7 @@ public class ScriptAddHeaderScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size-10) {
+            if (x >= size - 10) {
                 x = 3;
                 y += 10;
             }
@@ -54,7 +47,7 @@ public class ScriptAddHeaderScreen extends CScreen {
 
             amount++;
         }
-        return (int) (Math.ceil(Math.sqrt(amount))*10)+4;
+        return (int) (Math.ceil(Math.sqrt(amount)) * 10) + 4;
     }
 
     @Override

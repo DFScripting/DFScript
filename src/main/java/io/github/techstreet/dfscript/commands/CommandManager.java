@@ -3,10 +3,11 @@ package io.github.techstreet.dfscript.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.techstreet.dfscript.commands.misc.ScriptsCommand;
 import io.github.techstreet.dfscript.loader.Loadable;
-import java.util.ArrayList;
-import java.util.List;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandManager implements Loadable {
 
@@ -34,5 +35,7 @@ public class CommandManager implements Loadable {
         }
     }
 
-    public static List<Command> getCommands() { return commands; }
+    public static List<Command> getCommands() {
+        return commands;
+    }
 }

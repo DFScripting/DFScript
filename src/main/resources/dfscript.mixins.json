@@ -4,6 +4,7 @@
   "package": "io.github.techstreet.dfscript.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "game.MClientCommonNetworkHandler",
     "game.MClientPlayNetworkHandler",
     "game.MKeyboardHandler",
     "game.MMinecraftClient",
@@ -11,8 +12,7 @@
     "render.MInGameHUD",
     "render.MMultiplayerScreen",
     "render.MOptionsScreen",
-    "sound.MSoundSystem",
-    "game.MClientCommonNetworkHandler"
+    "sound.MSoundSystem"
   ],
   "injectors": {
     "defaultRequire": 1

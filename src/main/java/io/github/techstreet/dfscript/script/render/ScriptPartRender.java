@@ -32,7 +32,7 @@ public class ScriptPartRender {
         for (ScriptPartRenderElement element : elements) {
             int origY = y;
             y = element.render(panel, y, indent, script, header);
-            if(element.canGenerateButton()) {
+            if (element.canGenerateButton()) {
                 createIndent(panel, indent, origY, y - origY - 2);
                 buttonPos.add(new ScriptButtonPos(origY, y - origY));
             }
@@ -40,10 +40,9 @@ public class ScriptPartRender {
         return y;
     }
 
-    public static void createIndent(CScrollPanel panel, int indent, int y, int height)
-    {
-        for (int i = 0; i < indent; i ++) {
-            int xpos = 8 + i*5;
+    public static void createIndent(CScrollPanel panel, int indent, int y, int height) {
+        for (int i = 0; i < indent; i++) {
+            int xpos = 8 + i * 5;
             int ypos = y;
             panel.add(new CWidget() {
                 @Override

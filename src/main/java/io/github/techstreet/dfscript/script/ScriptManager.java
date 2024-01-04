@@ -25,18 +25,13 @@ import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
-import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScriptManager implements Loadable {
     public static final Logger LOGGER = LogManager.getLogger("Scripts");
@@ -44,41 +39,41 @@ public class ScriptManager implements Loadable {
     private static ScriptManager instance;
     private final List<Script> scripts = new ArrayList<>();
     private final Gson GSON = new GsonBuilder()
-        .registerTypeAdapter(Script.class, new Script.Serializer())
-        .registerTypeAdapter(ScriptPart.class, new ScriptPart.Serializer())
-        .registerTypeAdapter(ScriptArgument.class, new ScriptArgument.Serializer())
-        .registerTypeAdapter(ScriptTextArgument.class, new ScriptTextArgument.Serializer())
+            .registerTypeAdapter(Script.class, new Script.Serializer())
+            .registerTypeAdapter(ScriptPart.class, new ScriptPart.Serializer())
+            .registerTypeAdapter(ScriptArgument.class, new ScriptArgument.Serializer())
+            .registerTypeAdapter(ScriptTextArgument.class, new ScriptTextArgument.Serializer())
             .registerTypeAdapter(ScriptStringArgument.class, new ScriptStringArgument.Serializer())
-        .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
-        .registerTypeAdapter(ScriptBoolArgument.class, new ScriptBoolArgument.Serializer())
-        .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
-        .registerTypeAdapter(ScriptClientValueArgument.class, new ScriptClientValueArgument.Serializer())
-        .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
-        .registerTypeAdapter(ScriptFunctionArgument.class, new ScriptFunctionArgument.Serializer())
-        .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
-        .registerTypeAdapter(ScriptBuiltinAction.class, new ScriptBuiltinAction.Serializer())
-        .registerTypeAdapter(ScriptFunctionCall.class, new ScriptFunctionCall.Serializer())
-        .registerTypeAdapter(ScriptBuiltinCondition.class, new ScriptBuiltinCondition.Serializer())
-        .registerTypeAdapter(ScriptCondition.class, new ScriptCondition.Serializer())
-        .registerTypeAdapter(ScriptBuiltinRepetition.class, new ScriptBuiltinRepetition.Serializer())
-        .registerTypeAdapter(ScriptWhile.class, new ScriptWhile.Serializer())
-        .registerTypeAdapter(ScriptBranch.class, new ScriptBranch.Serializer())
-        .registerTypeAdapter(ScriptBooleanSet.class, new ScriptBooleanSet.Serializer())
-        .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
-        .registerTypeAdapter(ScriptFunction.class, new ScriptFunction.Serializer())
-        .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
-        .registerTypeAdapter(ScriptSnippet.class, new ScriptSnippet.Serializer())
-        .registerTypeAdapter(ScriptHeader.class, new ScriptHeader.Serializer())
-        .registerTypeAdapter(ScriptEmptyHeader.class, new ScriptEmptyHeader.Serializer())
-        .registerTypeAdapter(ScriptActionArgument.class, new ScriptActionArgument.Serializer())
-        .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
-        .registerTypeAdapter(ScriptValue.class, new ScriptValue.Serializer())
-        .registerTypeAdapter(ScriptNumberValue.class, new ScriptNumberValue.Serializer())
-        .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
-        .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
-        .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
-        .registerTypeAdapter(ScriptBoolValue.class, new ScriptDictionaryValue.Serializer())
-        .create();
+            .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
+            .registerTypeAdapter(ScriptBoolArgument.class, new ScriptBoolArgument.Serializer())
+            .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
+            .registerTypeAdapter(ScriptClientValueArgument.class, new ScriptClientValueArgument.Serializer())
+            .registerTypeAdapter(ScriptConfigArgument.class, new ScriptConfigArgument.Serializer())
+            .registerTypeAdapter(ScriptFunctionArgument.class, new ScriptFunctionArgument.Serializer())
+            .registerTypeAdapter(ScriptNamedOption.class, new ScriptNamedOption.Serializer())
+            .registerTypeAdapter(ScriptBuiltinAction.class, new ScriptBuiltinAction.Serializer())
+            .registerTypeAdapter(ScriptFunctionCall.class, new ScriptFunctionCall.Serializer())
+            .registerTypeAdapter(ScriptBuiltinCondition.class, new ScriptBuiltinCondition.Serializer())
+            .registerTypeAdapter(ScriptCondition.class, new ScriptCondition.Serializer())
+            .registerTypeAdapter(ScriptBuiltinRepetition.class, new ScriptBuiltinRepetition.Serializer())
+            .registerTypeAdapter(ScriptWhile.class, new ScriptWhile.Serializer())
+            .registerTypeAdapter(ScriptBranch.class, new ScriptBranch.Serializer())
+            .registerTypeAdapter(ScriptBooleanSet.class, new ScriptBooleanSet.Serializer())
+            .registerTypeAdapter(ScriptEvent.class, new ScriptEvent.Serializer())
+            .registerTypeAdapter(ScriptFunction.class, new ScriptFunction.Serializer())
+            .registerTypeAdapter(ScriptComment.class, new ScriptComment.Serializer())
+            .registerTypeAdapter(ScriptSnippet.class, new ScriptSnippet.Serializer())
+            .registerTypeAdapter(ScriptHeader.class, new ScriptHeader.Serializer())
+            .registerTypeAdapter(ScriptEmptyHeader.class, new ScriptEmptyHeader.Serializer())
+            .registerTypeAdapter(ScriptActionArgument.class, new ScriptActionArgument.Serializer())
+            .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
+            .registerTypeAdapter(ScriptValue.class, new ScriptValue.Serializer())
+            .registerTypeAdapter(ScriptNumberValue.class, new ScriptNumberValue.Serializer())
+            .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
+            .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
+            .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
+            .registerTypeAdapter(ScriptBoolValue.class, new ScriptDictionaryValue.Serializer())
+            .create();
 
     public ScriptManager() {
         instance = this;
@@ -130,7 +125,7 @@ public class ScriptManager implements Loadable {
                         key.reset();
                     }
                 } catch (Exception err) {
-                        err.printStackTrace();
+                    err.printStackTrace();
                 }
             }).start();
         } catch (Exception err) {
@@ -202,7 +197,8 @@ public class ScriptManager implements Loadable {
 
             ScriptMigrator.migrate(s);
 
-            if (s.getVersion() != Script.scriptVersion) throw new RuntimeException("this script uses version " + s.getVersion() + " when this version of DFScript uses version " + Script.scriptVersion + "!");
+            if (s.getVersion() != Script.scriptVersion)
+                throw new RuntimeException("this script uses version " + s.getVersion() + " when this version of DFScript uses version " + Script.scriptVersion + "!");
 
             scripts.add(s);
             LOGGER.info("Loaded script: " + file.getName());
@@ -260,7 +256,7 @@ public class ScriptManager implements Loadable {
             ownerId = DFScript.MC.player.getUuid().toString();
         }
 
-        Script script = new Script(name, ownerId, "None", new ArrayList<>(),false, Script.scriptVersion);
+        Script script = new Script(name, ownerId, "None", new ArrayList<>(), false, Script.scriptVersion);
         scripts.add(script);
 
         File file = null;

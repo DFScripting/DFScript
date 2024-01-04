@@ -45,7 +45,7 @@ public class ScriptNumberValue extends ScriptValue {
     @Override
     public boolean valueEquals(ScriptValue other) {
         if (!(other.get() instanceof ScriptNumberValue)
-            && !(other.get() instanceof ScriptUnknownValue)) {
+                && !(other.get() instanceof ScriptUnknownValue)) {
             return false;
         }
         return value == other.asNumber();
@@ -68,12 +68,12 @@ public class ScriptNumberValue extends ScriptValue {
 
     @Override
     public int compare(ScriptValue other) {
-        if(other instanceof ScriptNumberValue) {
-            if(asNumber() == other.asNumber()) {
+        if (other instanceof ScriptNumberValue) {
+            if (asNumber() == other.asNumber()) {
                 return 0;
             }
 
-            if(asNumber() > other.asNumber()) {
+            if (asNumber() > other.asNumber()) {
                 return 1;
             }
 
@@ -85,9 +85,9 @@ public class ScriptNumberValue extends ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptNumberValue>, JsonDeserializer<ScriptNumberValue> {
         @Override
         public ScriptNumberValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if(jsonElement.isJsonPrimitive()) {
+            if (jsonElement.isJsonPrimitive()) {
                 JsonPrimitive prim = jsonElement.getAsJsonPrimitive();
-                if(prim.isNumber()) {
+                if (prim.isNumber()) {
                     return new ScriptNumberValue(prim.getAsDouble());
                 }
             }

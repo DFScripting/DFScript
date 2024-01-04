@@ -2,7 +2,6 @@ package io.github.techstreet.dfscript.screen.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CReloadableScreen;
-import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.Script;
@@ -13,15 +12,13 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 import java.awt.*;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 public class ScriptEditPartScreen extends CReloadableScreen {
     private final Script script;
 
@@ -67,16 +64,14 @@ public class ScriptEditPartScreen extends CReloadableScreen {
 
         int maxWidth = 0;
 
-        for(ContextMenuButton w : contextMenuButtons)
-        {
+        for (ContextMenuButton w : contextMenuButtons) {
             TextRenderer t = DFScript.MC.textRenderer;
-            int width = t.getWidth(w.getName())/2 + 4;
+            int width = t.getWidth(w.getName()) / 2 + 4;
 
-            if(width > maxWidth) maxWidth = width;
+            if (width > maxWidth) maxWidth = width;
         }
 
-        for(ContextMenuButton w : contextMenuButtons)
-        {
+        for (ContextMenuButton w : contextMenuButtons) {
             CButton button = new CButton(x, y, maxWidth, 8, w.getName(), w.getOnClick());
             y += 8;
 
@@ -106,7 +101,8 @@ public class ScriptEditPartScreen extends CReloadableScreen {
             int currentIndex = index;
 
 
-            panel.add(new CButton(5, y-1, 85, 10, "",() -> {}) {
+            panel.add(new CButton(5, y - 1, 85, 10, "", () -> {
+            }) {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
@@ -118,18 +114,20 @@ public class ScriptEditPartScreen extends CReloadableScreen {
                 @Override
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
-                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
+                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
 
                         if (button == 0) {
                             ScriptArgument argument = action.getArguments().get(currentIndex);
                             String value = "~";
-                            if(argument instanceof ScriptClientValueArgument clientValue) value = clientValue.getName();
-                            if(argument instanceof ScriptConfigArgument configArgument) value = configArgument.getName();
-                            if(argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
-                            if(argument instanceof ScriptTextArgument text) value = text.value();
+                            if (argument instanceof ScriptClientValueArgument clientValue)
+                                value = clientValue.getName();
+                            if (argument instanceof ScriptConfigArgument configArgument)
+                                value = configArgument.getName();
+                            if (argument instanceof ScriptNumberArgument number) value = String.valueOf(number.value());
+                            if (argument instanceof ScriptTextArgument text) value = text.value();
                             if (argument instanceof ScriptStringArgument string) value = string.value();
-                            if(argument instanceof ScriptVariableArgument var) value = var.name();
-                            if(argument instanceof ScriptFunctionArgument var) value = var.getName();
+                            if (argument instanceof ScriptVariableArgument var) value = var.name();
+                            if (argument instanceof ScriptFunctionArgument var) value = var.getName();
                             DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, header, value));
                         }
 
@@ -139,14 +137,14 @@ public class ScriptEditPartScreen extends CReloadableScreen {
                                 DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex, header));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Insert After", () -> {
-                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex+1, header));
+                                DFScript.MC.setScreen(new ScriptAddArgumentScreen(script, action, currentIndex + 1, header));
                             }, false));
                             contextMenuButtons.add(new ContextMenuButton("Delete", () -> {
                                 action.getArguments().remove(currentIndex);
                             }));
                             contextMenuButtons.addAll(action.getArguments().get(currentIndex).getContextMenu());
                             DFScript.MC.send(() -> {
-                                if(DFScript.MC.currentScreen instanceof ScriptEditPartScreen screen) {
+                                if (DFScript.MC.currentScreen instanceof ScriptEditPartScreen screen) {
                                     screen.contextMenu((int) x, (int) y, contextMenuButtons);
                                 }
                             });

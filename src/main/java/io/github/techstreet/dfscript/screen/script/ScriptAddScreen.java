@@ -1,29 +1,22 @@
 package io.github.techstreet.dfscript.screen.script;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.features.AuthHandler;
 import io.github.techstreet.dfscript.screen.CScreen;
-import io.github.techstreet.dfscript.screen.widget.CButton;
-import io.github.techstreet.dfscript.screen.widget.CPlainPanel;
-import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.screen.widget.CText;
-import io.github.techstreet.dfscript.screen.widget.CTextField;
+import io.github.techstreet.dfscript.screen.widget.*;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
+import net.minecraft.text.Text;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.*;
-
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScriptAddScreen extends CScreen {
     public static ArrayList<VirtualScript> scripts = new ArrayList<>();

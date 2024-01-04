@@ -4,10 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
@@ -18,7 +16,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public final class ScriptConfigArgument implements ScriptArgument {
 

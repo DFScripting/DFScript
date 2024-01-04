@@ -9,7 +9,6 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
-import io.github.techstreet.dfscript.script.util.UploadResponse;
 import net.minecraft.text.Text;
 
 import java.io.BufferedReader;

@@ -23,8 +23,8 @@ public class ScriptEditSettingScreen extends CScreen {
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         CButton confirm = new CButton(2, 37, 46, 10, "Rename", () -> {
-            if(!Objects.equals(option.getName(), input.getText())) {
-                if(script.optionExists(input.getText())) {
+            if (!Objects.equals(option.getName(), input.getText())) {
+                if (script.optionExists(input.getText())) {
                     input.textColor = 0xFF3333;
                 } else {
                     script.replaceOption(option.getName(), input.getText());

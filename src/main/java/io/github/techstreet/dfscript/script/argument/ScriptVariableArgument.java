@@ -6,12 +6,10 @@ import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptAc
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.script.values.ScriptVariable;
-import io.github.techstreet.dfscript.util.ComponentUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.NbtTextContent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -95,8 +93,8 @@ public final class ScriptVariableArgument implements ScriptArgument {
 
         for (ScriptVariableScope scope : ScriptVariableScope.values()) {
             contextMenuButtons.add(new ContextMenuButton(
-                scope.getName().getString(),
-                () -> this.scope = scope
+                    scope.getName().getString(),
+                    () -> this.scope = scope
             ));
         }
 
@@ -116,8 +114,7 @@ public final class ScriptVariableArgument implements ScriptArgument {
             String name = obj.get("value").getAsString();
             String scope = "SCRIPT";
 
-            if(obj.has("scope")) scope = obj.get("scope").getAsString();
-
+            if (obj.has("scope")) scope = obj.get("scope").getAsString();
 
 
             return new ScriptVariableArgument(name, ScriptVariableScope.valueOf(scope));

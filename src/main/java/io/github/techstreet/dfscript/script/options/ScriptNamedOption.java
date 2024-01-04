@@ -2,10 +2,8 @@ package io.github.techstreet.dfscript.script.options;
 
 import com.google.gson.*;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
-import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -35,7 +33,9 @@ public class ScriptNamedOption {
         return option.getValue();
     }
 
-    public ScriptOption getOption() { return option; }
+    public ScriptOption getOption() {
+        return option;
+    }
 
     public int create(CScrollPanel panel, int x, int y) {
         return option.create(panel, x, y, 105);
@@ -62,10 +62,10 @@ public class ScriptNamedOption {
 
             List<ScriptOptionEnum> subtypes = new ArrayList<>();
 
-            if(object.has("subtypes")) {
+            if (object.has("subtypes")) {
                 JsonArray jsonSubtypes = object.get("subtypes").getAsJsonArray();
 
-                for(JsonElement subtype : jsonSubtypes) {
+                for (JsonElement subtype : jsonSubtypes) {
                     subtypes.add(ScriptOptionEnum.fromName(subtype.getAsString()));
                 }
             }
@@ -95,11 +95,11 @@ public class ScriptNamedOption {
 
             List<ScriptOptionEnum> subtypes = src.getOption().getSubtypes();
 
-            if(subtypes.size() != src.getOption().getType().getExtraTypes()) {
+            if (subtypes.size() != src.getOption().getType().getExtraTypes()) {
                 throw new JsonParseException("Incorrect amount of extra types");
             }
 
-            if(subtypes.size() > 0) {
+            if (subtypes.size() > 0) {
                 JsonArray jsonSubtypes = new JsonArray();
 
                 subtypes.stream().forEachOrdered((a) -> jsonSubtypes.add(a.name()));

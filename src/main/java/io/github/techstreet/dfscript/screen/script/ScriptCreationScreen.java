@@ -22,10 +22,10 @@ public class ScriptCreationScreen extends CScreen {
 
         widgets.add(new CText(4, 4, Text.of("Create Script")));
 
-        CTextField name = new CTextField("My Script", 4, 9, 92, 9, true){
+        CTextField name = new CTextField("My Script", 4, 9, 92, 9, true) {
             @Override
             public void keyPressed(int keyCode, int scanCode, int modifiers) {
-                if(keyCode == 257) return;
+                if (keyCode == 257) return;
                 super.keyPressed(keyCode, scanCode, modifiers);
             }
         };

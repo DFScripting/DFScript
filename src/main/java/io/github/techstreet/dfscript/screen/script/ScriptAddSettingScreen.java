@@ -15,7 +15,7 @@ public class ScriptAddSettingScreen extends CScreen {
     private static final int size;
 
     static {
-        size = (int) (Math.ceil(Math.sqrt(ScriptOptionEnum.values().length)) * 10)+4;
+        size = (int) (Math.ceil(Math.sqrt(ScriptOptionEnum.values().length)) * 10) + 4;
     }
 
     private final Script script;
@@ -27,12 +27,12 @@ public class ScriptAddSettingScreen extends CScreen {
         int x = 3;
         int y = 3;
 
-        for(ScriptOptionEnum option : ScriptOptionEnum.values()) {
-            if(option.isDeprecated()) continue;
+        for (ScriptOptionEnum option : ScriptOptionEnum.values()) {
+            if (option.isDeprecated()) continue;
 
             CItem citem = new CItem(x, y, option.getIcon());
 
-            if(option.getExtraTypes() == 0) {
+            if (option.getExtraTypes() == 0) {
                 citem.setClickListener((a) -> {
                     try {
                         script.addOption(pos, new ScriptNamedOption(ScriptOption.instantiate(option, new ArrayList<>()), script.getUnnamedOption()));
@@ -42,8 +42,7 @@ public class ScriptAddSettingScreen extends CScreen {
 
                     DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
                 });
-            }
-            else {
+            } else {
                 citem.setClickListener((a) -> {
                     DFScript.MC.setScreen(new ScriptAddSettingSubtypeScreen(script, option, pos));
                 });
