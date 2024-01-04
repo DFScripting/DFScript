@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.mixin.render;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
+import io.github.techstreet.dfscript.screen.script.TestScreen;
 import io.github.techstreet.dfscript.util.render.BlendableTexturedButtonWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
@@ -21,6 +22,11 @@ public class MOptionsScreen extends Screen {
     @Unique
     private final Identifier identifier_main_highlight = new Identifier(DFScript.MOD_ID + ":scripts_highlight");
 
+    @Unique
+    private final Identifier identifier_test = new Identifier(DFScript.MOD_ID + ":scripts");
+    @Unique
+    private final Identifier identifier_test_highlight = new Identifier(DFScript.MOD_ID + ":scripts_highlight");
+
     public MOptionsScreen(Text literalText) {
         super(literalText);
     }
@@ -30,6 +36,9 @@ public class MOptionsScreen extends Screen {
         this.addDrawableChild(new BlendableTexturedButtonWidget(5, 5, 20, 20, identifier_main, identifier_main_highlight, (button) -> {
             ScriptListScreen screen = new ScriptListScreen(DFScript.MC.player != null);
             DFScript.MC.setScreen(screen);
+        }));
+        this.addDrawableChild(new BlendableTexturedButtonWidget(5, 30, 20, 20, identifier_test, identifier_test_highlight, (button) -> {
+            DFScript.MC.setScreen(new TestScreen());
         }));
     }
 }

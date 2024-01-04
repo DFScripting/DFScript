@@ -143,4 +143,34 @@ public class CScreen extends Screen {
 
         return super.shouldCloseOnEsc();
     }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        mouseX = translateMouseX(mouseX);
+        mouseY = translateMouseY(mouseY);
+
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            if (widgets.get(i).mouseReleased(mouseX, mouseY, button)) {
+                break;
+            }
+        }
+
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        mouseX = translateMouseX(mouseX);
+        mouseY = translateMouseY(mouseY);
+        deltaX = translateMouseX(deltaX);
+        deltaY = translateMouseY(deltaY);
+
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            if (widgets.get(i).mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+                break;
+            }
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
 }

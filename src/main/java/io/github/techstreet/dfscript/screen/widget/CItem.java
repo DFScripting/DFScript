@@ -43,7 +43,8 @@ public class CItem implements CWidget {
         MatrixStack stack = context.getMatrices();
         stack.push();
         stack.translate(x, y, 0);
-        RenderUtil.renderGuiItem(context, item);
+        stack.scale(0.5F,0.5F,1F);
+        context.drawItem(item, 0, 0);
         if(countText != null)
         {
             stack.translate(4, 4, 0);

@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -40,6 +41,8 @@ public class RenderUtil {
         bb.vertex(stack.peek().getPositionMatrix(), x + width, y + height, 0).texture(ux+uw, uy+uh).next();
         bb.vertex(stack.peek().getPositionMatrix(), x, y + height, 0).texture(ux, uy+uh).next();
         tessellator.draw();
+
+        RenderSystem.enableCull();
     }
 
     public static void renderButton(DrawContext context, int x, int y, int width, int height, boolean hovered, boolean disabled) {
@@ -165,7 +168,6 @@ public class RenderUtil {
     public static void renderGuiItem(DrawContext context, ItemStack item) {
         MatrixStack stack = context.getMatrices();
         stack.push();
-        stack.translate(0.0F, 0.0F, 100.0F);
         stack.scale(0.5F,0.5F,1F);
         context.drawItem(item, 0, 0);
         stack.pop();
