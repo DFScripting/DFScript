@@ -108,7 +108,7 @@ public class MClientPlayNetworkHandler {
 
     /*@Inject(method = "onPlaySound", at = @At("HEAD"), cancellable = true)
     private void onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
-        RecieveSoundEvent event = new RecieveSoundEvent(packet);
+        ReceiveSoundEvent event = new ReceiveSoundEvent(packet);
         EventManager.getInstance().dispatch(event);
 
         if (event.isCancelled()) {
@@ -118,7 +118,7 @@ public class MClientPlayNetworkHandler {
 
     @Inject(method = "onPlaySoundFromEntity", at = @At("HEAD"), cancellable = true)
     private void onPlaySoundFromEntity(PlaySoundFromEntityS2CPacket packet, CallbackInfo ci) {
-        RecieveSoundEvent event = new RecieveSoundEvent(packet);
+        ReceiveSoundEvent event = new ReceiveSoundEvent(packet);
         EventManager.getInstance().dispatch(event);
 
         if (event.isCancelled()) {
@@ -128,7 +128,7 @@ public class MClientPlayNetworkHandler {
 
     @Inject(method = "onPlaySoundId", at = @At("HEAD"), cancellable = true)
     private void onPlaySoundId(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
-        RecieveSoundEvent event = new RecieveSoundEvent(packet);
+        ReceiveSoundEvent event = new ReceiveSoundEvent(packet);
         EventManager.getInstance().dispatch(event);
 
         if (event.isCancelled()) {

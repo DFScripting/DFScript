@@ -34,7 +34,7 @@ public enum ScriptEventType {
 
     MENU_BUTTON_EVENT(ScriptMenuClickButtonEvent.class, "OnMenuButtonClick", "Executed when a player clicks a button inside a custom menu.", Items.CHISELED_STONE_BRICKS),
 
-    RECEIVE_SOUND(RecieveSoundEvent.class, "OnReceiveSound", "Executed when a player receives a sound", Items.NAUTILUS_SHELL);
+    RECEIVE_SOUND(ReceiveSoundEvent.class, "OnReceiveSound", "Executed when a player receives a sound", Items.NAUTILUS_SHELL);
 
     private final String name;
     private final ItemStack icon;

@@ -3,13 +3,13 @@ package io.github.techstreet.dfscript.event;
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
 import net.minecraft.util.Identifier;
 
-public class RecieveSoundEvent implements CancellableEvent {
+public class ReceiveSoundEvent implements CancellableEvent {
     private boolean cancelled = false;
 
     private final Identifier soundId;
     private final float volume, pitch;
 
-    public RecieveSoundEvent(Identifier soundId, float volume, float pitch) {
+    public ReceiveSoundEvent(Identifier soundId, float volume, float pitch) {
         this.soundId = soundId;
         this.volume = volume;
         this.pitch = pitch;

@@ -1,6 +1,6 @@
 package io.github.techstreet.dfscript.mixin.sound;
 
-import io.github.techstreet.dfscript.event.RecieveSoundEvent;
+import io.github.techstreet.dfscript.event.ReceiveSoundEvent;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.SoundInstance;
@@ -26,7 +26,7 @@ public abstract class MSoundSystem {
     public abstract float getSoundVolume(SoundCategory category);
     @Inject(method = "play", at = @At(value="INVOKE_ASSIGN", target="Lnet/minecraft/client/sound/SoundSystem;getAdjustedPitch(Lnet/minecraft/client/sound/SoundInstance;)F"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     public void play(SoundInstance sound, CallbackInfo ci, WeightedSoundSet weightedSoundSet, Identifier identifier, Sound sound2, float f, float g, SoundCategory soundCategory, float h, float i) {
-        RecieveSoundEvent event = new RecieveSoundEvent(sound.getId(), h, i);
+        ReceiveSoundEvent event = new ReceiveSoundEvent(sound.getId(), h, i);
         EventManager.getInstance().dispatch(event);
 
         if (event.isCancelled()) {

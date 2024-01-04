@@ -21,7 +21,6 @@ import io.github.techstreet.dfscript.script.event.*;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptWhile;
-import io.github.techstreet.dfscript.script.util.ScriptValueJson;
 import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.FileUtil;
 import io.github.techstreet.dfscript.util.chat.ChatType;
@@ -233,7 +232,7 @@ public class ScriptManager implements Loadable {
         manager.register(BuildModeEvent.class, this::handleEvent);
         manager.register(DevModeEvent.class, this::handleEvent);
         manager.register(HudRenderEvent.class, this::handleEvent);
-        manager.register(RecieveSoundEvent.class, this::handleEvent);
+        manager.register(ReceiveSoundEvent.class, this::handleEvent);
     }
 
     public void handleEvent(Event event) {

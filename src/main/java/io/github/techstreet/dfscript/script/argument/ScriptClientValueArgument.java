@@ -7,11 +7,9 @@ import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.KeyPressEvent;
 import io.github.techstreet.dfscript.event.ReceiveChatEvent;
-import io.github.techstreet.dfscript.event.RecieveSoundEvent;
+import io.github.techstreet.dfscript.event.ReceiveSoundEvent;
 import io.github.techstreet.dfscript.event.SendChatEvent;
-import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.menu.ScriptMenuClickButtonEvent;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
@@ -20,7 +18,6 @@ import io.github.techstreet.dfscript.util.ComponentUtil;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.minecraft.item.Item;
@@ -141,7 +138,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (task) -> new ScriptStringValue(DFScript.PLAYER_NAME)),
 
     EVENT_SOUND("ReceivedSound", "The ID of the sound. (OnReceiveSound)", Items.NAUTILUS_SHELL, ScriptActionArgumentType.STRING, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if(task.event() instanceof ReceiveSoundEvent e) {
             return new ScriptStringValue(e.getSoundId().toString().replaceAll("^minecraft:", ""));
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
@@ -149,7 +146,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     }),
 
     EVENT_VOLUME("ReceivedSoundVolume", "The volume of the sound received. (OnReceiveSound)", Items.NOTE_BLOCK, ScriptActionArgumentType.NUMBER, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if(task.event() instanceof ReceiveSoundEvent e) {
             return new ScriptNumberValue(e.getVolume());
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
@@ -157,7 +154,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     }),
 
     EVENT_PITCH("ReceivedSoundPitch", "The pitch of the sound received. (OnReceiveSound)", Items.JUKEBOX, ScriptActionArgumentType.NUMBER, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if(task.event() instanceof ReceiveSoundEvent e) {
             return new ScriptNumberValue(e.getPitch());
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
