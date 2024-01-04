@@ -7,11 +7,8 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.ScriptSnippet;
 import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
-import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
-import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ScriptConditionCategoryScreen extends CScreen {
@@ -19,7 +16,7 @@ public class ScriptConditionCategoryScreen extends CScreen {
     private static final int size;
 
     static {
-        size = (int) (Math.ceil(Math.sqrt(ScriptActionCategory.values().length)) * 10)+4;
+        size = (int) (Math.ceil(Math.sqrt(ScriptActionCategory.values().length)) * 10) + 4;
     }
 
     private final Script script;

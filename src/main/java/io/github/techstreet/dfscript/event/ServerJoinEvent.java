@@ -1,8 +1,9 @@
 package io.github.techstreet.dfscript.event;
 
 import io.github.techstreet.dfscript.event.system.Event;
-import java.net.InetSocketAddress;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+
+import java.net.InetSocketAddress;
 
 public class ServerJoinEvent implements Event {
     private final GameJoinS2CPacket packet;
@@ -16,5 +17,8 @@ public class ServerJoinEvent implements Event {
     public GameJoinS2CPacket getPacket() {
         return packet;
     }
-    public InetSocketAddress getAddress() { return address; }
+
+    public InetSocketAddress getAddress() {
+        return address;
+    }
 }

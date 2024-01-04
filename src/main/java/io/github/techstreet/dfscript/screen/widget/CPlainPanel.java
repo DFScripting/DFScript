@@ -2,13 +2,13 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CPlainPanel implements CWidget {
 
@@ -36,10 +36,10 @@ public class CPlainPanel implements CWidget {
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-                (int) begin.x()*guiScale,
-                (int) begin.y()*guiScale,
-                (int) (end.x() - begin.x())*guiScale,
-                (int) (end.y() - begin.y())*guiScale
+                (int) begin.x() * guiScale,
+                (int) begin.y() * guiScale,
+                (int) (end.x() - begin.x()) * guiScale,
+                (int) (end.y() - begin.y()) * guiScale
         );
 
         for (CWidget child : children) {
@@ -93,7 +93,9 @@ public class CPlainPanel implements CWidget {
         children.add(child);
     }
 
-    public void clear() { children.clear(); }
+    public void clear() {
+        children.clear();
+    }
 
     @Override
     public void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
@@ -117,9 +119,8 @@ public class CPlainPanel implements CWidget {
 
     @Override
     public boolean enableClosingOnEsc() {
-        for(CWidget widget : children) {
-            if(!widget.enableClosingOnEsc())
-            {
+        for (CWidget widget : children) {
+            if (!widget.enableClosingOnEsc()) {
                 return false;
             }
         }

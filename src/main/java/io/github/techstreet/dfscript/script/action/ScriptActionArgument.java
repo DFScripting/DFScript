@@ -2,7 +2,6 @@ package io.github.techstreet.dfscript.script.action;
 
 import com.google.gson.*;
 import io.github.techstreet.dfscript.script.values.*;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -11,7 +10,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.NbtTextContent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -55,10 +53,10 @@ public class ScriptActionArgument {
     }
 
     public ScriptActionArgument defaultValue(ScriptValue value) {
-        if(value instanceof ScriptVariable) return this;
+        if (value instanceof ScriptVariable) return this;
 
         this.defaultValue = value;
-        if(!optional && !rightOptional) {
+        if (!optional && !rightOptional) {
             optional = true;
         }
         plural = false;
@@ -90,10 +88,9 @@ public class ScriptActionArgument {
     }
 
     public ScriptValue defaultValue() {
-        if(optional() && !plural()) {
+        if (optional() && !plural()) {
             return defaultValue;
-        }
-        else {
+        } else {
             return new ScriptUnknownValue();
         }
     }
@@ -120,8 +117,8 @@ public class ScriptActionArgument {
         List<Text> argText = new ArrayList<>();
         argText.add(t);
 
-        if(!(defaultValue() instanceof ScriptUnknownValue)) {
-            argText.add(Text.literal("  Default: "+defaultValue().formatAsText())
+        if (!(defaultValue() instanceof ScriptUnknownValue)) {
+            argText.add(Text.literal("  Default: " + defaultValue().formatAsText())
                     .fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)));
         }
 
@@ -136,13 +133,13 @@ public class ScriptActionArgument {
         NbtList lore = new NbtList();
 
         NbtCompound comp = icon.getSubNbt("display");
-        if(comp != null) {
+        if (comp != null) {
             if (comp.getList("Lore", NbtElement.STRING_TYPE) != null) {
                 lore = comp.getList("Lore", NbtElement.STRING_TYPE);
             }
         }
 
-        if(optional() || plural()) {
+        if (optional() || plural()) {
             lore.add(NbtString.of(Text.Serializer.toJson(
                     Text.literal((optional() ? (plural() ? "Optional & " : "Optional") : "")
                                     + (plural() ? "Plural" : ""))
@@ -150,19 +147,20 @@ public class ScriptActionArgument {
             )));
         }
 
-        if(!(defaultValue() instanceof ScriptUnknownValue)) {
+        if (!(defaultValue() instanceof ScriptUnknownValue)) {
             lore.add(NbtString.of(Text.Serializer.toJson(
-                    Text.literal("Default: "+defaultValue().formatAsText())
+                    Text.literal("Default: " + defaultValue().formatAsText())
                             .fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY))
             )));
         }
 
-        if(comp != null) {
+        if (comp != null) {
             comp.put("Lore", lore);
         }
 
         return icon;
     }
+
     public ItemStack getIcon() {
         ItemStack icon = type().icon(name);
 
@@ -210,12 +208,13 @@ public class ScriptActionArgument {
             MutableText val = Text.literal(name);
             return val.fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE));
         }
+
         public boolean convertableTo(ScriptActionArgumentType to) {
             return to == ANY
-                || to == TEXT
-                || to == STRING
-                || this == VARIABLE
-                || this == to;
+                    || to == TEXT
+                    || to == STRING
+                    || this == VARIABLE
+                    || this == to;
         }
 
         public ItemStack icon() {
@@ -256,11 +255,11 @@ public class ScriptActionArgument {
             obj.addProperty("name", src.name());
             obj.addProperty("type", src.type().name());
 
-            if(src.type().allowOptional()) {
+            if (src.type().allowOptional()) {
                 obj.addProperty("optional", src.optional());
                 obj.addProperty("plural", src.plural());
 
-                if(!(src.defaultValue() instanceof ScriptUnknownValue)) {
+                if (!(src.defaultValue() instanceof ScriptUnknownValue)) {
                     obj.add("default", context.serialize(src.defaultValue()));
                 }
             }
@@ -277,13 +276,13 @@ public class ScriptActionArgument {
 
             ScriptActionArgument arg = new ScriptActionArgument(name, argType);
 
-            if(argType.allowOptional()) {
+            if (argType.allowOptional()) {
                 boolean optional = obj.get("optional").getAsBoolean();
                 boolean plural = obj.get("plural").getAsBoolean();
 
                 arg.optional(optional).plural(plural);
 
-                if(obj.has("default")) {
+                if (obj.has("default")) {
                     arg.defaultValue((ScriptValue) context.deserialize(obj.get("default"), ScriptValue.class));
                 }
             }

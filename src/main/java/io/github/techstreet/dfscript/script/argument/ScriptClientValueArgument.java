@@ -9,20 +9,12 @@ import io.github.techstreet.dfscript.event.KeyPressEvent;
 import io.github.techstreet.dfscript.event.ReceiveChatEvent;
 import io.github.techstreet.dfscript.event.RecieveSoundEvent;
 import io.github.techstreet.dfscript.event.SendChatEvent;
-import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
-import io.github.techstreet.dfscript.script.execution.ScriptContext;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.menu.ScriptMenuClickButtonEvent;
 import io.github.techstreet.dfscript.script.util.ScriptValueItem;
 import io.github.techstreet.dfscript.script.values.*;
 import io.github.techstreet.dfscript.util.ComponentUtil;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -32,9 +24,14 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 public enum ScriptClientValueArgument implements ScriptArgument {
 
-    EVENT_KEY("KeyPressed","The key code of the key pressed. (KeyPressEvent)", Items.STONE_BUTTON, ScriptActionArgumentType.NUMBER, (task) -> {
+    EVENT_KEY("KeyPressed", "The key code of the key pressed. (KeyPressEvent)", Items.STONE_BUTTON, ScriptActionArgumentType.NUMBER, (task) -> {
         if (task.event() instanceof KeyPressEvent e) {
             return new ScriptNumberValue(e.getKey().getCode());
         } else {
@@ -42,7 +39,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         }
     }),
 
-    EVENT_KEY_ACTION("KeyAction","The code of the key action performed. (KeyPressEvent)", Items.OAK_BUTTON, ScriptActionArgumentType.NUMBER, (task) -> {
+    EVENT_KEY_ACTION("KeyAction", "The code of the key action performed. (KeyPressEvent)", Items.OAK_BUTTON, ScriptActionArgumentType.NUMBER, (task) -> {
         if (task.event() instanceof KeyPressEvent e) {
             return new ScriptNumberValue(e.getAction());
         } else {
@@ -50,7 +47,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         }
     }),
 
-    EVENT_MESSAGE("ReceivedMessage","The message received. (ReceiveChatEvent)", Items.WRITTEN_BOOK, ScriptActionArgumentType.TEXT, (task) -> {
+    EVENT_MESSAGE("ReceivedMessage", "The message received. (ReceiveChatEvent)", Items.WRITTEN_BOOK, ScriptActionArgumentType.TEXT, (task) -> {
         if (task.event() instanceof ReceiveChatEvent e) {
             return new ScriptTextValue(ComponentUtil.sectionSignsToAnds(ComponentUtil.toFormattedString(e.getMessage())));
         } else {
@@ -58,7 +55,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         }
     }),
 
-    ENTERED_MESSAGE("EnteredMessage","The message entered. (SendChatEvent)", Items.WRITABLE_BOOK, ScriptActionArgumentType.STRING, (task) -> {
+    ENTERED_MESSAGE("EnteredMessage", "The message entered. (SendChatEvent)", Items.WRITABLE_BOOK, ScriptActionArgumentType.STRING, (task) -> {
         if (task.event() instanceof SendChatEvent e) {
             return new ScriptStringValue(e.getMessage());
         } else {
@@ -66,19 +63,19 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         }
     }),
 
-    TIMESTAMP("Timestamp","The current timestamp in milliseconds.", Items.CLOCK, ScriptActionArgumentType.NUMBER, (task) -> new ScriptNumberValue(System.currentTimeMillis())),
+    TIMESTAMP("Timestamp", "The current timestamp in milliseconds.", Items.CLOCK, ScriptActionArgumentType.NUMBER, (task) -> new ScriptNumberValue(System.currentTimeMillis())),
 
     CLIPBOARD("Clipboard", "The current text on the clipboard", Items.PAPER, ScriptActionArgumentType.STRING, (task) -> new ScriptStringValue(DFScript.MC.keyboard.getClipboard())),
 
-    MAIN_HAND_ITEM("MainHandItem","The item in the players main hand.", Items.STONE_BUTTON, ScriptActionArgumentType.DICTIONARY,
+    MAIN_HAND_ITEM("MainHandItem", "The item in the players main hand.", Items.STONE_BUTTON, ScriptActionArgumentType.DICTIONARY,
             (task) -> ScriptValueItem.valueFromItem(DFScript.MC.player.getMainHandStack())
     ),
 
-    OFF_HAND_ITEM("OffHandItem","The item in the players off hand.", Items.OAK_BUTTON, ScriptActionArgumentType.DICTIONARY,
+    OFF_HAND_ITEM("OffHandItem", "The item in the players off hand.", Items.OAK_BUTTON, ScriptActionArgumentType.DICTIONARY,
             (task) -> ScriptValueItem.valueFromItem(DFScript.MC.player.getOffHandStack())
     ),
 
-    FULL_INVENTORY("FullInventory","The entire inventory items of the player.", Items.OAK_PLANKS, ScriptActionArgumentType.LIST, (task) -> {
+    FULL_INVENTORY("FullInventory", "The entire inventory items of the player.", Items.OAK_PLANKS, ScriptActionArgumentType.LIST, (task) -> {
         List<ScriptValue> list = new ArrayList<>();
         for (int i = 0; i < DFScript.MC.player.getInventory().size(); i++) {
             list.add(ScriptValueItem.valueFromItem(DFScript.MC.player.getInventory().getStack(i)));
@@ -126,14 +123,14 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (task) -> new ScriptNumberValue(DFScript.MC.getWindow().getScaledHeight())
     ),
 
-    MENU_ELEMENT_IDENTIFIER("Menu Element Identifier", "The identifier of the menu element that triggered the event.", Items.NAME_TAG, ScriptActionArgumentType.STRING,(task) -> {
+    MENU_ELEMENT_IDENTIFIER("Menu Element Identifier", "The identifier of the menu element that triggered the event.", Items.NAME_TAG, ScriptActionArgumentType.STRING, (task) -> {
         if (task.event() instanceof ScriptMenuClickButtonEvent e) {
             return new ScriptStringValue(e.identifier());
         } else {
             throw new IllegalStateException("The event is not a menu click event.");
         }
     }),
-    
+
     PLAYER_UUID("Player UUID", "The UUID of the player.", Items.PLAYER_HEAD, ScriptActionArgumentType.STRING,
             (task) -> new ScriptStringValue(DFScript.PLAYER_UUID)),
 
@@ -141,7 +138,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
             (task) -> new ScriptStringValue(DFScript.PLAYER_NAME)),
 
     EVENT_SOUND("ReceivedSound", "The ID of the sound. (OnReceiveSound)", Items.NAUTILUS_SHELL, ScriptActionArgumentType.STRING, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if (task.event() instanceof RecieveSoundEvent e) {
             return new ScriptStringValue(e.getSoundId().toString().replaceAll("^minecraft:", ""));
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
@@ -149,7 +146,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     }),
 
     EVENT_VOLUME("ReceivedSoundVolume", "The volume of the sound received. (OnReceiveSound)", Items.NOTE_BLOCK, ScriptActionArgumentType.NUMBER, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if (task.event() instanceof RecieveSoundEvent e) {
             return new ScriptNumberValue(e.getVolume());
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
@@ -157,7 +154,7 @@ public enum ScriptClientValueArgument implements ScriptArgument {
     }),
 
     EVENT_PITCH("ReceivedSoundPitch", "The pitch of the sound received. (OnReceiveSound)", Items.JUKEBOX, ScriptActionArgumentType.NUMBER, (task) -> {
-        if(task.event() instanceof RecieveSoundEvent e) {
+        if (task.event() instanceof RecieveSoundEvent e) {
             return new ScriptNumberValue(e.getPitch());
         } else {
             throw new IllegalStateException("The event is not a receive sound event.");
@@ -173,15 +170,15 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         this.name = name;
         this.icon = new ItemStack(type);
         icon.setCustomName(Text.literal(name)
-            .fillStyle(Style.EMPTY
-                .withItalic(false)));
+                .fillStyle(Style.EMPTY
+                        .withItalic(false)));
         NbtList lore = new NbtList();
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
-            .fillStyle(Style.EMPTY
-                .withColor(Formatting.GRAY)
-                .withItalic(false)))));
+                .fillStyle(Style.EMPTY
+                        .withColor(Formatting.GRAY)
+                        .withItalic(false)))));
         icon.getSubNbt("display")
-            .put("Lore", lore);
+                .put("Lore", lore);
         this.consumer = consumer;
         this.type = varType;
     }
@@ -209,8 +206,8 @@ public enum ScriptClientValueArgument implements ScriptArgument {
         @Override
         public JsonElement serialize(ScriptClientValueArgument src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("type","CLIENT_VALUE");
-            object.addProperty("value",src.name());
+            object.addProperty("type", "CLIENT_VALUE");
+            object.addProperty("value", src.name());
             return object;
         }
     }

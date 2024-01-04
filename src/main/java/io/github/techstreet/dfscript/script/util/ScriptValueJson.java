@@ -21,7 +21,7 @@ public class ScriptValueJson {
             return outer;
         } else if (value instanceof ScriptBoolValue sbv) {
             return new JsonPrimitive(sbv.asBoolean());
-        }else if (value instanceof ScriptListValue slv) {
+        } else if (value instanceof ScriptListValue slv) {
             JsonArray array = new JsonArray();
             for (ScriptValue sv : slv.asList()) {
                 array.add(toJson(sv));

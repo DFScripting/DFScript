@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.script.action;
 
 import com.google.gson.*;
-import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 
@@ -90,15 +89,15 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
     }
 
     public String getUnnamedArgument() {
-        for(int i = 1; ; i++) {
+        for (int i = 1; ; i++) {
 
             String name = "Argument";
 
-            if(i != 1) {
+            if (i != 1) {
                 name = name + " " + i;
             }
 
-            if(!argumentExists(name)) {
+            if (!argumentExists(name)) {
                 return name;
             }
         }
@@ -106,7 +105,7 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
 
     public boolean argumentExists(String functionArg) {
         for (ScriptActionArgument arg : this) {
-            if(arg.name().equals(functionArg)) {
+            if (arg.name().equals(functionArg)) {
                 return true;
             }
         }
@@ -115,7 +114,7 @@ public class ScriptActionArgumentList extends ArrayList<ScriptActionArgument> {
 
     public ScriptActionArgument getByName(String functionArg) {
         for (ScriptActionArgument arg : this) {
-            if(arg.name().equals(functionArg)) {
+            if (arg.name().equals(functionArg)) {
                 return arg;
             }
         }

@@ -1,10 +1,11 @@
 package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.features.MessageType;
+import net.minecraft.text.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import net.minecraft.text.Text;
 
 /**
  * A utility class to grab the next X chat messages.
@@ -20,7 +21,7 @@ public class MessageGrabber {
 
     public static void grab(int messages, Consumer<List<Text>> consumer, MessageType filter) {
         if (isActive()) {
-            tasks.add(new MessageGrabberTask(messages,consumer,false, filter));
+            tasks.add(new MessageGrabberTask(messages, consumer, false, filter));
             return;
         }
         messagesToGrab = messages;
@@ -30,12 +31,12 @@ public class MessageGrabber {
     }
 
     public static void grab(int messages, Consumer<List<Text>> consumer) {
-        grab(messages,consumer,null);
+        grab(messages, consumer, null);
     }
 
     public static void grabSilently(int messages, Consumer<List<Text>> consumer, MessageType filter) {
         if (isActive()) {
-            tasks.add(new MessageGrabberTask(messages,consumer,true, filter));
+            tasks.add(new MessageGrabberTask(messages, consumer, true, filter));
             return;
         }
         messagesToGrab = messages;
@@ -45,7 +46,7 @@ public class MessageGrabber {
     }
 
     public static void grabSilently(int messages, Consumer<List<Text>> consumer) {
-        grabSilently(messages,consumer, null);
+        grabSilently(messages, consumer, null);
     }
 
     public static void hideNext() {
@@ -53,10 +54,13 @@ public class MessageGrabber {
     }
 
     public static void hide(int messages) {
-        if (messages > 0) grabSilently(messages, ignored -> {}, null);
+        if (messages > 0) grabSilently(messages, ignored -> {
+        }, null);
     }
+
     public static void hide(int messages, MessageType filter) {
-        if (messages > 0) grabSilently(messages, ignored -> {}, filter);
+        if (messages > 0) grabSilently(messages, ignored -> {
+        }, filter);
     }
 
     public static void reset() {

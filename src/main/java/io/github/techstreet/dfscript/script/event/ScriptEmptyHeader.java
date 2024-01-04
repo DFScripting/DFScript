@@ -14,10 +14,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 
-import java.awt.*;
 import java.lang.reflect.Type;
 
 public class ScriptEmptyHeader extends ScriptHeader {

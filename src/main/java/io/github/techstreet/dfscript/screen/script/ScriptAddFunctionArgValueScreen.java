@@ -7,7 +7,6 @@ import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptFunctionArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
@@ -31,20 +30,19 @@ public class ScriptAddFunctionArgValueScreen extends CScreen {
 
         CScrollPanel panel = new CScrollPanel(0, 0, WIDTH, HEIGHT);
 
-        if(header instanceof ScriptFunction f)
-        {
+        if (header instanceof ScriptFunction f) {
             int x = 5;
             int y = 5;
             for (ScriptActionArgument arg : f.argList()) {
                 CItem item = new CItem(x, y, arg.getIcon());
                 item.setClickListener((btn) -> {
-                    if(overwrite != null) action.getArguments().remove(insertIndex);
+                    if (overwrite != null) action.getArguments().remove(insertIndex);
                     this.action.getArguments().add(insertIndex, new ScriptFunctionArgument(arg.name(), header));
                     DFScript.MC.setScreen(new ScriptEditPartScreen(this.action, this.script, this.header));
                 });
                 panel.add(item);
                 x += 10;
-                if (x > WIDTH-10) {
+                if (x > WIDTH - 10) {
                     x = 5;
                     y += 10;
                 }

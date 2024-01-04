@@ -1,8 +1,7 @@
 package io.github.techstreet.dfscript.script.conditions;
 
 import com.google.gson.*;
-import io.github.techstreet.dfscript.script.*;
-import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
+import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.render.ScriptPartRender;
 import net.minecraft.item.ItemStack;
@@ -32,6 +31,7 @@ public abstract class ScriptCondition {
     }
 
     public abstract ItemStack getIcon(String prefix, String invertedPrefix);
+
     public abstract String getName(String prefix, String invertedPrefix);
 
     public abstract List<Text> getLore();
@@ -45,10 +45,11 @@ public abstract class ScriptCondition {
             String type = obj.get("type").getAsString();
             ScriptCondition condition;
             switch (type) {
-                case "condition" -> condition = new ScriptBuiltinCondition(ScriptConditionType.valueOf(obj.get("condition").getAsString()));
+                case "condition" ->
+                        condition = new ScriptBuiltinCondition(ScriptConditionType.valueOf(obj.get("condition").getAsString()));
                 default -> throw new JsonParseException("Unknown script condition type: " + type);
             }
-            if(inverted) condition.invert();
+            if (inverted) condition.invert();
             return condition;
         }
     }

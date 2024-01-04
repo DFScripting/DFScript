@@ -5,21 +5,13 @@ import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
-import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
-import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.event.ScriptHeaderCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ScriptHeaderCategoryScreen extends CScreen {
 
@@ -28,12 +20,12 @@ public class ScriptHeaderCategoryScreen extends CScreen {
 
     static {
         extra = List.of(
-            new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) ->
-                    script.getHeaders().add(insertIndex, new ScriptFunction(
-                            script.getUnnamedFunction(), Items.LAPIS_LAZULI, new ScriptActionArgumentList(), ""
-                    )))
+                new HeaderExtra(ScriptFunction.functionIcon, (script, insertIndex) ->
+                        script.getHeaders().add(insertIndex, new ScriptFunction(
+                                script.getUnnamedFunction(), Items.LAPIS_LAZULI, new ScriptActionArgumentList(), ""
+                        )))
         );
-        size = (int) (Math.ceil(Math.sqrt(ScriptHeaderCategory.values().length+extra.size())) * 10)+4;
+        size = (int) (Math.ceil(Math.sqrt(ScriptHeaderCategory.values().length + extra.size())) * 10) + 4;
     }
 
     private final Script script;
@@ -58,7 +50,7 @@ public class ScriptHeaderCategoryScreen extends CScreen {
             }
         }
 
-        for(HeaderExtra headerExtra : extra) {
+        for (HeaderExtra headerExtra : extra) {
             CItem item = new CItem(x, y, headerExtra.icon());
             item.setClickListener(button -> {
                 headerExtra.onClick().accept(script, insertIndex);
@@ -80,5 +72,6 @@ public class ScriptHeaderCategoryScreen extends CScreen {
         DFScript.MC.setScreen(new ScriptEditScreen(script));
     }
 
-    record HeaderExtra(ItemStack icon, BiConsumer<Script, Integer> onClick) {}
+    record HeaderExtra(ItemStack icon, BiConsumer<Script, Integer> onClick) {
+    }
 }

@@ -3,39 +3,31 @@ package io.github.techstreet.dfscript.script;
 import com.google.gson.*;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.system.Event;
-import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptUnknownArgument;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
 import io.github.techstreet.dfscript.script.event.*;
-import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.execution.ScriptContext;
-import io.github.techstreet.dfscript.script.execution.ScriptPosStack;
-import io.github.techstreet.dfscript.script.execution.ScriptScopeVariables;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
-import io.github.techstreet.dfscript.script.options.ScriptOption;
-import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
-import io.github.techstreet.dfscript.script.repetitions.ScriptRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
-import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
 import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatType;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Script {
     public static int scriptVersion = 8;
@@ -76,13 +68,13 @@ public class Script {
     }
 
     public void invoke(Event event) {
-        if(disabled) return;
+        if (disabled) return;
 
         for (ScriptHeader part : headers) {
             if (part instanceof ScriptEvent se) {
                 if (se.getType().getCodeutilitiesEvent().equals(event.getClass())) {
                     try {
-                        ScriptTask task = new ScriptTask(event,this);
+                        ScriptTask task = new ScriptTask(event, this);
                         se.run(task);
                         task.run();
                     } catch (Exception err) {
@@ -268,19 +260,19 @@ public class Script {
     }
 
     public void replaceAction(ScriptActionType oldAction, ScriptActionType newAction) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceAction(oldAction, newAction));
         }
     }
 
     public void replaceCondition(ScriptConditionType oldCondition, ScriptConditionType newCondition) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceCondition(oldCondition, newCondition));
         }
     }
 
     public void replaceRepetition(ScriptRepetitionType oldRepetition, ScriptRepetitionType newRepetition) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceRepetition(oldRepetition, newRepetition));
         }
     }
@@ -294,39 +286,39 @@ public class Script {
     }
 
     public boolean optionExists(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return true;
+        for (ScriptNamedOption o : getOptions()) {
+            if (Objects.equals(o.getName(), option)) return true;
         }
 
         return false;
     }
 
     public ScriptValue getOption(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return o.getValue();
+        for (ScriptNamedOption o : getOptions()) {
+            if (Objects.equals(o.getName(), option)) return o.getValue();
         }
 
         return new ScriptUnknownValue();
     }
 
     public String getUnnamedOption() {
-        for(int i = 1; ; i++) {
+        for (int i = 1; ; i++) {
 
             String name = "Option";
 
-            if(i != 1) {
+            if (i != 1) {
                 name = name + " " + i;
             }
 
-            if(!optionExists(name)) {
+            if (!optionExists(name)) {
                 return name;
             }
         }
     }
 
     public ScriptNamedOption getNamedOption(String option) {
-        for(ScriptNamedOption o : getOptions()) {
-            if(Objects.equals(o.getName(), option)) return o;
+        for (ScriptNamedOption o : getOptions()) {
+            if (Objects.equals(o.getName(), option)) return o;
         }
 
         return null;
@@ -336,7 +328,7 @@ public class Script {
         List<ScriptFunction> functions = new ArrayList<>();
 
         for (ScriptHeader header : getHeaders()) {
-            if(header instanceof ScriptFunction function) {
+            if (header instanceof ScriptFunction function) {
                 functions.add(function);
             }
         }
@@ -346,7 +338,7 @@ public class Script {
 
     public boolean functionExists(String functionName) {
         for (ScriptFunction function : getFunctions()) {
-            if(function.getName().equals(functionName)) {
+            if (function.getName().equals(functionName)) {
                 return true;
             }
         }
@@ -355,7 +347,7 @@ public class Script {
 
     public ScriptFunction getNamedFunction(String functionName) {
         for (ScriptFunction function : getFunctions()) {
-            if(function.getName().equals(functionName)) {
+            if (function.getName().equals(functionName)) {
                 return function;
             }
         }
@@ -363,46 +355,46 @@ public class Script {
     }
 
     public String getUnnamedFunction() {
-        for(int i = 1; ; i++) {
+        for (int i = 1; ; i++) {
 
             String name = "Function";
 
-            if(i != 1) {
+            if (i != 1) {
                 name = name + " " + i;
             }
 
-            if(!functionExists(name)) {
+            if (!functionExists(name)) {
                 return name;
             }
         }
     }
 
     private void updateScriptReferences() {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.updateScriptReferences(this, header));
         }
     }
 
     public void replaceOption(String oldOption, String newOption) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceOption(oldOption, newOption));
         }
     }
 
     public void removeOption(String option) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.removeOption(option));
         }
     }
 
     public void replaceFunction(String oldFunction, String newFunction) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.replaceFunction(oldFunction, newFunction));
         }
     }
 
     public void removeFunction(String function) {
-        for(ScriptHeader header : headers) {
+        for (ScriptHeader header : headers) {
             header.forEach((snippet) -> snippet.removeFunction(function));
         }
     }
@@ -424,11 +416,10 @@ public class Script {
 
             List<ScriptHeader> headers = new ArrayList<>();
 
-            if(object.has("actions")) {
+            if (object.has("actions")) {
                 JsonArray parts = object.get("actions").getAsJsonArray();
                 legacyDeserialize(headers, parts, context);
-            }
-            else {
+            } else {
                 for (JsonElement element : object.get("headers").getAsJsonArray()) {
                     ScriptHeader header = context.deserialize(element, ScriptHeader.class);
                     headers.add(header);
@@ -445,18 +436,18 @@ public class Script {
             script.setDescription(description);
 
             if (object.get("config") != null) for (JsonElement element : object.get("config").getAsJsonArray()) {
-                if(version < 8) {
-                    if(element.isJsonObject()) {
+                if (version < 7) {
+                    if (element.isJsonObject()) {
                         JsonObject obj = element.getAsJsonObject();
 
-                        if(obj.getAsJsonPrimitive("type").getAsString().equals("BOOL")) {
+                        if (obj.getAsJsonPrimitive("type").getAsString().equals("BOOL")) {
                             obj.addProperty("type", "OLD_BOOL");
                         }
 
-                        if(obj.has("subtypes") && obj.get("subtypes").isJsonArray()) {
+                        if (obj.has("subtypes") && obj.get("subtypes").isJsonArray()) {
                             int i = 0;
                             for (JsonElement el : obj.getAsJsonArray("subtypes")) {
-                                if(el.getAsString().equals("BOOL")) {
+                                if (el.getAsString().equals("BOOL")) {
                                     obj.getAsJsonArray("subtypes").set(i, new JsonPrimitive("OLD_BOOL"));
                                 }
                                 i++;
@@ -502,7 +493,7 @@ public class Script {
         public static void legacyDeserialize(List<ScriptHeader> headers, JsonArray parts, JsonDeserializationContext context) {
             int pos = 0;
 
-            while(pos < parts.size()) {
+            while (pos < parts.size()) {
                 ScriptHeader header;
 
                 JsonObject obj = parts.get(pos).getAsJsonObject();
@@ -511,14 +502,12 @@ public class Script {
                 DFScript.LOGGER.info(pos);
                 DFScript.LOGGER.info(obj);
 
-                if(Objects.equals(type, "event")) {
+                if (Objects.equals(type, "event")) {
                     header = new ScriptEvent(ScriptEventType.valueOf(obj.get("event").getAsString()));
                     pos++;
-                }
-                else {
+                } else {
                     header = new ScriptEmptyHeader();
-                    if(obj.get("action").getAsString().equals("CLOSE_BRACKET"))
-                    {
+                    if (obj.get("action").getAsString().equals("CLOSE_BRACKET")) {
                         pos++;
                     }
                 }
@@ -526,7 +515,7 @@ public class Script {
                 ScriptSnippet snippet = new ScriptSnippet();
                 pos = legacyDeserializeActions(pos, parts, snippet, context);
 
-                if(snippet.size() > 0) {
+                if (snippet.size() > 0) {
                     header.container().setSnippet(0, snippet);
                     headers.add(header);
                 }
@@ -536,11 +525,11 @@ public class Script {
         private static int legacyDeserializeActions(int pos, JsonArray parts, ScriptSnippet snippet, JsonDeserializationContext context) {
             boolean parity = false;
 
-            while(pos < parts.size()) {
+            while (pos < parts.size()) {
                 JsonObject obj = parts.get(pos).getAsJsonObject();
                 String type = obj.get("type").getAsString();
                 boolean breakOut = false;
-                switch(type) {
+                switch (type) {
                     case "event" -> {
                         breakOut = true;
                     }
@@ -552,23 +541,22 @@ public class Script {
                     case "action" -> {
                         String action = obj.get("action").getAsString();
 
-                        switch(action) {
+                        switch (action) {
                             case "CLOSE_BRACKET" -> {
                                 breakOut = true;
                             }
                             case "ELSE" -> {
-                                ScriptPart latestPart = snippet.get(snippet.size()-1);
+                                ScriptPart latestPart = snippet.get(snippet.size() - 1);
 
                                 ScriptSnippet elseSnippet = new ScriptSnippet();
 
-                                pos = legacyDeserializeActions(pos+1, parts, elseSnippet, context);
+                                pos = legacyDeserializeActions(pos + 1, parts, elseSnippet, context);
 
-                                if(latestPart instanceof ScriptBranch b) {
-                                    if(!b.hasElse()) b.setHasElse();
+                                if (latestPart instanceof ScriptBranch b) {
+                                    if (!b.hasElse()) b.setHasElse();
                                     b.container().getSnippet(parity ? 0 : 1).addAll(elseSnippet);
                                     parity = !parity;
-                                }
-                                else {
+                                } else {
                                     ScriptCondition condition = new ScriptBuiltinCondition(ScriptConditionType.TRUE).invert();
                                     ScriptBranch b = new ScriptBranch(new ArrayList<>(), condition);
                                     snippet.add(b);
@@ -586,18 +574,16 @@ public class Script {
                                     ScriptActionType innerType = ScriptActionType.valueOf(action);
 
                                     snippet.add(new ScriptBuiltinAction(innerType, args));
-                                }
-                                catch(IllegalArgumentException e) {
+                                } catch (IllegalArgumentException e) {
                                     ScriptSnippet innerSnippet = new ScriptSnippet();
-                                    pos = legacyDeserializeActions(pos+1, parts, innerSnippet, context);
+                                    pos = legacyDeserializeActions(pos + 1, parts, innerSnippet, context);
 
                                     try {
                                         ScriptRepetitionType innerType = ScriptRepetitionType.valueOf(action);
                                         ScriptBuiltinRepetition part = new ScriptBuiltinRepetition(args, innerType);
                                         part.container().setSnippet(0, innerSnippet);
                                         snippet.add(part);
-                                    }
-                                    catch(IllegalArgumentException e2) {
+                                    } catch (IllegalArgumentException e2) {
                                         ScriptConditionType innerType = ScriptConditionType.valueOf(action);
                                         ScriptBranch part = new ScriptBranch(args, new ScriptBuiltinCondition(innerType));
                                         part.container().setSnippet(0, innerSnippet);
@@ -608,7 +594,7 @@ public class Script {
                         }
                     }
                 }
-                if(breakOut) break;
+                if (breakOut) break;
                 pos++;
             }
 

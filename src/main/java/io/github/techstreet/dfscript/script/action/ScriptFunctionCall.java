@@ -7,7 +7,6 @@ import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
-import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
@@ -17,7 +16,6 @@ import io.github.techstreet.dfscript.script.render.ScriptPartRenderIconElement;
 import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptFunctionCall extends ScriptAction {
@@ -40,13 +38,10 @@ public class ScriptFunctionCall extends ScriptAction {
     public void run(ScriptTask task) {
         ScriptActionContext context = new ScriptActionContext(task, getArguments());
 
-        try
-        {
+        try {
             getFunction().argList().getArgMap(context);
             getFunction().container().runSnippet(task, 0, getFunction(), context);
-        }
-        catch(IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             OverlayManager.getInstance().add("Invalid arguments for function '" + function + "'.");
         }
     }

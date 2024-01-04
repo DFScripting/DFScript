@@ -3,14 +3,15 @@ package io.github.techstreet.dfscript.screen;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.widget.CWidget;
 import io.github.techstreet.dfscript.util.RenderUtil;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CScreen extends Screen {
 
@@ -34,24 +35,24 @@ public class CScreen extends Screen {
         MatrixStack stack = context.getMatrices();
 
         assert mc.currentScreen != null;
-        stack.translate(mc.currentScreen.width/2f, mc.currentScreen.height/2f, 0);
+        stack.translate(mc.currentScreen.width / 2f, mc.currentScreen.height / 2f, 0);
 
 //        float scaleFactor = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
-        stack.scale(scaleFactor,scaleFactor,0);
+        stack.scale(scaleFactor, scaleFactor, 0);
 
-        stack.translate(-width/2f, -height/2f, 0);
+        stack.translate(-width / 2f, -height / 2f, 0);
 
-        RenderUtil.renderGui(context,0,0,width,height);
+        RenderUtil.renderGui(context, 0, 0, width, height);
 
-        mouseX += -mc.currentScreen.width/2;
-        mouseY += -mc.currentScreen.height/2;
+        mouseX += -mc.currentScreen.width / 2;
+        mouseY += -mc.currentScreen.height / 2;
 
         mouseX /= scaleFactor;
         mouseY /= scaleFactor;
 
-        mouseX += width/2;
-        mouseY += height/2;
+        mouseX += width / 2;
+        mouseY += height / 2;
 
         for (CWidget cWidget : widgets) {
             cWidget.render(context, mouseX, mouseY, tickDelta);
@@ -78,6 +79,7 @@ public class CScreen extends Screen {
 
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
+
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
         for (CWidget cWidget : widgets) {
@@ -116,9 +118,9 @@ public class CScreen extends Screen {
 //        float s = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
         assert mc.currentScreen != null;
-        mouseX += -mc.currentScreen.width/2f;
+        mouseX += -mc.currentScreen.width / 2f;
         mouseX /= scaleFactor;
-        mouseX += width/2f;
+        mouseX += width / 2f;
         return mouseX;
     }
 
@@ -127,16 +129,16 @@ public class CScreen extends Screen {
 //        float scaleFactor = (float) mc.getWindow().getScaleFactor();
         float scaleFactor = 2;
         assert mc.currentScreen != null;
-        mouseY += -mc.currentScreen.height/2f;
+        mouseY += -mc.currentScreen.height / 2f;
         mouseY /= scaleFactor;
-        mouseY += height/2f;
+        mouseY += height / 2f;
         return mouseY;
     }
 
     @Override
     public boolean shouldCloseOnEsc() {
-        for(CWidget widget : widgets) {
-            if(!widget.enableClosingOnEsc()) {
+        for (CWidget widget : widgets) {
+            if (!widget.enableClosingOnEsc()) {
                 return false;
             }
         }

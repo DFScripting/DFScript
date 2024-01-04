@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.script;
 
 import com.google.gson.*;
-import io.github.techstreet.dfscript.DFScript;
 
 public class LiteralScriptMigrator {
 

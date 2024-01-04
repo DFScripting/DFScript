@@ -1,17 +1,19 @@
 package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.DFScript;
-import java.awt.Color;
-import java.util.Objects;
-
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.Objects;
 
 public class ChatUtil {
     public static class PlayerAudience implements Audience {
@@ -41,6 +43,7 @@ public class ChatUtil {
             }
         }
     }
+
     private static final PlayerAudience audience = new PlayerAudience();
 
     public static void playSound(SoundEvent sound) {

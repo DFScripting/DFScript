@@ -10,8 +10,10 @@ public class ScriptMenuButton extends CButton implements ScriptWidget {
 
     private final String identifier;
     private final Script script;
+
     public ScriptMenuButton(int x, int y, int width, int height, String text, String identifier, Script script) {
-        super(x, y, width, height, text, () -> {});
+        super(x, y, width, height, text, () -> {
+        });
         this.identifier = identifier;
         this.script = script;
     }
@@ -23,8 +25,8 @@ public class ScriptMenuButton extends CButton implements ScriptWidget {
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        if (getBounds().contains(x,y)) {
-            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
+        if (getBounds().contains(x, y)) {
+            DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
             script.invoke(new ScriptMenuClickButtonEvent(identifier));
             return true;
         }

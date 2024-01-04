@@ -9,7 +9,6 @@ import io.github.techstreet.dfscript.script.event.ScriptFunction;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
-import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
@@ -43,11 +42,12 @@ public final class ScriptFunctionArgument implements ScriptArgument {
     }
 
     public ScriptActionArgument getFunctionArg() {
-        if(header instanceof ScriptFunction f) {
+        if (header instanceof ScriptFunction f) {
             return f.argList().getByName(functionArg);
         }
         return null;
     }
+
     public String getName() {
         return functionArg;
     }
@@ -78,7 +78,7 @@ public final class ScriptFunctionArgument implements ScriptArgument {
 
     @Override
     public String getArgText() {
-        if(getFunctionArg() == null) {
+        if (getFunctionArg() == null) {
             return "Invalid Function Argument";
         }
 

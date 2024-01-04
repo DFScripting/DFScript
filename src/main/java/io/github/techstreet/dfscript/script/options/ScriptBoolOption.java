@@ -17,7 +17,8 @@ public class ScriptBoolOption implements ScriptOption {
         this.value = value.getAsBoolean();
     }
 
-    public ScriptBoolOption() {}
+    public ScriptBoolOption() {
+    }
 
     @Override
     public ScriptValue getValue() {
@@ -44,6 +45,7 @@ public class ScriptBoolOption implements ScriptOption {
     private String getTexture() {
         return DFScript.MOD_ID + (value ? ":on_button.png" : ":off_button.png");
     }
+
     private String getHighlightedTexture() {
         return DFScript.MOD_ID + (value ? ":on_button_highlight.png" : ":disable_highlight.png");
     }

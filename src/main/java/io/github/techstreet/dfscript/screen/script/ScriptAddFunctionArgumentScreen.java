@@ -4,16 +4,8 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.CScreen;
 import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptSnippet;
-import io.github.techstreet.dfscript.script.action.*;
-import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
-import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
-import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
-import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
-import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
-
-import java.util.ArrayList;
 
 public class ScriptAddFunctionArgumentScreen extends CScreen {
 
@@ -58,7 +50,7 @@ public class ScriptAddFunctionArgumentScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size-10) {
+            if (x >= size - 10) {
                 x = 3;
                 y += 10;
             }
@@ -67,7 +59,7 @@ public class ScriptAddFunctionArgumentScreen extends CScreen {
 
     private static int size() {
         int amount = ScriptActionArgument.ScriptActionArgumentType.values().length;
-        return (int) (Math.ceil(Math.sqrt(amount))*10)+4;
+        return (int) (Math.ceil(Math.sqrt(amount)) * 10) + 4;
     }
 
     @Override
