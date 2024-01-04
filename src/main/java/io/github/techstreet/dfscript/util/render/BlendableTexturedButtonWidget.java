@@ -3,11 +3,7 @@ package io.github.techstreet.dfscript.util.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class BlendableTexturedButtonWidget extends TexturedButtonWidget {

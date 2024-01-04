@@ -1681,6 +1681,11 @@ public enum ScriptActionType {
         description.add("No description provided.");
         builder.accept(this);
     }
+
+    public Item getItem() {
+        return icon;
+    }
+
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
 
@@ -1729,6 +1734,7 @@ public enum ScriptActionType {
 
         return item;
     }
+
     public String getName() {
         return name;
     }
@@ -1743,6 +1749,14 @@ public enum ScriptActionType {
 
     public ScriptActionCategory getCategory() {
         return category;
+    }
+
+    public List<String> getDescription() {
+        return description;
+    }
+
+    public ScriptActionArgumentList getArguments() {
+        return arguments;
     }
 
     private ScriptActionType action(Consumer<ScriptActionContext> action) {
