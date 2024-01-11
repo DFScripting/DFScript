@@ -43,6 +43,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -1445,7 +1447,6 @@ public enum ScriptActionType {
     /* MENUS */
     ///////////
 
-
     OPEN_MENU(builder -> builder.name("Open Menu")
             .description("Opens a custom empty menu.")
             .icon(Items.PAINTING)
@@ -1456,7 +1457,9 @@ public enum ScriptActionType {
                 int width = (int) ctx.value("Width").asNumber();
                 int height = (int) ctx.value("Height").asNumber();
 
-                DFScript.MC.send(() -> DFScript.MC.setScreen(new ScriptMenu(width, height, ctx.task().context().script())));
+                DFScript.MC.setScreen(new ScriptMenu(width, height, ctx.task().context().script()));
+                DFScript.LOGGER.info("New menu: w=" + width + " h=" + height);
+                DFScript.LOGGER.info(DFScript.MC.currentScreen.getTitle().getString());
             })),
 
     ADD_MENU_BUTTON(builder -> builder.name("Add Menu Button")
@@ -1479,12 +1482,12 @@ public enum ScriptActionType {
 
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuButton(x, y, width, height, text, identifier, ctx.task().context().script())));
+                        menu.widgets.add(new ScriptMenuButton(x, y, width, height, text, identifier, ctx.task().context().script()));
                     } else {
                         OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add button to menu! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("button");
                 }
             })),
 
@@ -1504,12 +1507,12 @@ public enum ScriptActionType {
 
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuItem(x, y, item, identifier)));
+                         menu.widgets.add(new ScriptMenuItem(x, y, item, identifier));
                     } else {
                         OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add item to menu! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("item");
                 }
             })),
 
@@ -1530,12 +1533,12 @@ public enum ScriptActionType {
 
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuText(x, y, t, 0x333333, 1, false, false, identifier)));
+                         menu.widgets.add(new ScriptMenuText(x, y, t, 0x333333, 1, false, false, identifier));
                     } else {
                         OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add text to menu! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("text");
                 }
             })),
 
@@ -1557,12 +1560,12 @@ public enum ScriptActionType {
 
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        DFScript.MC.send(() -> menu.widgets.add(new ScriptMenuTextField("", x, y, width, height, true, identifier)));
+                        menu.widgets.add(new ScriptMenuTextField("", x, y, width, height, true, identifier));
                     } else {
                         OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to add text field to menu! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("text field");
                 }
             })),
 
@@ -1575,12 +1578,12 @@ public enum ScriptActionType {
                 String identifier = ctx.value("Identifier").asString();
                 if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
                     if (menu.ownedBy(ctx.task().context().script())) {
-                        DFScript.MC.send(() -> menu.removeChild(identifier));
+                        menu.removeChild(identifier);
                     } else {
                         OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to remove element from menu! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("element", "remove");
                 }
             })),
 
@@ -1608,7 +1611,7 @@ public enum ScriptActionType {
                         OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to get text field value! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("text field value", "get");
                 }
             })),
 
@@ -1625,7 +1628,7 @@ public enum ScriptActionType {
                     if (menu.ownedBy(ctx.task().context().script())) {
                         ScriptWidget w = menu.getWidget(identifier);
                         if (w instanceof ScriptMenuTextField field) {
-                            DFScript.MC.send(() -> field.setText(ctx.value("Value").asString()));
+                            field.setText(ctx.value("Value").asString());
                         } else {
                             OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
                         }
@@ -1633,7 +1636,7 @@ public enum ScriptActionType {
                         OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
                     }
                 } else {
-                    OverlayManager.getInstance().add("Unable to set text field value! (Unknown menu type)");
+                    menu_UnknownMenuTypeError("text field value", "set");
                 }
             })),
 
@@ -1641,7 +1644,7 @@ public enum ScriptActionType {
             .description("Closes the current menu")
             .category(ScriptActionCategory.MENUS)
             .icon(Items.BARRIER)
-            .action(ctx -> DFScript.MC.send(() -> DFScript.MC.setScreen(null)))),
+            .action(ctx -> DFScript.MC.setScreen(null))),
 
     /////////////
     /* CONTROL */
@@ -1913,6 +1916,21 @@ public enum ScriptActionType {
                     }
                 }
             }));
+
+    private static void menu_UnknownMenuTypeError(String widget) {
+        menu_UnknownMenuTypeError(widget, "add");
+    }
+
+    private static void menu_UnknownMenuTypeError(String widget, String verb) {
+        if (verb == null) verb = "add";
+        if (DFScript.MC.currentScreen != null) {
+            OverlayManager.getInstance().add("Unable to " + verb + " " + widget +" to menu! (Unknown menu type, title=" + DFScript.MC.currentScreen.getTitle().getString() + ")");
+            DFScript.LOGGER.error("Unknown menu type: " + DFScript.MC.currentScreen.getTitle().getString());
+        } else {
+            OverlayManager.getInstance().add("Unable to " + verb + " " + widget + " to menu! (No menu is present)");
+            DFScript.LOGGER.error("No menu is present");
+        }
+    }
 
     private Consumer<ScriptActionContext> action = (ctx) -> {
     };
