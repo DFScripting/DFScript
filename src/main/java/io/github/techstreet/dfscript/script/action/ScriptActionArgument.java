@@ -118,7 +118,7 @@ public class ScriptActionArgument {
         argText.add(t);
 
         if (!(defaultValue() instanceof ScriptUnknownValue)) {
-            argText.add(Text.literal("  Default: " + defaultValue().formatAsText())
+            argText.add(Text.literal("  Default: ").append(defaultValue.formatAsText())
                     .fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)));
         }
 
@@ -149,7 +149,7 @@ public class ScriptActionArgument {
 
         if (!(defaultValue() instanceof ScriptUnknownValue)) {
             lore.add(NbtString.of(Text.Serializer.toJson(
-                    Text.literal("Default: " + defaultValue().formatAsText())
+                    Text.literal("Default: ").append(defaultValue.formatAsText())
                             .fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY))
             )));
         }

@@ -22,21 +22,28 @@ public class CButton implements CWidget {
     private Runnable onClick;
     private boolean disabled;
 
-    public CButton(int x, int y, int width, int height, float textScale, String text, Runnable onClick) {
+    public CButton(int x, int y, int width, int height, float textScale, Text text, Runnable onClick) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.textScale = textScale;
-        this.text = Text.literal(text);
+        this.text = text;
         this.onClick = onClick;
         this.disabled = false;
     }
 
-    public CButton(int x, int y, int width, int height, String text, Runnable onClick) {
+    public CButton(int x, int y, int width, int height, float textScale, String text, Runnable onClick) {
+        this(x, y, width, height, textScale, Text.literal(text), onClick);
+    }
+
+    public CButton(int x, int y, int width, int height, Text text, Runnable onClick) {
         this(x, y, width, height, 1f, text, onClick);
     }
 
+    public CButton(int x, int y, int width, int height, String text, Runnable onClick) {
+        this(x, y, width, height, 1f, Text.literal(text), onClick);
+    }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {

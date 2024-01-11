@@ -5,13 +5,14 @@ import io.github.techstreet.dfscript.screen.widget.CButton;
 import io.github.techstreet.dfscript.script.Script;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 
 public class ScriptMenuButton extends CButton implements ScriptWidget {
 
     private final String identifier;
     private final Script script;
 
-    public ScriptMenuButton(int x, int y, int width, int height, String text, String identifier, Script script) {
+    public ScriptMenuButton(int x, int y, int width, int height, Text text, String identifier, Script script) {
         super(x, y, width, height, text, () -> {
         });
         this.identifier = identifier;

@@ -1,6 +1,7 @@
 package io.github.techstreet.dfscript.script.values;
 
 import com.google.gson.*;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -61,8 +62,8 @@ public abstract class ScriptValue {
         return asString().compareTo(other.asString());
     }
 
-    public String formatAsText() {
-        return asString();
+    public Text formatAsText() {
+        return Text.literal(asString());
     }
 
     public static class Serializer implements JsonSerializer<ScriptValue>, JsonDeserializer<ScriptValue> {

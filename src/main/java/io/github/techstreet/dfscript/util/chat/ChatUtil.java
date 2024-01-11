@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.util.chat;
 
 import io.github.techstreet.dfscript.DFScript;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.fabric.FabricClientAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -16,35 +17,8 @@ import java.awt.*;
 import java.util.Objects;
 
 public class ChatUtil {
-    public static class PlayerAudience implements Audience {
-        final private ClientPlayerEntity player = DFScript.MC.player;
 
-        private boolean assertPlayer() {
-            return player != null;
-        }
-
-        @Override
-        public void sendMessage(final @NotNull Component message) {
-            if (assertPlayer()) {
-                player.sendMessage(message);
-            }
-        }
-
-        @Override
-        public void sendActionBar(final @NotNull Component message) {
-            if (assertPlayer()) {
-                player.sendActionBar(message);
-            }
-        }
-
-        public void sendTitle(final @NotNull Component title, final @NotNull Component subtitle) {
-            if (assertPlayer()) {
-                player.showTitle(Title.title(title, subtitle));
-            }
-        }
-    }
-
-    private static final PlayerAudience audience = new PlayerAudience();
+    private static final Audience audience = FabricClientAudiences.of().audience();
 
     public static void playSound(SoundEvent sound) {
         playSound(sound, 1F);
@@ -83,6 +57,18 @@ public class ChatUtil {
 
     public static void sendMessage(Text text) {
         sendMessage(text, null);
+    }
+
+    public static void sendPlayerTabTitle(Component component) {
+        audience.sendPlayerListHeader(component);
+    }
+
+    public static void sendPlayerTabFooter(Component component) {
+        audience.sendPlayerListFooter(component);
+    }
+
+    public static void clearTitle() {
+        audience.clearTitle();
     }
 
     public static void sendMessage(Component component) {
@@ -129,7 +115,7 @@ public class ChatUtil {
 
     public static void sendTitle(Component title, Component subtitle) {
         if (DFScript.MC.player == null) return;
-        audience.sendTitle(title, subtitle);
+        audience.showTitle(Title.title(title, subtitle));
     }
 
     public static void error(String s) {

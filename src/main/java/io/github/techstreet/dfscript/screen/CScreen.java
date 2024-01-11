@@ -18,6 +18,11 @@ public class CScreen extends Screen {
     private final int width, height;
     public final List<CWidget> widgets = new ArrayList<>();
 
+    @Override
+    public boolean shouldPause() {
+        return false;
+    }
+
     protected CScreen(int width, int height) {
         super(Text.literal("DFScript Screen"));
         this.width = width;

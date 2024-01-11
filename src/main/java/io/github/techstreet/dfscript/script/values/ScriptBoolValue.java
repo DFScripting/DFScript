@@ -1,6 +1,7 @@
 package io.github.techstreet.dfscript.script.values;
 
 import com.google.gson.*;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -57,11 +58,6 @@ public class ScriptBoolValue extends ScriptValue {
             return false;
         }
         return other.asBoolean() == value;
-    }
-
-    @Override
-    public String formatAsText() {
-        return value ? "True" : "False";
     }
 
     public static class Serializer implements JsonSerializer<ScriptBoolValue>, JsonDeserializer<ScriptBoolValue> {

@@ -1,8 +1,10 @@
 package io.github.techstreet.dfscript.script.values;
 
 import com.google.gson.*;
+import net.kyori.adventure.platform.fabric.FabricClientAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -56,8 +58,8 @@ public class ScriptTextValue extends ScriptValue {
     }
 
     @Override
-    public String formatAsText() {
-        return '"' + asString() + '"';
+    public Text formatAsText() {
+        return FabricClientAudiences.of().toNative(parse());
     }
 
     public Component parse() {
