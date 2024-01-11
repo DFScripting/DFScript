@@ -21,7 +21,8 @@ public interface CWidget {
     default void keyReleased(int keyCode, int scanCode, int modifiers) {
     }
 
-    default void mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
+    default boolean mouseScrolled(double mouseX, double mouseY, double vertical, double horizontal) {
+        return false;
     }
 
     default void renderOverlay(DrawContext context, int mouseX, int mouseY, float tickDelta) {
@@ -32,5 +33,13 @@ public interface CWidget {
 
     default boolean enableClosingOnEsc() {
         return true;
+    }
+
+    default boolean mouseReleased(double x, double y, int button) {
+        return false;
+    }
+
+    default boolean mouseDragged(double x, double y, int button, double deltaX, double deltaY) {
+        return false;
     }
 }
