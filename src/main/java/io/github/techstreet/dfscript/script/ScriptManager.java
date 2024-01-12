@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.script;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.event.*;
 import io.github.techstreet.dfscript.event.system.Event;
@@ -75,6 +74,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
         .registerTypeAdapter(ScriptValue.class, new ScriptValue.Serializer())
         .registerTypeAdapter(ScriptNumberValue.class, new ScriptNumberValue.Serializer())
+            .registerTypeAdapter(ScriptStringValue.class, new ScriptStringValue.Serializer())
         .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
         .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
         .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
@@ -197,7 +197,11 @@ public class ScriptManager implements Loadable {
             }
 
             String content = FileUtil.readFile(file.toPath());
-            content = LiteralScriptMigrator.migrate(content);
+            JsonElement script = JsonParser.parseString(content);
+            int version = script.getAsJsonObject().get("version").getAsInt();
+            if (version < 8) {
+                content = LiteralScriptMigrator.migrate(content);
+            }
             Script s = GSON.fromJson(content, Script.class);
             s.setFile(file);
 
