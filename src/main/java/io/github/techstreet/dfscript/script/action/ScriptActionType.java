@@ -26,9 +26,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -46,8 +43,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,15 +70,17 @@ public enum ScriptActionType {
             .category(ScriptActionCategory.VISUALS)
             .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
             .action(ctx -> {
-                StringBuilder sb = new StringBuilder();
-                for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                    sb.append(arg.asString())
-                            .append(" ");
+                Component send = Component.empty();
+
+                int i = 0;
+                List<ScriptValue> values = ctx.pluralValue("Texts");
+                for (ScriptValue arg : values) {
+                    send = send.append(arg.formatAsText());
+                    if (i < values.size() - 1) { send = send.appendSpace(); }
+                    i ++;
                 }
-                sb.deleteCharAt(sb.length() - 1);
-                ScriptTextValue finalText = new ScriptTextValue(sb.toString());
-                Component sendComponent = finalText.parse();
-                ChatUtil.sendMessage(sendComponent);
+
+                ChatUtil.sendMessage(send);
             })),
 
     ACTIONBAR(builder -> builder.name("Action Bar")
@@ -92,15 +89,17 @@ public enum ScriptActionType {
             .category(ScriptActionCategory.VISUALS)
             .arg("Texts", ScriptActionArgumentType.TEXT, arg -> arg.plural(true))
             .action(ctx -> {
-                StringBuilder sb = new StringBuilder();
-                for (ScriptValue arg : ctx.pluralValue("Texts")) {
-                    sb.append(arg.asString())
-                            .append(" ");
+                Component send = Component.empty();
+
+                int i = 0;
+                List<ScriptValue> values = ctx.pluralValue("Texts");
+                for (ScriptValue arg : values) {
+                    send = send.append(arg.formatAsText());
+                    if (i < values.size() - 1) { send = send.appendSpace(); }
+                    i ++;
                 }
-                sb.deleteCharAt(sb.length() - 1);
-                ScriptTextValue finalText = new ScriptTextValue(sb.toString());
-                Component sendComponent = finalText.parse();
-                ChatUtil.sendActionBar(sendComponent);
+
+                ChatUtil.sendActionBar(send);
             })),
 
 
@@ -1047,6 +1046,8 @@ public enum ScriptActionType {
 
                 result = result.replaceAll("<color:.*?>", "").replaceAll("</color:.*?>", "");
                 result = result.replaceAll("<#\\d+>", "").replaceAll("</#\\d+>", "");
+                result = result.replaceAll("<gradient:.*?:.*?>", "").replaceAll("</gradient>", "");
+                result = result.replaceAll("<rainbow(:.*?)?>", "").replaceAll("</rainbow>", "");
                 String[] colors = {
                         "black",
                         "dark_blue",
@@ -1515,7 +1516,7 @@ public enum ScriptActionType {
                             OverlayManager.getInstance().add("Unable to add button to menu! (Not owned by script)");
                         }
                     } else {
-                        menu_UnknownMenuTypeError("button");
+                        menu_CheckMenuIsNull("add button to menu");
                     }
                 });
             })),
@@ -1542,7 +1543,7 @@ public enum ScriptActionType {
                             OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
                         }
                     } else {
-                        menu_UnknownMenuTypeError("item");
+                        menu_CheckMenuIsNull("add item to menu");
                     }
                 });
             })),
@@ -1569,7 +1570,7 @@ public enum ScriptActionType {
                             OverlayManager.getInstance().add("Unable to add text to menu! (Not owned by script)");
                         }
                     } else {
-                        menu_UnknownMenuTypeError("text");
+                        menu_CheckMenuIsNull("add text to menu");
                     }
                 });
             })),
@@ -1598,7 +1599,7 @@ public enum ScriptActionType {
                             OverlayManager.getInstance().add("Unable to add text field to menu! (Not owned by script)");
                         }
                     } else {
-                        menu_UnknownMenuTypeError("text field");
+                        menu_CheckMenuIsNull("add text field to menu");
                     }
                 });
             })),
@@ -1619,7 +1620,7 @@ public enum ScriptActionType {
                             OverlayManager.getInstance().add("Unable to remove element from menu! (Not owned by script)");
                         }
                     } else {
-                        menu_UnknownMenuTypeError("element", "remove");
+                        menu_CheckMenuIsNull("remove element from menu");
                     }
                 });
             })),
@@ -1633,26 +1634,12 @@ public enum ScriptActionType {
             .action(ctx -> {
                 String identifier = ctx.value("Identifier").asString();
 
-                DFScript.MC.send(() -> {
-                    if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                        if (menu.ownedBy(ctx.task().context().script())) {
-                            ScriptWidget w = menu.getWidget(identifier);
-
-                            if (w instanceof ScriptMenuTextField field) {
-                                ctx.setVariable(
-                                        "Result",
-                                        new ScriptStringValue(field.getText())
-                                );
-                            } else {
-                                OverlayManager.getInstance().add("Unable to get text field value! (Unknown widget type)");
-                            }
-                        } else {
-                            OverlayManager.getInstance().add("Unable to get text field value! (Not owned by script)");
-                        }
-                    } else {
-                        menu_UnknownMenuTypeError("text field value", "get");
-                    }
-                });
+                menu_Check(ctx, "get text field value", (ScriptMenuTextField field) -> {
+                    ctx.setVariable(
+                            "Result",
+                            new ScriptStringValue(field.getText())
+                    );
+                }, identifier, ScriptMenuTextField.class);
             })),
 
     SET_MENU_TEXT_FIELD_VALUE(builder -> builder.name("Set Menu Text Field Value")
@@ -1664,22 +1651,9 @@ public enum ScriptActionType {
             .action(ctx -> {
                 String identifier = ctx.value("Identifier").asString();
 
-                DFScript.MC.send(() -> {
-                    if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
-                        if (menu.ownedBy(ctx.task().context().script())) {
-                            ScriptWidget w = menu.getWidget(identifier);
-                            if (w instanceof ScriptMenuTextField field) {
-                                field.setText(ctx.value("Value").asString());
-                            } else {
-                                OverlayManager.getInstance().add("Unable to set text field value! (Unknown widget type)");
-                            }
-                        } else {
-                            OverlayManager.getInstance().add("Unable to set text field value! (Not owned by script)");
-                        }
-                    } else {
-                        menu_UnknownMenuTypeError("text field value", "set");
-                    }
-                });
+                menu_Check(ctx, "set text field value", (ScriptMenuTextField field) -> {
+                    field.setText(ctx.value("Value").asString());
+                }, identifier, ScriptMenuTextField.class);
             })),
 
     CLOSE_MENU(builder -> builder.name("Close Menu")
@@ -1959,17 +1933,32 @@ public enum ScriptActionType {
                 }
             }));
 
-    private static void menu_UnknownMenuTypeError(String widget) {
-        menu_UnknownMenuTypeError(widget, "add");
+    private static <T extends ScriptWidget> void menu_Check(ScriptActionContext ctx, String verb, Consumer<T> cb, String identifier, Class<?> widgetClass) {
+        DFScript.MC.send(() -> {
+            if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                if (menu.ownedBy(ctx.task().context().script())) {
+                    ScriptWidget w = menu.getWidget(identifier);
+                    if (widgetClass.isInstance(w)) {
+                        T wC = (T) w;
+                        cb.accept(wC);
+                    } else {
+                        OverlayManager.getInstance().add("Unable to " + verb + "! (Unknown widget type)");
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Unable to " + verb + "! (Not owned by script)");
+                }
+            } else {
+                menu_CheckMenuIsNull(verb);
+            }
+        });
     }
 
-    private static void menu_UnknownMenuTypeError(String widget, String verb) {
-        if (verb == null) verb = "add";
+    private static void menu_CheckMenuIsNull(String verb) {
         if (DFScript.MC.currentScreen != null) {
-            OverlayManager.getInstance().add("Unable to " + verb + " " + widget +" to menu! (Unknown menu type, title=" + DFScript.MC.currentScreen.getTitle().getString() + ")");
+            OverlayManager.getInstance().add("Unable to " + verb + "! (Unknown menu type, title=" + DFScript.MC.currentScreen.getTitle().getString() + ")");
             DFScript.LOGGER.error("Unknown menu type: " + DFScript.MC.currentScreen.getTitle().getString());
         } else {
-            OverlayManager.getInstance().add("Unable to " + verb + " " + widget + " to menu! (No menu is present)");
+            OverlayManager.getInstance().add("Unable to " + verb + "! (No menu is present)");
             DFScript.LOGGER.error("No menu is present");
         }
     }

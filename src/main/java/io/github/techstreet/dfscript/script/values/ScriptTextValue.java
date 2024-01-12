@@ -27,7 +27,7 @@ public class ScriptTextValue extends ScriptValue {
     public ScriptValue convertTo(ScriptValue type) {
         if (type instanceof ScriptDictionaryValue) {
             HashMap<String, ScriptValue> map = new HashMap<>();
-            map.put("String", this);
+            map.put("Text", this);
             return new ScriptDictionaryValue(map);
         } else if (type instanceof ScriptListValue) {
             List<ScriptValue> list = new java.util.ArrayList<>(List.of());

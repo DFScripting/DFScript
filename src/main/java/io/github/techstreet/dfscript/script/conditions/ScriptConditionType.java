@@ -87,9 +87,7 @@ public enum ScriptConditionType {
                 double value = ctx.value("Value").asNumber();
 
                 if (value >= ctx.value("Minimum").asNumber()) {
-                    if (value <= ctx.value("Maximum").asNumber()) {
-                        return true;
-                    }
+                    return value <= ctx.value("Maximum").asNumber();
                 }
                 return false;
             })),
@@ -106,9 +104,7 @@ public enum ScriptConditionType {
                 double value = ctx.value("Value").asNumber();
 
                 if (value >= ctx.value("Minimum").asNumber()) {
-                    if (value <= ctx.value("Maximum").asNumber()) {
-                        return false;
-                    }
+                    return !(value <= ctx.value("Maximum").asNumber());
                 }
 
                 return true;
@@ -156,13 +152,13 @@ public enum ScriptConditionType {
         .arg("String", ScriptActionArgumentType.STRING)
         .arg("Sub-String", ScriptActionArgumentType.STRING)
         .action(ctx -> {
-            String text = ctx.value("Text").asString();
-            String subtext = ctx.value("Subtext").asString();
+            String text = ctx.value("String").asString();
+            String subtext = ctx.value("Sub-String").asString();
             return text.startsWith(subtext);
         })),
 
     IF_LIST_DOESNT_CONTAIN(builder -> builder.name("List Doesnt Contain")
-        .description("Checks if a list doesnt contain a value.")
+        .description("Checks if a list doesn't contain a value.")
         .icon(Items.BOOKSHELF)
         .category(ScriptActionCategory.LISTS)
         .arg("List", ScriptActionArgumentType.LIST)
@@ -248,9 +244,7 @@ public enum ScriptConditionType {
         .icon(Items.BOOK)
         .deprecate(IF_GUI_OPEN)
         .category(ScriptActionCategory.MISC)
-        .action(ctx -> {
-            return DFScript.MC.currentScreen == null;
-        })),
+        .action(ctx -> DFScript.MC.currentScreen == null)),
 
     IF_FILE_EXISTS(builder -> builder.name("File Exists")
         .description("Executes if the specified file exists.")
@@ -261,9 +255,7 @@ public enum ScriptConditionType {
             String filename = ctx.value("Filename").asString();
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
-                if (Files.exists(f)) {
-                    return true;
-                }
+                return Files.exists(f);
             } else {
                 ChatUtil.error("Illegal filename: " + filename);
             }
@@ -280,9 +272,7 @@ public enum ScriptConditionType {
             String filename = ctx.value("Filename").asString();
             if (filename.matches("^[a-zA-Z\\d_\\-. ]+$")) {
                 Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName()+"-files").resolve(filename);
-                if (!Files.exists(f)) {
-                    return true;
-                }
+                return !Files.exists(f);
             } else {
                 ChatUtil.error("Illegal filename: " + filename);
             }
@@ -317,7 +307,7 @@ public enum ScriptConditionType {
     private String name = "Unnamed Condition";
     private boolean hasChildren = false;
     private ScriptActionCategory category = ScriptActionCategory.MISC;
-    private List<String> description = new ArrayList();
+    private final List<String> description = new ArrayList<>();
 
     private ScriptConditionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
@@ -339,7 +329,7 @@ public enum ScriptConditionType {
             lore.add(NbtString.of(Text.Serializer.toJson(txt)));
         }
 
-        item.getSubNbt("display")
+        Objects.requireNonNull(item.getSubNbt("display"))
             .put("Lore", lore);
 
         if(glow)
