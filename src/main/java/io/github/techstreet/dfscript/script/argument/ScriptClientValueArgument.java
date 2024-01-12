@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -49,7 +50,8 @@ public enum ScriptClientValueArgument implements ScriptArgument {
 
     EVENT_MESSAGE("ReceivedMessage","The message received. (ReceiveChatEvent)", Items.WRITTEN_BOOK, ScriptActionArgumentType.TEXT, (task) -> {
         if (task.event() instanceof ReceiveChatEvent e) {
-            return new ScriptTextValue(ComponentUtil.sectionSignsToAnds(ComponentUtil.toFormattedString(e.getMessage())));
+            String eventMessage = MiniMessage.miniMessage().serialize(e.getMessage());
+            return new ScriptTextValue(eventMessage);
         } else {
             throw new IllegalStateException("Event is not a ReceiveChatEvent");
         }

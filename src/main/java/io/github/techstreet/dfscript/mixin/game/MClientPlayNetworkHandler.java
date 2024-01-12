@@ -7,10 +7,14 @@ import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
 import java.net.InetSocketAddress;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.network.packet.s2c.common.*;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +31,8 @@ public class MClientPlayNetworkHandler {
             return;
         }
 
-        ReceiveChatEvent event = new ReceiveChatEvent(packet.content());
+        Text content = packet.content();
+        ReceiveChatEvent event = new ReceiveChatEvent(content.asComponent());
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();

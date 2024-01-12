@@ -1,17 +1,18 @@
 package io.github.techstreet.dfscript.event;
 
 import io.github.techstreet.dfscript.event.system.CancellableEvent;
+import net.kyori.adventure.text.Component;
 import net.minecraft.text.Text;
 
 public class ReceiveChatEvent implements CancellableEvent {
-    private final Text message;
+    private final Component message;
     private boolean cancelled = false;
 
-    public ReceiveChatEvent(Text message) {
+    public ReceiveChatEvent(Component message) {
         this.message = message;
     }
 
-    public Text getMessage() {
+    public Component getMessage() {
         return message;
     }
 
