@@ -1,13 +1,7 @@
 package io.github.techstreet.dfscript.util;
 
 import com.google.gson.JsonArray;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
-
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
@@ -16,6 +10,11 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.minecraft.util.Formatting;
 
 public class StringUtil {
     public static final Regex STRIP_CHARS_PATTERN = Regex.of("(^\\s+|\\s+$)");
@@ -102,31 +101,31 @@ public class StringUtil {
         return out.toString();
     }
 
-    public static void copyToClipboard(String contents) {
+    public static void copyToClipboard(String contents){
         StringSelection stringSelection = new StringSelection(contents);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
     }
 
     public static String[] toStringArray(JsonArray array) {
-        if (array == null)
+        if(array == null)
             return null;
-        if (array.size() == 0)
+        if(array.size() == 0)
             return new String[0];
 
         String[] arr = new String[array.size()];
-        for (int i = 0; i < arr.length; i++) {
+        for(int i = 0; i < arr.length; i++) {
             arr[i] = array.get(i).getAsString();
         }
         return arr;
     }
 
     public static HashSet<String[]> toStringListHashSet(JsonArray array) {
-        if (array == null)
+        if(array == null)
             return null;
 
         HashSet<String[]> arr = new HashSet<>();
-        for (int i = 0; i < array.size(); i++) {
+        for(int i = 0; i < array.size(); i++) {
             arr.add(toStringArray(array.get(i).getAsJsonArray()));
         }
         return arr;

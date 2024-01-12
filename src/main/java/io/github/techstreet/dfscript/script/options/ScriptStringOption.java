@@ -16,8 +16,7 @@ public class ScriptStringOption implements ScriptOption {
         this.value = value.getAsString();
     }
 
-    public ScriptStringOption() {
-    }
+    public ScriptStringOption() {}
 
     @Override
     public ScriptValue getValue() {

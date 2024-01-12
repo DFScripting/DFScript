@@ -7,6 +7,7 @@ import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.event.ScriptFunction;
+import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
 
 import java.util.Objects;
 
@@ -27,8 +28,8 @@ public class ScriptEditFunctionArgumentScreen extends CScreen {
         input.setChangedListener(() -> input.textColor = 0xFFFFFF);
 
         CButton confirm = new CButton(2, 37, 46, 10, "Rename", () -> {
-            if (!Objects.equals(argument.name(), input.getText())) {
-                if (function.argList().argumentExists(input.getText())) {
+            if(!Objects.equals(argument.name(), input.getText())) {
+                if(function.argList().argumentExists(input.getText())) {
                     input.textColor = 0xFF3333;
                 } else {
                     //script.replaceOption(option.getName(), input.getText());

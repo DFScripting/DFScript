@@ -6,15 +6,17 @@ import io.github.techstreet.dfscript.event.*;
 import io.github.techstreet.dfscript.event.system.EventManager;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeRank;
 import io.github.techstreet.dfscript.util.hypercube.HypercubeUtil;
+import java.net.InetSocketAddress;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
+import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.network.packet.s2c.common.*;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MClientPlayNetworkHandler {
@@ -96,8 +98,8 @@ public class MClientPlayNetworkHandler {
 
     @Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
     private void command(String command, CallbackInfo ci) {
-        if (command.startsWith("scripts")) return;
-        SendChatEvent event = new SendChatEvent("/" + command);
+        if(command.startsWith("scripts")) return;
+        SendChatEvent event = new SendChatEvent("/"+command);
         EventManager.getInstance().dispatch(event);
         if (event.isCancelled()) {
             ci.cancel();

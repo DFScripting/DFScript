@@ -7,6 +7,8 @@ import io.github.techstreet.dfscript.screen.widget.CText;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+
 public class ScriptMessageScreen extends CScreen {
 
     private final Screen parent;

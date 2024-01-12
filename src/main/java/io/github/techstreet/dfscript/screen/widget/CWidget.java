@@ -1,8 +1,8 @@
 package io.github.techstreet.dfscript.screen.widget;
 
-import net.minecraft.client.gui.DrawContext;
+import java.awt.Rectangle;
 
-import java.awt.*;
+import net.minecraft.client.gui.DrawContext;
 
 public interface CWidget {
 
@@ -31,7 +31,7 @@ public interface CWidget {
 
     Rectangle getBounds();
 
-    default boolean enableClosingOnEsc() {
+    default boolean enableClosingOnEsc(){
         return true;
     }
 

@@ -2,13 +2,12 @@ package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.util.RenderUtil;
+import java.awt.Rectangle;
+import java.util.List;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
-
-import java.awt.*;
-import java.util.List;
 
 public class CTextField implements CWidget {
 
@@ -70,10 +69,10 @@ public class CTextField implements CWidget {
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-                (int) begin.x() * guiScale,
-                (int) begin.y() * guiScale,
-                (int) (end.x() - begin.x()) * guiScale,
-                (int) (end.y() - begin.y()) * guiScale
+                (int) begin.x()*guiScale,
+                (int) begin.y()*guiScale,
+                (int) (end.x() - begin.x())*guiScale,
+                (int) (end.y() - begin.y())*guiScale
         );
 
         stack.translate(2 + xScroll, 2 + scroll, 0);
@@ -114,7 +113,7 @@ public class CTextField implements CWidget {
             int cursorX = f.getWidth(getCursorLine().substring(0, cursorLinePos));
             int cursorY = f.fontHeight * cursorLine;
 
-            context.drawText(f, "|", cursorX, cursorY, 0x99FFFFFF, false);
+            context.drawText(f, "|", cursorX, cursorY,0x99FFFFFF, false);
         }
 
         stack.pop();
@@ -142,13 +141,14 @@ public class CTextField implements CWidget {
         }
     }
 
-    public void keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 341) xScrolling = false; // left control
+    public void keyReleased(int keyCode, int scanCode, int modifiers)
+    {
+        if(keyCode == 341) xScrolling = false; // left control
     }
 
     @Override
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 341) xScrolling = true; // left control
+        if(keyCode == 341) xScrolling = true; // left control
 
         if (editable && selected) {
             String lastText = text;
@@ -303,11 +303,15 @@ public class CTextField implements CWidget {
                         hasSelection = false;
                     }
                     //return true;
-                } else {
+                }
+                else
+                {
                     this.selected = false;
                 }
             }
-        } else {
+        }
+        else
+        {
             this.selected = false;
         }
         return false;
@@ -326,7 +330,7 @@ public class CTextField implements CWidget {
         for (String line : getLines()) {
             int lineWidth = f.getWidth(line);
 
-            if (maxScroll < lineWidth) {
+            if(maxScroll < lineWidth) {
                 maxScroll = lineWidth;
             }
         }
@@ -334,7 +338,8 @@ public class CTextField implements CWidget {
         maxScroll /= 2;
         maxScroll -= width - 2;
 
-        if (xScrolling) {
+        if(xScrolling)
+        {
             double temp = vertical;
             vertical = horizontal;
             horizontal = temp;

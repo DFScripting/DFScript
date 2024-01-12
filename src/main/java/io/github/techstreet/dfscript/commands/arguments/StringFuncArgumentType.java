@@ -6,10 +6,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandSource;
-
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
+import net.minecraft.command.CommandSource;
 
 public class StringFuncArgumentType implements ArgumentType<String> {
 
@@ -23,7 +24,7 @@ public class StringFuncArgumentType implements ArgumentType<String> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context,
-                                                              SuggestionsBuilder builder) {
+        SuggestionsBuilder builder) {
 
         List<String> suggestions = func.getFunction().apply(null);
 
@@ -47,7 +48,8 @@ public class StringFuncArgumentType implements ArgumentType<String> {
         return reader.getString().substring(i, reader.getCursor());
     }
 
-    public StringFuncArgumentFunctions getFunction() {
+    public StringFuncArgumentFunctions getFunction()
+    {
         return func;
     }
 

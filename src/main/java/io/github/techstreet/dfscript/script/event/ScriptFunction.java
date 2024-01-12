@@ -19,6 +19,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
 
@@ -29,7 +30,6 @@ public class ScriptFunction extends ScriptHeader {
     static {
         functionIcon = new ItemStack(Items.LAPIS_BLOCK).setCustomName(Text.literal("Function").setStyle(Style.EMPTY.withColor(Formatting.WHITE).withItalic(false)));
     }
-
     private String name;
 
     private String description;
@@ -55,15 +55,15 @@ public class ScriptFunction extends ScriptHeader {
 
         NbtList lore = new NbtList();
 
-        if (description != "") {
-            for (String descriptionLine : description.split("\n")) {
+        if(description != "") {
+            for (String descriptionLine: description.split("\n")) {
                 lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
                         .fillStyle(Style.EMPTY
                                 .withColor(Formatting.GRAY)
                                 .withItalic(false)))));
             }
 
-            if (argList.size() > 0)
+            if(argList.size() > 0)
                 lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
         }
 

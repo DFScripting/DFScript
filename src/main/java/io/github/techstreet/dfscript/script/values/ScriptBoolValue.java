@@ -63,9 +63,9 @@ public class ScriptBoolValue extends ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptBoolValue>, JsonDeserializer<ScriptBoolValue> {
         @Override
         public ScriptBoolValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonPrimitive()) {
+            if(jsonElement.isJsonPrimitive()) {
                 JsonPrimitive prim = jsonElement.getAsJsonPrimitive();
-                if (prim.isBoolean()) {
+                if(prim.isBoolean()) {
                     return new ScriptBoolValue(prim.getAsBoolean());
                 }
             }

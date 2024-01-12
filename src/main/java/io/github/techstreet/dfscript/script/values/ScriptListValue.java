@@ -27,7 +27,7 @@ public class ScriptListValue extends ScriptValue {
             int i = 1;
             for (ScriptValue val : value) {
                 map.put(String.valueOf(i), val);
-                i++;
+                i ++;
             }
             return new ScriptDictionaryValue(map);
         } else if (type instanceof ScriptBoolValue) {
@@ -47,7 +47,7 @@ public class ScriptListValue extends ScriptValue {
     @Override
     public boolean valueEquals(ScriptValue other) {
         if (!(other.get() instanceof ScriptListValue)
-                && !(other.get() instanceof ScriptUnknownValue)) {
+            && !(other.get() instanceof ScriptUnknownValue)) {
             return false;
         }
         List<ScriptValue> otherList = other.asList();
@@ -80,7 +80,7 @@ public class ScriptListValue extends ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptListValue>, JsonDeserializer<ScriptListValue> {
         @Override
         public ScriptListValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonArray()) {
+            if(jsonElement.isJsonArray()) {
                 JsonArray arr = jsonElement.getAsJsonArray();
                 List<ScriptValue> list = new ArrayList<>();
 

@@ -20,7 +20,8 @@ public class ScriptVariableMap {
     }
 
     public ScriptVariable getReference(String name) {
-        if (has(name)) {
+        if(has(name))
+        {
             return variables.get(name);
         }
         ScriptVariable newVar = new ScriptVariable();
@@ -29,7 +30,8 @@ public class ScriptVariableMap {
     }
 
     public void set(String name, ScriptValue value) {
-        if (has(name)) {
+        if(has(name))
+        {
             variables.get(name).set(value);
             return;
         }

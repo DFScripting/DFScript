@@ -1,10 +1,13 @@
 package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.script.values.ScriptVariable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +43,7 @@ public final class ScriptActionContext {
     }
 
     public ScriptValue value(String name) {
-        if (!argMap.containsKey(name)) {
+        if(!argMap.containsKey(name)) {
             return actionArgMap.get(name).defaultValue();
         }
 
@@ -52,7 +55,8 @@ public final class ScriptActionContext {
     }
 
     public ScriptVariable variable(String name) {
-        if (arg(name).getValue(task) instanceof ScriptVariable var) {
+        if(arg(name).getValue(task) instanceof ScriptVariable var)
+        {
             return var;
         }
 

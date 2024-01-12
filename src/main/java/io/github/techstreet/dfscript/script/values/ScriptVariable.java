@@ -39,7 +39,7 @@ public class ScriptVariable extends ScriptValue {
     }
 
     @Override
-    public HashMap<String, ScriptValue> asDictionary() {
+    public HashMap<String,ScriptValue> asDictionary() {
         return get().asDictionary();
     }
 

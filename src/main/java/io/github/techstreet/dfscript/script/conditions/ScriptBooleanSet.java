@@ -5,8 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
-import io.github.techstreet.dfscript.script.Script;
-import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.*;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
 import io.github.techstreet.dfscript.script.argument.ScriptVariableArgument;
@@ -18,6 +17,7 @@ import io.github.techstreet.dfscript.script.values.ScriptBoolValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.MutableText;
@@ -28,6 +28,7 @@ import net.minecraft.util.Formatting;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ScriptBooleanSet extends ScriptParametrizedPart {
 
@@ -54,7 +55,6 @@ public class ScriptBooleanSet extends ScriptParametrizedPart {
         booleanSetIcon.getSubNbt("display")
                 .put("Lore", lore);
     }
-
     boolean hasElse = false;
 
     ScriptCondition condition;
@@ -71,14 +71,14 @@ public class ScriptBooleanSet extends ScriptParametrizedPart {
 
     @Override
     public void run(ScriptTask task) {
-        if (getArguments().isEmpty()) {
+        if(getArguments().isEmpty()) {
             ChatUtil.error("You need to add a variable argument to Set to Condition.");
             return;
         }
 
         ScriptArgument variableArg = getArguments().get(0);
 
-        if (!(variableArg instanceof ScriptVariableArgument)) {
+        if(!(variableArg instanceof ScriptVariableArgument)) {
             ChatUtil.error("You need to add a VARIABLE argument to Set to Condition.");
             return;
         }
@@ -86,7 +86,7 @@ public class ScriptBooleanSet extends ScriptParametrizedPart {
         ScriptVariableArgument variable = (ScriptVariableArgument) variableArg;
 
         List<ScriptArgument> conditionArguments = new ArrayList<>();
-        for (int i = 1; i < getArguments().size(); i++) {
+        for(int i = 1; i < getArguments().size(); i++) {
             conditionArguments.add(getArguments().get(i));
         }
 
@@ -120,7 +120,7 @@ public class ScriptBooleanSet extends ScriptParametrizedPart {
 
         MutableText t = ScriptActionArgument.ScriptActionArgumentType.VARIABLE.text();
         t.append(Text.literal(" - ").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)))
-                .append(Text.literal("Result").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
+         .append(Text.literal("Result").fillStyle(Style.EMPTY.withItalic(false).withColor(Formatting.WHITE)));
 
         lore.add(NbtString.of(Text.Serializer.toJson(t)));
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));

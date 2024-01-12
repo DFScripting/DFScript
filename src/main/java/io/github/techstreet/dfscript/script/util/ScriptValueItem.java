@@ -1,12 +1,17 @@
 package io.github.techstreet.dfscript.script.util;
 
 import io.github.techstreet.dfscript.script.values.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 
 public class ScriptValueItem {
 

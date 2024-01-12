@@ -8,7 +8,9 @@ import io.github.techstreet.dfscript.script.ScriptSnippet;
 import io.github.techstreet.dfscript.script.action.*;
 import io.github.techstreet.dfscript.script.conditions.ScriptBranch;
 import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
+import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
 import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.event.ScriptEventType;
 import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
 
@@ -48,15 +50,16 @@ public class ScriptAddPartScreen extends CScreen {
             }
         }*/
 
-        if (category != null) {
-            for (ScriptActionCategoryExtra extra : category.getExtras(script)) {
+        if (category != null)
+        {
+            for(ScriptActionCategoryExtra extra : category.getExtras(script)) {
                 CItem item = new CItem(x, y, extra.getIcon());
                 item.setClickListener((btn) -> {
                     extra.click(script, snippet, insertIndex);
                 });
                 widgets.add(item);
                 x += 10;
-                if (x >= size - 10) {
+                if (x >= size-10) {
                     x = 3;
                     y += 10;
                 }
@@ -75,7 +78,7 @@ public class ScriptAddPartScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size - 10) {
+            if (x >= size-10) {
                 x = 3;
                 y += 10;
             }
@@ -93,7 +96,7 @@ public class ScriptAddPartScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size - 10) {
+            if (x >= size-10) {
                 x = 3;
                 y += 10;
             }
@@ -111,7 +114,7 @@ public class ScriptAddPartScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size - 10) {
+            if (x >= size-10) {
                 x = 3;
                 y += 10;
             }
@@ -136,7 +139,7 @@ public class ScriptAddPartScreen extends CScreen {
                 amount++;
             }
         }
-        return (int) (Math.ceil(Math.sqrt(amount)) * 10) + 4;
+        return (int) (Math.ceil(Math.sqrt(amount))*10)+4;
     }
 
     @Override

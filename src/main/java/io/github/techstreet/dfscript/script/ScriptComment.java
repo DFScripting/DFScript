@@ -17,6 +17,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class ScriptComment extends ScriptPart {
 
@@ -48,14 +49,14 @@ public class ScriptComment extends ScriptPart {
             int indent = args.indent();
             CScrollPanel panel = args.panel();
 
-            panel.add(new CItem(5 + indent * 5, y, new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false)))));
+            panel.add(new CItem(5+indent*5, y, new ItemStack(Items.MAP).setCustomName(Text.literal("Comment").setStyle(Style.EMPTY.withItalic(false)))));
 
-            CTextField cTextField = new CTextField(getComment(), 15 + indent * 5, y - 1, ScriptEditScreen.width - (15 + indent * 5) - 5, 10, true);
+            CTextField cTextField = new CTextField(getComment(),15+indent*5, y-1, ScriptEditScreen.width-(15+indent*5)-5, 10, true);
 
             cTextField.setChangedListener(() -> setComment(cTextField.getText()));
 
             panel.add(cTextField);
-            return y + 10;
+            return y+10;
         }));
     }
 

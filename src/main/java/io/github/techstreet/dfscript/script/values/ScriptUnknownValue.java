@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class ScriptUnknownValue extends ScriptValue {
+public class ScriptUnknownValue extends ScriptValue{
 
     @Override
     String typeName() {

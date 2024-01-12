@@ -1,6 +1,10 @@
 package io.github.techstreet.dfscript.script.argument;
 
-import com.google.gson.*;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument.ScriptActionArgumentType;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
@@ -26,9 +30,7 @@ public interface ScriptArgument {
         return new ArrayList<>();
     }
 
-    default Text getArgIconText() {
-        return null;
-    }
+    default Text getArgIconText() { return null; }
 
     class Serializer implements JsonDeserializer<ScriptArgument> {
 

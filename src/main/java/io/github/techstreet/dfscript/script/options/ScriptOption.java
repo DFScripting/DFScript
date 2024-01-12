@@ -7,22 +7,25 @@ import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.util.ScriptOptionSubtypeMismatchException;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.Item;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface ScriptOption {
     ScriptValue getValue();
-
     boolean convertableTo(ScriptActionArgument.ScriptActionArgumentType arg);
 
     default String getName() {
         String result = getType().getName();
 
-        if (getSubtypes().size() > 0) {
+        if(getSubtypes().size() > 0)
+        {
             result += "<" + String.join(", ", getSubtypes().stream().map(ScriptOptionEnum::getName).toList()) + ">";
         }
 
@@ -42,16 +45,16 @@ public interface ScriptOption {
     }
 
     static ScriptOption fromJson(JsonElement value, ScriptOptionEnum type, List<ScriptOptionEnum> subtypes) throws ScriptOptionSubtypeMismatchException {
-        if (type.getExtraTypes() != subtypes.size()) {
+        if(type.getExtraTypes() != subtypes.size()) {
             throw new ScriptOptionSubtypeMismatchException("Incorrect amount of extra types");
         }
 
-        Class<?>[] argTypes = new Class[subtypes.size() + 1];
-        Object[] args = new Object[subtypes.size() + 1];
+        Class<?>[] argTypes = new Class[subtypes.size()+1];
+        Object[] args = new Object[subtypes.size()+1];
         argTypes[0] = JsonElement.class;
         args[0] = value;
         int i = 1;
-        for (ScriptOptionEnum subtype : subtypes) {
+        for(ScriptOptionEnum subtype : subtypes) {
             argTypes[i] = ScriptOptionEnum.class;
             args[i] = subtype;
 
@@ -114,7 +117,7 @@ public interface ScriptOption {
     }
 
     static ScriptOption instantiate(ScriptOptionEnum type, List<ScriptOptionEnum> subtypes) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (subtypes.size() == 0) return type.getOptionType().getConstructor().newInstance();
+        if(subtypes.size() == 0) return type.getOptionType().getConstructor().newInstance();
 
         Class<?>[] argTypes = new Class[type.getExtraTypes()];
         Arrays.fill(argTypes, ScriptOptionEnum.class);

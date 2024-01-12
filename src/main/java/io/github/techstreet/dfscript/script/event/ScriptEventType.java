@@ -14,7 +14,7 @@ import net.minecraft.util.Formatting;
 
 public enum ScriptEventType {
 
-    SEND_CHAT(SendChatEvent.class, "OnSendChat", "Executed when a player sends a chat message or command.", Items.BOOK),
+    SEND_CHAT(SendChatEvent.class,"OnSendChat", "Executed when a player sends a chat message or command.", Items.BOOK),
 
     KEY_PRESS(KeyPressEvent.class, "OnKeyPress", "Executed when a player presses a key.", Items.STONE_BUTTON),
 
@@ -45,16 +45,16 @@ public enum ScriptEventType {
         this.name = name;
         icon = new ItemStack(item);
         icon.setCustomName(Text.literal(name)
-                .setStyle(Style.EMPTY
-                        .withColor(Formatting.WHITE)
-                        .withItalic(false)));
+            .setStyle(Style.EMPTY
+                .withColor(Formatting.WHITE)
+                .withItalic(false)));
         NbtList lore = new NbtList();
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(description)
-                .fillStyle(Style.EMPTY
-                        .withColor(Formatting.GRAY)
-                        .withItalic(false)))));
+            .fillStyle(Style.EMPTY
+                .withColor(Formatting.GRAY)
+                .withItalic(false)))));
         icon.getSubNbt("display")
-                .put("Lore", lore);
+            .put("Lore", lore);
     }
 
     public ItemStack getIcon() {

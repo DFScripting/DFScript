@@ -43,7 +43,8 @@ public class CKeyField implements CWidget {
 
         int outlineColor = 0xFF888888;
 
-        if (editable && selected) {
+        if(editable && selected)
+        {
             outlineColor = 0xFFFFFF00;
         }
 
@@ -58,10 +59,10 @@ public class CKeyField implements CWidget {
 
         int guiScale = (int) DFScript.MC.getWindow().getScaleFactor();
         RenderUtil.pushScissor(
-                (int) begin.x() * guiScale,
-                (int) begin.y() * guiScale,
-                (int) (end.x() - begin.x()) * guiScale,
-                (int) (end.y() - begin.y()) * guiScale
+                (int) begin.x()*guiScale,
+                (int) begin.y()*guiScale,
+                (int) (end.x() - begin.x())*guiScale,
+                (int) (end.y() - begin.y())*guiScale
         );
 
         stack.translate(2, 2, 0);
@@ -74,17 +75,19 @@ public class CKeyField implements CWidget {
         String line;
         int color = textColor;
 
-        if (key != null) {
+        if(key != null) {
             line = key.getLocalizedText().getString();
-        } else {
+        }
+        else
+        {
             line = "None";
         }
 
-        if (editable && selected) {
+        if(editable && selected) {
             color = 0xFFFF00;
         }
 
-        if (line != null) {
+        if(line != null) {
             context.drawText(f, line, 0, 0, color, false);
         }
 
@@ -102,12 +105,14 @@ public class CKeyField implements CWidget {
                 if (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
                     this.selected = true;
                     blockEsc = true;
-                } else {
+                }
+                else {
                     this.selected = false;
                     blockEsc = false;
                 }
             }
-        } else {
+        }
+        else {
             this.selected = false;
             blockEsc = false;
         }
@@ -116,11 +121,13 @@ public class CKeyField implements CWidget {
 
     @Override
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (editable && selected) {
-            if (keyCode != -1) {
-                if (keyCode == 256) {
+        if(editable && selected) {
+            if(keyCode != -1) {
+                if(keyCode == 256) {
                     key = null;
-                } else {
+                }
+                else
+                {
                     key = InputUtil.fromKeyCode(keyCode, scanCode);
                 }
 
@@ -129,7 +136,8 @@ public class CKeyField implements CWidget {
 
             selected = false;
             blockEsc = true;
-        } else {
+        }
+        else {
             blockEsc = false;
         }
     }

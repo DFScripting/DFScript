@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.util;
 
 import io.github.techstreet.dfscript.DFScript;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

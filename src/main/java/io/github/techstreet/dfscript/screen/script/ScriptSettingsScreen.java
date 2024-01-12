@@ -50,13 +50,13 @@ public class ScriptSettingsScreen extends CScreen {
 
         Text descriptionText = Text.of(descriptionString);
 
-        CWrappedText descriptionCText = new CWrappedText(5, y, 110 * 2, descriptionText);
+        CWrappedText descriptionCText = new CWrappedText(5, y, 110*2, descriptionText);
         panel.add(descriptionCText);
 
-        y += DFScript.MC.textRenderer.getWrappedLinesHeight(descriptionString, 110 * 2) / 2;
+        y += DFScript.MC.textRenderer.getWrappedLinesHeight(descriptionString, 110*2) / 2;
         y++;
 
-        if (owned) {
+        if(owned) {
             CTextField description = new CTextField(script.getDescription(), 5, y, 110, 20, true);
             description.setChangedListener(() -> script.setDescription(description.getText()));
             panel.add(description);
@@ -64,19 +64,19 @@ public class ScriptSettingsScreen extends CScreen {
             y += 22;
         }
 
-        for (ScriptNamedOption option : script.getOptions()) {
+        for(ScriptNamedOption option : script.getOptions())
+        {
             String name = option.getFullName() + ":";
 
             Text text = Text.of(name);
 
-            CWrappedText ctext = new CWrappedText(5, y, 110 * 2, text);
+            CWrappedText ctext = new CWrappedText(5, y, 110*2, text);
 
             panel.add(ctext);
 
-            int height = DFScript.MC.textRenderer.getWrappedLinesHeight(name, 110 * 2) / 2;
+            int height = DFScript.MC.textRenderer.getWrappedLinesHeight(name, 110*2) / 2;
             int finalIndex = index;
-            if (owned) panel.add(new CButton(5, y, 115, height, "", () -> {
-            }) {
+            if(owned) panel.add(new CButton(5, y, 115, height, "",() -> {}) {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
@@ -88,23 +88,25 @@ public class ScriptSettingsScreen extends CScreen {
                 @Override
                 public boolean mouseClicked(double x, double y, int button) {
                     if (getBounds().contains(x, y)) {
-                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f));
+                        DFScript.MC.getSoundManager().play(PositionedSoundInstance.ambient(SoundEvents.UI_BUTTON_CLICK.value(), 1f,1f));
 
                         if (button != 0) {
                             CButton insertBefore = new CButton((int) x, (int) y, 40, 8, "Insert Before", () -> {
                                 DFScript.MC.setScreen(new ScriptAddSettingScreen(script, finalIndex));
                             });
-                            CButton insertAfter = new CButton((int) x, (int) y + 8, 40, 8, "Insert After", () -> {
+                            CButton insertAfter = new CButton((int) x, (int) y+8, 40, 8, "Insert After", () -> {
                                 DFScript.MC.setScreen(new ScriptAddSettingScreen(script, finalIndex + 1));
                             });
-                            CButton delete = new CButton((int) x, (int) y + 16, 40, 8, "Delete", () -> {
+                            CButton delete = new CButton((int) x, (int) y+16, 40, 8, "Delete", () -> {
                                 script.removeOption(script.getOptions().get(finalIndex).getName());
                                 script.getOptions().remove(finalIndex);
                                 scroll = panel.getScroll();
                                 DFScript.MC.setScreen(new ScriptSettingsScreen(script, true));
                             });
                             newContextMenu(new CButton[]{insertBefore, insertAfter, delete});
-                        } else {
+                        }
+                        else
+                        {
                             DFScript.MC.setScreen(new ScriptEditSettingScreen(script, option));
                         }
                         return true;
@@ -121,7 +123,8 @@ public class ScriptSettingsScreen extends CScreen {
             index++;
         }
 
-        if (owned) {
+        if(owned)
+        {
             CButton add = new CButton(37, y, 48, 9, "Add Option", () -> {
                 DFScript.MC.setScreen(new ScriptAddSettingScreen(script, script.getOptions().size()));
             });
@@ -133,7 +136,8 @@ public class ScriptSettingsScreen extends CScreen {
     public void close() {
         if (owned) {
             DFScript.MC.setScreen(new ScriptEditScreen(script));
-        } else {
+        }
+        else {
             ScriptManager.getInstance().saveScript(script);
             DFScript.MC.setScreen(new ScriptListScreen(true));
         }
@@ -149,13 +153,12 @@ public class ScriptSettingsScreen extends CScreen {
         clearContextMenu();
 
         DFScript.MC.send(() -> {
-            for (CButton button : buttons) {
+            for(CButton button : buttons) {
                 panel.add(button);
                 contextMenu.add(button);
             }
         });
     }
-
     private void clearContextMenu() {
         for (CWidget w : contextMenu) {
             panel.remove(w);

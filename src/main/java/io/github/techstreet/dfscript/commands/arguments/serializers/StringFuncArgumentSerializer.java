@@ -1,11 +1,15 @@
 package io.github.techstreet.dfscript.commands.arguments.serializers;
 
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import io.github.techstreet.dfscript.commands.arguments.StringFuncArgumentFunctions;
 import io.github.techstreet.dfscript.commands.arguments.StringFuncArgumentType;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
 import net.minecraft.network.PacketByteBuf;
+
+import java.util.List;
+import java.util.function.Function;
 
 public class StringFuncArgumentSerializer implements ArgumentSerializer<StringFuncArgumentType, StringFuncArgumentSerializer.StringFuncArgumentProperties> {
 
@@ -40,7 +44,8 @@ public class StringFuncArgumentSerializer implements ArgumentSerializer<StringFu
         boolean greedy;
         StringFuncArgumentFunctions func;
 
-        public StringFuncArgumentProperties(boolean greedy, StringFuncArgumentFunctions func) {
+        public StringFuncArgumentProperties(boolean greedy, StringFuncArgumentFunctions func)
+        {
             this.greedy = greedy;
             this.func = func;
         }

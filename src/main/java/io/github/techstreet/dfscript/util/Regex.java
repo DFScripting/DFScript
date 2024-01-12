@@ -41,14 +41,14 @@ public class Regex {
     }
 
     public void matches(Consumer<Matcher> exec) {
-        while (matches()) {
+        while(matches()) {
             exec.accept(getMatcher());
         }
     }
 
     public void matches(String input, Consumer<Matcher> exec) {
         getMatcher(input);
-        while (matches()) {
+        while(matches()) {
             exec.accept(getMatcher());
         }
     }
@@ -62,14 +62,14 @@ public class Regex {
     }
 
     public void find(Consumer<Matcher> exec) {
-        while (find()) {
+        while(find()) {
             exec.accept(getMatcher());
         }
     }
 
     public void find(String input, Consumer<Matcher> exec) {
         getMatcher(input);
-        while (find()) {
+        while(find()) {
             exec.accept(getMatcher());
         }
     }

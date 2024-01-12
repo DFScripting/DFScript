@@ -1,9 +1,14 @@
 package io.github.techstreet.dfscript.script.render;
 
+import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
+import io.github.techstreet.dfscript.screen.widget.CText;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ScriptPartRenderDynamicElement implements ScriptPartRenderElement {

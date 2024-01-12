@@ -7,6 +7,7 @@ import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
 import io.github.techstreet.dfscript.script.execution.ScriptActionContext;
 import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
 import io.github.techstreet.dfscript.script.values.ScriptStringValue;
+import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
 import io.github.techstreet.dfscript.util.chat.ChatUtil;
 import net.minecraft.enchantment.Enchantments;
@@ -32,13 +33,13 @@ public enum ScriptRepetitionType {
             .arg("Times", ScriptActionArgumentType.NUMBER)
             .arg("Current", ScriptActionArgumentType.VARIABLE, b -> b.optional(true))
             .action(ctx -> {
-                if (!ctx.hasScopeVariable("Counter")) {
+                if(!ctx.hasScopeVariable("Counter")) {
                     ctx.setScopeVariable("Counter", 0);
                 }
 
-                int counter = (Integer) ctx.getScopeVariable("Counter") + 1;
+                int counter = (Integer)ctx.getScopeVariable("Counter")+1;
 
-                if (counter <= ctx.value("Times").asNumber()) {
+                if(counter <= ctx.value("Times").asNumber()) {
                     ctx.setScopeVariable("Counter", counter);
                     if (ctx.argMap().containsKey("Current")) {
                         ctx.setVariable("Current", new ScriptNumberValue(counter));
@@ -55,16 +56,16 @@ public enum ScriptRepetitionType {
             .arg("Variable", ScriptActionArgumentType.VARIABLE)
             .arg("List", ScriptActionArgumentType.LIST)
             .action(ctx -> {
-                if (!ctx.hasScopeVariable("Counter")) {
+                if(!ctx.hasScopeVariable("Counter")) {
                     ctx.setScopeVariable("Counter", 0);
                 }
 
-                int counter = (Integer) ctx.getScopeVariable("Counter") + 1;
+                int counter = (Integer)ctx.getScopeVariable("Counter")+1;
                 List<ScriptValue> list = ctx.value("List").asList();
 
-                if (counter <= list.size()) {
+                if(counter <= list.size()) {
                     ctx.setScopeVariable("Counter", counter);
-                    ctx.setVariable("Variable", list.get(counter - 1));
+                    ctx.setVariable("Variable", list.get(counter-1));
                     return true;
                 }
                 return false;
@@ -103,20 +104,20 @@ public enum ScriptRepetitionType {
             .action(ctx -> {
                 HashMap<String, ScriptValue> dict = ctx.value("Dictionary").asDictionary();
 
-                if (!ctx.hasScopeVariable("Iterator")) {
+                if(!ctx.hasScopeVariable("Iterator")) {
                     ctx.setScopeVariable("Iterator", dict.entrySet().iterator());
                 }
 
                 Iterator<Map.Entry<String, ScriptValue>> iterator = (Iterator<Map.Entry<String, ScriptValue>>) ctx.getScopeVariable("Iterator");
 
-                if (iterator.hasNext()) {
+                if(iterator.hasNext()) {
                     Map.Entry<String, ScriptValue> entry = iterator.next();
                     ctx.setScopeVariable("Iterator", iterator);
                     ctx.setVariable("Key", new ScriptStringValue(entry.getKey()));
                     ctx.setVariable("Value", entry.getValue());
                     return true;
                 }
-                return false;
+            return false;
             })),
 
     REPEAT_FOREVER(builder -> builder.name("RepeatForever")
@@ -136,23 +137,22 @@ public enum ScriptRepetitionType {
 
     private ScriptRepetitionType deprecated = null; //if deprecated == null, the action is not deprecated
     private final ScriptActionArgumentList arguments = new ScriptActionArgumentList();
-
     ScriptRepetitionType(Consumer<ScriptRepetitionType> builder) {
         description.add("No description provided.");
         builder.accept(this);
     }
-
     public ItemStack getIcon() {
         ItemStack item = new ItemStack(icon);
 
         item.setCustomName(Text.literal(name)
-                .fillStyle(Style.EMPTY
-                        .withColor(Formatting.WHITE)
-                        .withItalic(false)));
+            .fillStyle(Style.EMPTY
+                .withColor(Formatting.WHITE)
+                .withItalic(false)));
 
         NbtList lore = new NbtList();
 
-        if (isDeprecated()) {
+        if(isDeprecated())
+        {
             lore.add(NbtString.of(Text.Serializer.toJson(Text.literal("This action is deprecated!")
                     .fillStyle(Style.EMPTY
                             .withColor(Formatting.RED)
@@ -163,11 +163,11 @@ public enum ScriptRepetitionType {
                             .withItalic(false)))));
         }
 
-        for (String descriptionLine : description) {
+        for (String descriptionLine: description) {
             lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(descriptionLine)
-                    .fillStyle(Style.EMPTY
-                            .withColor(Formatting.GRAY)
-                            .withItalic(false)))));
+                .fillStyle(Style.EMPTY
+                      .withColor(Formatting.GRAY)
+                      .withItalic(false)))));
         }
 
         lore.add(NbtString.of(Text.Serializer.toJson(Text.literal(""))));
@@ -179,16 +179,16 @@ public enum ScriptRepetitionType {
         }
 
         item.getSubNbt("display")
-                .put("Lore", lore);
+            .put("Lore", lore);
 
-        if (glow) {
+        if(glow)
+        {
             item.addEnchantment(Enchantments.UNBREAKING, 1);
             item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
         }
 
         return item;
     }
-
     public String getName() {
         return name;
     }
@@ -261,10 +261,13 @@ public enum ScriptRepetitionType {
     }
 
     public boolean run(ScriptActionContext ctx) {
-        try {
+        try
+        {
             arguments.getArgMap(ctx);
             return action.apply(ctx);
-        } catch (IllegalArgumentException e) {
+        }
+        catch(IllegalArgumentException e)
+        {
             ChatUtil.error("Invalid arguments for " + name + ".");
             return false;
         }

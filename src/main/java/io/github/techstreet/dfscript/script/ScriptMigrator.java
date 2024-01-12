@@ -2,6 +2,9 @@ package io.github.techstreet.dfscript.script;
 
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
+import io.github.techstreet.dfscript.script.options.ScriptOptionEnum;
+import io.github.techstreet.dfscript.script.values.ScriptStringValue;
+import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 
 public class ScriptMigrator {
     public static void migrate(Script script) {
@@ -43,7 +46,7 @@ public class ScriptMigrator {
             script.setVersion(6);
         }
 
-        if (script.getVersion() == 6) {
+        if(script.getVersion() == 6) {
             script.setVersion(7);
         }
 

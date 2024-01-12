@@ -6,11 +6,12 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.ScriptSnippet;
-import io.github.techstreet.dfscript.script.action.ScriptActionCategory;
-import io.github.techstreet.dfscript.script.conditions.ScriptBuiltinCondition;
-import io.github.techstreet.dfscript.script.conditions.ScriptCondition;
-import io.github.techstreet.dfscript.script.conditions.ScriptConditionType;
+import io.github.techstreet.dfscript.script.action.*;
+import io.github.techstreet.dfscript.script.conditions.*;
+import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
+import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 public class ScriptConditionSelectScreen extends CScreen {
@@ -44,7 +45,7 @@ public class ScriptConditionSelectScreen extends CScreen {
             });
             widgets.add(item);
             x += 10;
-            if (x >= size - 10) {
+            if (x >= size-10) {
                 x = 3;
                 y += 10;
             }
@@ -58,7 +59,7 @@ public class ScriptConditionSelectScreen extends CScreen {
                 amount++;
             }
         }
-        return (int) (Math.ceil(Math.sqrt(amount)) * 10) + 4;
+        return (int) (Math.ceil(Math.sqrt(amount))*10)+4;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ScriptDictionaryValue extends ScriptValue {
     @Override
     public boolean valueEquals(ScriptValue other) {
         if (!(other.get() instanceof ScriptDictionaryValue)
-                && !(other.get() instanceof ScriptUnknownValue)) {
+            && !(other.get() instanceof ScriptUnknownValue)) {
             return false;
         }
         HashMap<String, ScriptValue> otherValue = other.asDictionary();
@@ -84,7 +84,7 @@ public class ScriptDictionaryValue extends ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptDictionaryValue>, JsonDeserializer<ScriptDictionaryValue> {
         @Override
         public ScriptDictionaryValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonObject()) {
+            if(jsonElement.isJsonObject()) {
                 JsonObject obj = jsonElement.getAsJsonObject();
                 HashMap<String, ScriptValue> dict = new HashMap<>();
 

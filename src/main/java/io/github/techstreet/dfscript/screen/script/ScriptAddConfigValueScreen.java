@@ -6,6 +6,8 @@ import io.github.techstreet.dfscript.screen.widget.CItem;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptParametrizedPart;
+import io.github.techstreet.dfscript.script.ScriptPart;
+import io.github.techstreet.dfscript.script.action.ScriptAction;
 import io.github.techstreet.dfscript.script.argument.ScriptConfigArgument;
 import io.github.techstreet.dfscript.script.event.ScriptHeader;
 import io.github.techstreet.dfscript.script.options.ScriptNamedOption;
@@ -34,13 +36,13 @@ public class ScriptAddConfigValueScreen extends CScreen {
         for (ScriptNamedOption arg : script.getOptions()) {
             CItem item = new CItem(x, y, arg.getIcon());
             item.setClickListener((btn) -> {
-                if (overwrite != null) action.getArguments().remove(insertIndex);
+                if(overwrite != null) action.getArguments().remove(insertIndex);
                 this.action.getArguments().add(insertIndex, new ScriptConfigArgument(arg.getName(), this.script));
                 DFScript.MC.setScreen(new ScriptEditPartScreen(this.action, this.script, this.header));
             });
             panel.add(item);
             x += 10;
-            if (x > WIDTH - 10) {
+            if (x > WIDTH-10) {
                 x = 5;
                 y += 10;
             }

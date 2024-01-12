@@ -17,8 +17,7 @@ public class ScriptLegacyBoolOption implements ScriptOption {
         this.value = value.getAsBoolean();
     }
 
-    public ScriptLegacyBoolOption() {
-    }
+    public ScriptLegacyBoolOption() {}
 
     @Override
     public ScriptValue getValue() {
@@ -45,7 +44,6 @@ public class ScriptLegacyBoolOption implements ScriptOption {
     private String getTexture() {
         return DFScript.MOD_ID + (value ? ":on_button.png" : ":off_button.png");
     }
-
     private String getHighlightedTexture() {
         return DFScript.MOD_ID + (value ? ":on_button_highlight.png" : ":disable_highlight.png");
     }

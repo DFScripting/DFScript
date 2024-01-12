@@ -31,7 +31,7 @@ public abstract class ScriptValue {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to list");
     }
 
-    public HashMap<String, ScriptValue> asDictionary() {
+    public HashMap<String,ScriptValue> asDictionary() {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to dictionary");
     }
 
@@ -69,35 +69,36 @@ public abstract class ScriptValue {
     public static class Serializer implements JsonSerializer<ScriptValue>, JsonDeserializer<ScriptValue> {
         @Override
         public ScriptValue deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonNull()) {
+            if(jsonElement.isJsonNull()) {
                 return new ScriptUnknownValue();
             }
-            if (jsonElement.isJsonPrimitive()) {
+            if(jsonElement.isJsonPrimitive()) {
                 JsonPrimitive prim = jsonElement.getAsJsonPrimitive();
-                if (prim.isNumber()) {
+                if(prim.isNumber()) {
                     return context.deserialize(prim, ScriptNumberValue.class);
                 }
-                if (prim.isString()) {
+                if(prim.isString()) {
                     return context.deserialize(prim, ScriptTextValue.class);
                 }
-                if (prim.isBoolean()) {
+                if(prim.isBoolean()) {
                     return context.deserialize(prim, ScriptBoolValue.class);
                 }
-            } else {
-                if (jsonElement.isJsonArray()) {
+            }
+            else {
+                if(jsonElement.isJsonArray()) {
                     JsonArray array = jsonElement.getAsJsonArray();
                     return context.deserialize(array, ScriptListValue.class);
                 }
-                if (jsonElement.isJsonObject()) {
+                if(jsonElement.isJsonObject()) {
                     JsonObject object = jsonElement.getAsJsonObject();
 
-                    if (object.has("___objectType")) {
+                    if(object.has("___objectType")) {
                         String objectType = object.get("___objectType").getAsString();
-                        return switch (objectType) {
+                        return switch(objectType) {
                             case "dict" -> context.deserialize(object.get("dict"), ScriptDictionaryValue.class);
                             case "string" -> context.deserialize(object.get("string"), ScriptStringValue.class);
                             default ->
-                                    throw new JsonParseException("Unable to convert a json object of type '" + objectType + "' into a script value");
+                                throw new JsonParseException("Unable to convert a json object of type '" + objectType + "' into a script value");
                         };
                     } else {
                         return context.deserialize(object, ScriptDictionaryValue.class);

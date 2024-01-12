@@ -27,13 +27,13 @@ public class EventManager {
     @SuppressWarnings("unchecked")
     public <T extends Event> void register(Class<T> type, Consumer<T> consumer) {
         listeners
-                .computeIfAbsent(type, k -> new ArrayList<>())
-                .add((Consumer<Event>) consumer);
+            .computeIfAbsent(type, k -> new ArrayList<>())
+            .add((Consumer<Event>) consumer);
     }
 
     public void dispatch(Event event) {
         for (Consumer<Event> consumer : listeners.getOrDefault(event.getClass(), new ArrayList<>())) {
-            if (events == eventLimit) return;
+            if(events == eventLimit) return;
             events++;
             consumer.accept(event);
         }

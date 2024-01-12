@@ -6,7 +6,6 @@ import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.script.ScriptListScreen;
 import io.github.techstreet.dfscript.screen.script.ScriptMessageScreen;
 import io.github.techstreet.dfscript.util.FileUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;

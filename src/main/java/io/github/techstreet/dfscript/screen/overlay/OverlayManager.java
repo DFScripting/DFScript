@@ -3,6 +3,7 @@ package io.github.techstreet.dfscript.screen.overlay;
 import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.loader.Loadable;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ public class OverlayManager implements Loadable {
     public void add(String text) {
         add(Text.literal(text));
     }
-
     public void add(Text text) {
         overlayText.add(new Overlay(text));
     }
@@ -48,12 +48,12 @@ public class OverlayManager implements Loadable {
             overlayText.remove(0);
         }
         int y = 10;
-        for (Overlay text : this.overlayText) {
-            if (text.past()) continue;
+        for (Overlay text: this.overlayText) {
+            if(text.past()) continue;
             long now = new Date().getTime();
             long fadeout = text.by.getTime() - 980;
             int opacity = 0;
-            if (fadeout < now) {
+            if(fadeout < now) {
                 opacity = (int) ((fadeout - now + 1000) * 255 / 1000);
             }
             context.drawText(DFScript.MC.textRenderer, text.text, 10, y, 0xFF5555 + ((opacity) << 24), true);

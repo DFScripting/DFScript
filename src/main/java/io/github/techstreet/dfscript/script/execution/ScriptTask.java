@@ -2,6 +2,7 @@ package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.event.system.Event;
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.util.chat.ChatUtil;
 
 public class ScriptTask {
 
@@ -37,11 +38,11 @@ public class ScriptTask {
         }
 
         running = true;
-        while (true) {
-            if (!running) break;
-            if (stack.size() <= 0) break;
+        while(true) {
+            if(!running) break;
+            if(stack.size() <= 0) break;
 
-            if (stack.peek().executeOnce(this)) {
+            if(stack.peek().executeOnce(this)) {
                 stack.pop();
             }
         }
@@ -61,7 +62,6 @@ public class ScriptTask {
     }
 
     private final ScriptVariableMap variables = new ScriptVariableMap();
-
     public ScriptVariableMap variables() {
         return variables;
     }

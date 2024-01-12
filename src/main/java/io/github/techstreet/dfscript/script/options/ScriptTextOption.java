@@ -7,6 +7,8 @@ import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.values.ScriptTextValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class ScriptTextOption implements ScriptOption {
 
@@ -16,8 +18,7 @@ public class ScriptTextOption implements ScriptOption {
         this.value = value.getAsString();
     }
 
-    public ScriptTextOption() {
-    }
+    public ScriptTextOption() {}
 
     @Override
     public ScriptValue getValue() {

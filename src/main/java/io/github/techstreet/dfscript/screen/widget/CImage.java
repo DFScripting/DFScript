@@ -1,9 +1,10 @@
 package io.github.techstreet.dfscript.screen.widget;
 
 import io.github.techstreet.dfscript.util.RenderUtil;
-import net.minecraft.client.gui.DrawContext;
+import java.awt.Rectangle;
 
-import java.awt.*;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class CImage implements CWidget {
 

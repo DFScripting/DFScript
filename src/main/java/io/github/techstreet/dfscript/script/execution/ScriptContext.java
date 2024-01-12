@@ -1,6 +1,12 @@
 package io.github.techstreet.dfscript.script.execution;
 
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.values.ScriptUnknownValue;
+import io.github.techstreet.dfscript.script.values.ScriptValue;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class ScriptContext {
 
@@ -29,19 +35,23 @@ public class ScriptContext {
 
     private int breakLoop = 0;
 
-    public void breakLoop(int n) {
+    public void breakLoop(int n)
+    {
         breakLoop += n;
     }
 
-    public void breakLoop() {
+    public void breakLoop()
+    {
         breakLoop(1);
     }
 
-    public void stopBreakLoop() {
+    public void stopBreakLoop()
+    {
         breakLoop = 0;
     }
 
-    public boolean isLoopBroken() {
+    public boolean isLoopBroken()
+    {
         return breakLoop > 0;
     }
 
@@ -50,7 +60,6 @@ public class ScriptContext {
     }
 
     private final ScriptVariableMap variables = new ScriptVariableMap();
-
     public ScriptVariableMap variables() {
         return variables;
     }

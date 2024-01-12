@@ -5,8 +5,11 @@ import com.google.gson.JsonPrimitive;
 import io.github.techstreet.dfscript.screen.widget.CScrollPanel;
 import io.github.techstreet.dfscript.screen.widget.CTextField;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
+import io.github.techstreet.dfscript.script.argument.ScriptNumberArgument;
 import io.github.techstreet.dfscript.script.values.ScriptNumberValue;
 import io.github.techstreet.dfscript.script.values.ScriptValue;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class ScriptFloatOption implements ScriptOption {
 
@@ -16,8 +19,7 @@ public class ScriptFloatOption implements ScriptOption {
         this.value = value.getAsDouble();
     }
 
-    public ScriptFloatOption() {
-    }
+    public ScriptFloatOption() {}
 
     @Override
     public ScriptValue getValue() {
@@ -36,7 +38,8 @@ public class ScriptFloatOption implements ScriptOption {
             try {
                 value = Double.parseDouble(field.getText());
                 field.textColor = 0xFFFFFF;
-            } catch (Exception e) {
+            }
+            catch(Exception e) {
                 field.textColor = 0xFF3333;
             }
         });

@@ -56,7 +56,6 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
         elseIcon.getSubNbt("display")
                 .put("Lore", lore);
     }
-
     boolean hasElse = false;
 
     ScriptCondition condition;
@@ -76,7 +75,8 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
 
         render.addElement(new ScriptPartRenderIconElement(closeBracketName, closeBracketIcon));
 
-        if (hasElse) {
+        if(hasElse)
+        {
             render.addElement(new ScriptPartRenderIconElement(elseName, elseIcon));
 
             render.addElement(container.createSnippet(1));
@@ -99,7 +99,7 @@ public class ScriptBranch extends ScriptParametrizedPart implements ScriptScopeP
         ScriptActionContext actionCtx = new ScriptActionContext(task, getArguments());
         boolean result = condition.run(actionCtx);
 
-        if (!result && !hasElse) return;
+        if(!result && !hasElse) return;
 
         container.runSnippet(task, result ? 0 : 1, this);
     }

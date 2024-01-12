@@ -1,5 +1,7 @@
 package io.github.techstreet.dfscript.script.argument;
 
+import io.github.techstreet.dfscript.script.ScriptPart;
+import io.github.techstreet.dfscript.script.ScriptSnippet;
 import io.github.techstreet.dfscript.script.execution.ScriptTask;
 import io.github.techstreet.dfscript.script.execution.ScriptVariableMap;
 import net.minecraft.text.Style;
@@ -21,7 +23,8 @@ public enum ScriptVariableScope {
     FUNCTION(
             Text.literal("Function").setStyle(Style.EMPTY.withColor(Formatting.BLUE).withItalic(false)),
             (task) -> task.stack().getFunctionElement().getVarMap()
-    );
+    )
+    ;
 
 
     private final Function<ScriptTask, ScriptVariableMap> varMapFunction;
@@ -40,9 +43,8 @@ public enum ScriptVariableScope {
     public Text getName() {
         return name;
     }
-
     public Text getShortName() {
-        String firstChar = name.getString().substring(0, 1);
+        String firstChar = name.getString().substring(0,1);
         Text shortName = Text.literal(firstChar).setStyle(name.getStyle());
 
         return shortName;

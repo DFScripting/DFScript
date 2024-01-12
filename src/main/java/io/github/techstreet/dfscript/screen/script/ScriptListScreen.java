@@ -9,6 +9,7 @@ import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.ScriptManager;
 import io.github.techstreet.dfscript.script.VirtualScript;
 import io.github.techstreet.dfscript.script.util.UploadResponse;
+import io.github.techstreet.dfscript.util.Regex;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -53,8 +54,7 @@ public class ScriptListScreen extends CScreen {
 
             panel.add(new CText(6, y + 2, text));
 
-            panel.add(new CButton(4, y - 1, 153, 10, "", () -> {
-            }) {
+            panel.add(new CButton(4, y-1, 153, 10, "",() -> {}) {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
                     Rectangle b = getBounds();
@@ -103,7 +103,7 @@ public class ScriptListScreen extends CScreen {
 
             panel.add(enableDisable);
 
-            if (allowEditAndUpload) {
+            if(allowEditAndUpload) {
                 if (s.getOwner() != null && s.getOwner().replaceAll("-", "").equals(DFScript.PLAYER_UUID.replaceAll("-", ""))) {
                     // Edit Button
                     CButton edit = new CTexturedButton(addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":wrench.png", DFScript.MOD_ID + ":wrench_highlight.png", () -> {
@@ -205,7 +205,8 @@ public class ScriptListScreen extends CScreen {
                     }
 
                     panel.add(upload);
-                } else {
+                }
+                else {
                     //Script Settings Button
                     CButton settings = new CTexturedButton(10 + addedX, y + addedY, 8, 8, DFScript.MOD_ID + ":settings.png", DFScript.MOD_ID + ":settings_highlight.png", () -> {
                         DFScript.MC.setScreen(new ScriptSettingsScreen(s, false));

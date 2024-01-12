@@ -1,9 +1,14 @@
 package io.github.techstreet.dfscript.script.action;
 
 import io.github.techstreet.dfscript.script.Script;
+import io.github.techstreet.dfscript.script.ScriptPart;
 import io.github.techstreet.dfscript.script.ScriptSnippet;
 import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
+
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ScriptActionCategoryExtra {
     private final ItemStack icon;

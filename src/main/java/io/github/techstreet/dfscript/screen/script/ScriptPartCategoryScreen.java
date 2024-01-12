@@ -12,7 +12,7 @@ public class ScriptPartCategoryScreen extends CScreen {
     private static final int size;
 
     static {
-        size = (int) (Math.ceil(Math.sqrt(ScriptActionCategory.values().length)) * 10) + 4;
+        size = (int) (Math.ceil(Math.sqrt(ScriptActionCategory.values().length)) * 10)+4;
     }
 
     private final Script script;

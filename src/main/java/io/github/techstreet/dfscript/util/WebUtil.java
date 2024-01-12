@@ -1,7 +1,6 @@
 package io.github.techstreet.dfscript.util;
 
 import io.github.techstreet.dfscript.DFScript;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,12 +18,12 @@ public class WebUtil {
     public static void getAsync(String url, Consumer<String> callback) {
         HttpClient client = HttpClient.newHttpClient();
         client.sendAsync(HttpRequest.newBuilder(URI.create(url)).GET().build(), HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(s -> {
-                    DFScript.MC.submit(() -> {
-                        callback.accept(s);
-                    });
+            .thenApply(HttpResponse::body)
+            .thenAccept(s -> {
+                DFScript.MC.submit(() -> {
+                    callback.accept(s);
                 });
+            });
     }
 
     public static String getString(String urlToRead, Charset charset) throws IOException {

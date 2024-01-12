@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.slf4j.helpers.FormattingTuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,9 +79,9 @@ public enum ScriptActionCategory {
     public ItemStack getIcon() {
         return icon;
     }
-
-    public List<ScriptActionCategoryExtra> getExtras(Script script) {
-        if (extras == null) return List.of();
+    public List<ScriptActionCategoryExtra> getExtras(Script script)
+    {
+        if(extras == null) return List.of();
 
         return extras.apply(script);
     }

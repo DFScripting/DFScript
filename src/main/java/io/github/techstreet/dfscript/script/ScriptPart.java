@@ -1,6 +1,10 @@
 package io.github.techstreet.dfscript.script;
 
-import com.google.gson.*;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import io.github.techstreet.dfscript.screen.ContextMenuButton;
 import io.github.techstreet.dfscript.script.action.ScriptActionType;
 import io.github.techstreet.dfscript.script.action.ScriptBuiltinAction;
@@ -14,6 +18,7 @@ import io.github.techstreet.dfscript.script.repetitions.ScriptBuiltinRepetition;
 import io.github.techstreet.dfscript.script.repetitions.ScriptRepetitionType;
 import io.github.techstreet.dfscript.script.repetitions.ScriptWhile;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -67,7 +72,7 @@ public abstract class ScriptPart implements ScriptRunnable {
                     ScriptCondition condition = context.deserialize(obj.get("condition"), ScriptCondition.class);
 
                     ScriptBranch part = new ScriptBranch(args, condition);
-                    if (hasElse) part.setHasElse();
+                    if(hasElse) part.setHasElse();
 
                     part.container().setSnippet(0, context.deserialize(obj.getAsJsonObject("true"), ScriptSnippet.class));
                     part.container().setSnippet(1, context.deserialize(obj.getAsJsonObject("false"), ScriptSnippet.class));

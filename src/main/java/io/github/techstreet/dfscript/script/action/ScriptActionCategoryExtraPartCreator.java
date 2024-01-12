@@ -5,6 +5,7 @@ import io.github.techstreet.dfscript.screen.script.ScriptEditScreen;
 import io.github.techstreet.dfscript.script.ScriptPart;
 import net.minecraft.item.ItemStack;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ScriptActionCategoryExtraPartCreator extends ScriptActionCategoryExtra {
