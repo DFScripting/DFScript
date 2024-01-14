@@ -265,9 +265,9 @@ public enum ScriptActionType {
                 int slot = (int) ctx.value("Slot").asNumber();
                 ItemStack item = ScriptValueItem.itemFromValue(ctx.value("Item"));
 
-                if (io.github.techstreet.dfscript.DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
-                    io.github.techstreet.dfscript.DFScript.MC.interactionManager.clickCreativeStack(item, slot + 36);
-                    io.github.techstreet.dfscript.DFScript.MC.player.getInventory().setStack(slot, item);
+                if (DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
+                    DFScript.MC.interactionManager.clickCreativeStack(item, slot + 36);
+                    DFScript.MC.player.getInventory().setStack(slot, item);
                 } else {
                     OverlayManager.getInstance().add("Unable to set hotbar item! (Not in creative mode)");
                 }
@@ -281,7 +281,22 @@ public enum ScriptActionType {
             .action(ctx -> {
                 ItemStack item = ScriptValueItem.itemFromValue(ctx.value("Item"));
 
-                if (io.github.techstreet.dfscript.DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
+                if (DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
+                    ItemUtil.giveCreativeItem(item, true);
+                } else {
+                    OverlayManager.getInstance().add("Unable to set give item! (Not in creative mode)");
+                }
+            })),
+
+    GIVE_ITEM_SNBT(builder -> builder.name("Give Item with SNBT")
+            .description("Gives the player an item from SNBT.")
+            .icon(Items.OAK_CHEST_BOAT)
+            .category(ScriptActionCategory.ACTIONS)
+            .arg("SNBT", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                ItemStack item = ScriptValueItem.itemFromSNBT(ctx.value("SNBT").asString());
+
+                if (DFScript.MC.interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
                     ItemUtil.giveCreativeItem(item, true);
                 } else {
                     OverlayManager.getInstance().add("Unable to set give item! (Not in creative mode)");
