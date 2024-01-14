@@ -1563,6 +1563,33 @@ public enum ScriptActionType {
                 });
             })),
 
+    ADD_MENU_ITEM_SNBT(builder -> builder.name("Add Menu Item from SNBT")
+            .description("Adds an item to an open custom menu.")
+            .icon(Items.GLOW_ITEM_FRAME)
+            .category(ScriptActionCategory.MENUS)
+            .arg("X", ScriptActionArgumentType.NUMBER)
+            .arg("Y", ScriptActionArgumentType.NUMBER)
+            .arg("SNBT", ScriptActionArgumentType.STRING)
+            .arg("Identifier", ScriptActionArgumentType.STRING)
+            .action(ctx -> {
+                int x = (int) ctx.value("X").asNumber();
+                int y = (int) ctx.value("Y").asNumber();
+                ItemStack item = ScriptValueItem.itemFromSNBT(ctx.value("SNBT").asString());
+                String identifier = ctx.value("Identifier").asString();
+
+                DFScript.MC.send(() -> {
+                    if (DFScript.MC.currentScreen instanceof ScriptMenu menu) {
+                        if (menu.ownedBy(ctx.task().context().script())) {
+                            menu.widgets.add(new ScriptMenuItem(x, y, item, identifier));
+                        } else {
+                            OverlayManager.getInstance().add("Unable to add item to menu! (Not owned by script)");
+                        }
+                    } else {
+                        menu_CheckMenuIsNull("add item to menu");
+                    }
+                });
+            })),
+
     ADD_MENU_TEXT(builder -> builder.name("Add Menu Text")
             .description("Adds text to an open custom menu.")
             .icon(Items.WRITTEN_BOOK)
