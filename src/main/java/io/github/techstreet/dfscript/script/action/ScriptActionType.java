@@ -425,11 +425,40 @@ public enum ScriptActionType {
                 }
             })),
 
+    WRITE_FILE_LITERAL(builder -> builder.name("Write File Literal")
+            .description("Writes to a file with the contents being the value, literally.")
+            .icon(Items.GLOW_INK_SAC)
+            .category(ScriptActionCategory.MISC)
+            .arg("Filename", ScriptActionArgumentType.STRING)
+            .arg("Content", ScriptActionArgumentType.ANY, arg -> arg.plural(true))
+            .action(ctx -> {
+                String filename = ctx.value("Filename").asString();
+                List<ScriptValue> values = ctx.pluralValue("Content");
+
+                StringBuilder sb = new StringBuilder();
+                for (ScriptValue value : values) {
+                    sb.append(value.asString());
+                }
+
+                if (filename.matches("^[a-zA-z\\d_\\-. ]+$")) {
+                    Path f = FileUtil.folder("Scripts").resolve(ctx.task().context().script().getFile().getName() + "-files").resolve(filename);
+                    try {
+                        f.toFile().getParentFile().mkdir();
+                        FileUtil.writeFile(f, sb.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        OverlayManager.getInstance().add("Internal error while writing file: " + filename);
+                    }
+                } else {
+                    OverlayManager.getInstance().add("Illegal filename: " + filename);
+                }
+            })),
+
     MESSAGE_BOX(builder -> builder.name("Send Message Box")
             .description("Sends a MessageBox pop up. Returns the option index.\nDoes not work on POJAV Launcher")
             .icon(Items.OAK_SIGN)
             .category(ScriptActionCategory.MISC)
-            .arg("Result", ScriptActionArgumentType.NUMBER)
+            .arg("Result", ScriptActionArgumentType.VARIABLE)
             .arg("Title", ScriptActionArgumentType.STRING)
             .arg("Message", ScriptActionArgumentType.STRING)
             .arg("Options", ScriptActionArgumentType.LIST)
