@@ -1,5 +1,6 @@
 package io.github.techstreet.dfscript.script.execution;
 
+import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgument;
 import io.github.techstreet.dfscript.script.action.ScriptActionArgumentList;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;

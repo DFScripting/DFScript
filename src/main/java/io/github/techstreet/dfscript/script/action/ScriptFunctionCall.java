@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import io.github.techstreet.dfscript.DFScript;
 import io.github.techstreet.dfscript.screen.overlay.OverlayManager;
 import io.github.techstreet.dfscript.script.Script;
 import io.github.techstreet.dfscript.script.argument.ScriptArgument;
@@ -52,16 +53,12 @@ public class ScriptFunctionCall extends ScriptAction {
     }
 
     public ScriptFunction getFunction() {
+        DFScript.LOGGER.info("Calling function " + function);
         return script.getNamedFunction(function);
     }
 
     public String getFunctionName() {
         return function;
-    }
-
-    @Override
-    public boolean isDeprecated() {
-        return false;
     }
 
     @Override

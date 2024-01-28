@@ -498,10 +498,14 @@ public enum ScriptActionType {
             .category(ScriptActionCategory.VARIABLES)
             .arg("Variable", ScriptActionArgumentType.VARIABLE)
             .arg("Value", ScriptActionArgumentType.ANY)
-            .action(ctx -> ctx.setVariable(
-                    "Variable",
-                    ctx.value("Value")
-            ))),
+            .action(ctx -> {
+                DFScript.LOGGER.info("setting: " + ctx.value("Value").toString());
+                DFScript.LOGGER.info("to: " + ctx.value("Variable").toString());
+                ctx.setVariable(
+                        "Variable",
+                        ctx.value("Value")
+                );
+            })),
 
     CONVERT_TYPE(builder -> builder.name("Convert Type")
             .description("Converts one type of data to another.\nType can be any value with the data type you want.")
