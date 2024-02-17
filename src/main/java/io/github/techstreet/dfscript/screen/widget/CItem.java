@@ -46,7 +46,7 @@ public class CItem implements CWidget {
         RenderUtil.renderGuiItem(context, item);
         if(countText != null)
         {
-            stack.translate(4, 4, 0);
+            stack.translate(4, 4, 200);
             stack.scale(0.5f, 0.5f, 0.5f);
             context.drawText(DFScript.MC.textRenderer, countText, 0, 0, 0xFFFFFFFF, true);
         }
