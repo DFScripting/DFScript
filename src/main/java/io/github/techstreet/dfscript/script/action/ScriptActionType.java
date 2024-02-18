@@ -507,46 +507,6 @@ public enum ScriptActionType {
                 );
             })),
 
-    CONVERT_TYPE(builder -> builder.name("Convert Type")
-            .description("Converts one type of data to another.\nType can be any value with the data type you want.")
-            .icon(Items.END_CRYSTAL)
-            .category(ScriptActionCategory.VARIABLES)
-            .arg("Result", ScriptActionArgumentType.VARIABLE)
-            .arg("Value", ScriptActionArgumentType.ANY)
-            .arg("Type", ScriptActionArgumentType.ANY)
-            .action(ctx -> {
-                ScriptValue type = ctx.value("Type");
-                ScriptValue value = ctx.value("Value");
-                if (type.getTypeName().equals(value.getTypeName())) {
-                    ctx.setVariable("Result", value);
-                } else if (type instanceof ScriptUnknownValue) {
-                    ctx.setVariable("Result", new ScriptUnknownValue());
-                } else if (type instanceof ScriptStringValue) {
-                    ctx.setVariable("Result", new ScriptStringValue(value.toString()));
-                } else if (type instanceof ScriptTextValue) {
-                    ctx.setVariable("Result", new ScriptTextValue(value.toString()));
-                } else {
-                    ctx.setVariable("Result", value.convertTo(type));
-                }
-            })),
-
-    PURGE_VAR(builder -> builder.name("Purge Variable")
-            .description("Purges all variables with name matching a RegEx.")
-            .icon(Items.DEAD_BRAIN_CORAL)
-            .category(ScriptActionCategory.VARIABLES)
-            .arg("RegEx", ScriptActionArgumentType.STRING)
-            .action(ctx -> {
-                List<String> vars = new ArrayList<>();
-                ctx.task().variables().variables.forEach((key, value) -> {
-                    if (key.matches(ctx.value("RegEx").asString())) {
-                        vars.add(key);
-                    }
-                });
-                vars.forEach(key -> {
-                    ctx.task().variables().variables.remove(key);
-                });
-            })),
-
     //////////////
     /* BOOLEANS */
     //////////////
@@ -2117,6 +2077,10 @@ public enum ScriptActionType {
 
     public ScriptActionCategory getCategory() {
         return category;
+    }
+
+    public List<String> getDescription() {
+        return description;
     }
 
     private ScriptActionType action(Consumer<ScriptActionContext> action) {

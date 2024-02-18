@@ -22,23 +22,6 @@ public class ScriptDictionaryValue extends ScriptValue {
     }
 
     @Override
-    public ScriptValue convertTo(ScriptValue type) {
-        if (type instanceof ScriptBoolValue) {
-            return new ScriptBoolValue(asBoolean());
-        } else if (type instanceof ScriptListValue) {
-            List<ScriptValue> list = new ArrayList<>(List.of());
-            for (String key : value.keySet()) {
-                list.add(new ScriptStringValue(key));
-            }
-            return new ScriptListValue(list);
-        } else if (type instanceof ScriptNumberValue) {
-            return new ScriptNumberValue(asBoolean() ? 1 : 0);
-        } else {
-            return super.convertTo(type);
-        }
-    }
-
-    @Override
     public HashMap<String, ScriptValue> asDictionary() {
         return new HashMap<>(value);
     }

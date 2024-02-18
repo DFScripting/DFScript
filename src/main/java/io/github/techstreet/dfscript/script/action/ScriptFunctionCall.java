@@ -53,7 +53,6 @@ public class ScriptFunctionCall extends ScriptAction {
     }
 
     public ScriptFunction getFunction() {
-        DFScript.LOGGER.info("Calling function " + function);
         return script.getNamedFunction(function);
     }
 

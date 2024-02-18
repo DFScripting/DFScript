@@ -39,10 +39,6 @@ public abstract class ScriptValue {
         throw new UnsupportedOperationException("Cannot convert " + typeName() + " to boolean");
     }
 
-    public ScriptValue convertTo(ScriptValue type) {
-        throw new UnsupportedOperationException("Cannot convert " + typeName() + " to " + type.getTypeName());
-    }
-
     public ScriptValue get() {
         return this;
     }

@@ -21,25 +21,6 @@ public class ScriptListValue extends ScriptValue {
     }
 
     @Override
-    public ScriptValue convertTo(ScriptValue type) {
-        if (type instanceof ScriptDictionaryValue) {
-            HashMap<String, ScriptValue> map = new HashMap<>();
-            int i = 1;
-            for (ScriptValue val : value) {
-                map.put(String.valueOf(i), val);
-                i ++;
-            }
-            return new ScriptDictionaryValue(map);
-        } else if (type instanceof ScriptBoolValue) {
-            return new ScriptBoolValue(asBoolean());
-        } else if (type instanceof ScriptNumberValue) {
-            return new ScriptNumberValue(asBoolean() ? 1 : 0);
-        } else {
-            return super.convertTo(type);
-        }
-    }
-
-    @Override
     public List<ScriptValue> asList() {
         return new ArrayList<>(value);
     }

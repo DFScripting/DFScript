@@ -48,7 +48,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptPart.class, new ScriptPart.Serializer())
         .registerTypeAdapter(ScriptArgument.class, new ScriptArgument.Serializer())
         .registerTypeAdapter(ScriptTextArgument.class, new ScriptTextArgument.Serializer())
-            .registerTypeAdapter(ScriptStringArgument.class, new ScriptStringArgument.Serializer())
+        .registerTypeAdapter(ScriptStringArgument.class, new ScriptStringArgument.Serializer())
         .registerTypeAdapter(ScriptNumberArgument.class, new ScriptNumberArgument.Serializer())
         .registerTypeAdapter(ScriptBoolArgument.class, new ScriptBoolArgument.Serializer())
         .registerTypeAdapter(ScriptVariableArgument.class, new ScriptVariableArgument.Serializer())
@@ -74,7 +74,7 @@ public class ScriptManager implements Loadable {
         .registerTypeAdapter(ScriptActionArgumentList.class, new ScriptActionArgumentList.Serializer())
         .registerTypeAdapter(ScriptValue.class, new ScriptValue.Serializer())
         .registerTypeAdapter(ScriptNumberValue.class, new ScriptNumberValue.Serializer())
-            .registerTypeAdapter(ScriptStringValue.class, new ScriptStringValue.Serializer())
+        .registerTypeAdapter(ScriptStringValue.class, new ScriptStringValue.Serializer())
         .registerTypeAdapter(ScriptTextValue.class, new ScriptTextValue.Serializer())
         .registerTypeAdapter(ScriptListValue.class, new ScriptListValue.Serializer())
         .registerTypeAdapter(ScriptDictionaryValue.class, new ScriptDictionaryValue.Serializer())
@@ -213,7 +213,6 @@ public class ScriptManager implements Loadable {
             LOGGER.info("Loaded script: " + file.getName());
         } catch (Exception e) {
             LOGGER.error("Failed to load script: " + file.getName());
-            e.printStackTrace();
         }
     }
 
@@ -222,7 +221,6 @@ public class ScriptManager implements Loadable {
             FileUtil.writeFile(script.getFile().toPath(), GSON.toJson(script));
         } catch (Exception e) {
             LOGGER.error("Failed to save script: " + script.getFile().getName());
-            e.printStackTrace();
         }
     }
 

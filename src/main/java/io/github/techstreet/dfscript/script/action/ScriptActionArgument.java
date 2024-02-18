@@ -53,7 +53,7 @@ public class ScriptActionArgument {
     }
 
     public ScriptActionArgument defaultValue(ScriptValue value) {
-        if (value instanceof ScriptVariable) return this;
+        if(value instanceof ScriptVariable) return this;
 
         this.defaultValue = value;
         if (!optional && !rightOptional) {
